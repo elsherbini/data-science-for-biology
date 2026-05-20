@@ -1,0 +1,13 @@
+/.quarto/
+/_site/
+*_cache/
+.Rproj.user
+.Rhistory
+.RData
+.DS_Store
+._*
+.luarc.json
+renv/library/
+renv/local/
+renv/cellar/
+renv/staging/

@@ -1,0 +1,5 @@
+---
+title: "Module 0: Welcome"
+---
+
+Welcome to Workshop 1 — Intro to R for Data Science with LLMs. Lesson content is coming soon.

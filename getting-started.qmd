@@ -1,0 +1,61 @@
+---
+title: "Get Started"
+toc: true
+---
+
+This workshop runs entirely in the cloud using **GitHub Codespaces**. There is
+nothing to install on your laptop — you only need a web browser and a free
+GitHub account.
+
+Follow the steps below to get a working environment.
+
+## 1. Create a codespace from the participant environment
+
+<!-- TODO(Phase E): participant-env repo URL -->
+
+1. Open the [participant environment repo](#) on GitHub.
+2. Click the green **"Use this template"** button near the top right.
+3. Choose **"Create a new repository"** and give it a name (for example,
+   `workshop-2026`). This makes your own copy of the environment.
+4. On your new repository, click the green **"Code"** button.
+5. Open the **"Codespaces"** tab and click **"Create codespace on main"**.
+
+GitHub will build the environment for you. The first build takes a few
+minutes — after that, reopening the codespace is fast.
+
+## 2. Set the `OPENROUTER_API_KEY` Codespaces secret
+
+The workshop uses AI models through OpenRouter. You need to store your
+OpenRouter API key as a Codespaces secret so the environment can use it.
+
+1. Go to your GitHub **Settings** → **Codespaces**.
+2. Under **"Codespaces secrets"**, click **"New secret"**.
+3. Name the secret exactly `OPENROUTER_API_KEY`.
+4. Paste in the API key you were given for the workshop.
+5. Under **"Repository access"**, select the repository you created in
+   step 1 so the secret is available to your codespace.
+6. Save the secret. If your codespace is already open, rebuild or restart it
+   so it picks up the new secret.
+
+## 3. Open a notebook
+
+Once the codespace has finished building:
+
+1. Use the file explorer on the left to find the starter Quarto notebooks
+   (files ending in `.qmd`).
+2. Open one to start working. You can edit text and code cells directly in
+   the browser.
+
+## 4. Meet Claude Code in the terminal
+
+Your codespace includes **Claude Code**, an AI coding assistant, in the
+integrated terminal.
+
+1. Open the integrated terminal (**Terminal → New Terminal**, or use the
+   keyboard shortcut).
+2. Start Claude Code by typing `claude` and pressing Enter.
+3. Ask it questions in plain language — it can read your notebook, explain
+   code, and help you make changes.
+
+You are now ready to begin the workshop. If you get stuck, ask an instructor
+or a teaching assistant.

@@ -1,0 +1,49 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - "*.qmd"
+    - "materials/**/*.qmd"
+    - "!materials/**/exercises/"
+    - "!archive/"
+    - "!archive-src/"
+
+from: markdown+emoji
+
+execute:
+  freeze: auto
+
+website:
+  title: "Data Science for Biology Workshop Series"
+  page-navigation: true
+  navbar:
+    background: light
+    foreground: dark
+    right:
+      - text: "Get Started"
+        href: getting-started.qmd
+      - text: "Datasets"
+        href: datasets.qmd
+      - text: "Resources"
+        href: resources.qmd
+      - text: "Past Workshops"
+        href: past-workshops.qmd
+      - text: "About"
+        href: about.qmd
+      - icon: github
+        href: https://github.com/elsherbini/durban-data-science-for-biology
+        aria-label: GitHub
+  sidebar:
+    style: docked
+    align: left
+    collapse-level: 1
+    contents:
+      - section: "<em>1. Intro to R for Data Science with LLMs</em>"
+        contents:
+          - text: "<b>Module 0</b>: Welcome"
+            href: materials/1-workshop1/0-welcome/index.qmd
+
+format:
+  html:
+    theme: [default, assets/custom.scss]
+    toc: false

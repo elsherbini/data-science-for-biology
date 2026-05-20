@@ -1,0 +1,14 @@
+---
+title: "Intro to the UNIX shell"
+author: Marie HIDJO
+format:
+  html:
+    toc: true
+---
+  
+## Slides
+
+
+```{=html}
+<iframe src="https://docs.google.com/presentation/d/e/2PACX-1vTMagosjL88dFPQ7ZRY83HmcU91qP7aYkytTi3v89U6jU4vmNp-gKhBtSxIUdCo3CJjhIoV94IU2z7Q/embed?start=false&loop=false&delayms=60000" frameborder="0" width="640" height="389" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+```

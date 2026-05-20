@@ -1,0 +1,14 @@
+---
+title: "Building Sucessful Sequencing Libraries"
+format:
+  html:
+    toc: true
+---
+  
+## Slides
+
+
+```{=html}
+<iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQ6OG7kqCIPFws9y5QFhQJGy9xh7dYKZI6IXGSreqMHqyO8E-qUia_7TcYGFkHweO87tLFULz13OaP6/embed?start=true&loop=false&delayms=3000" frameborder="0" width="960" height="569" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+```
+  

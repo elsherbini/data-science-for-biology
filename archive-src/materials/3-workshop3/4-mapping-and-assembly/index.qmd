@@ -1,0 +1,26 @@
+---
+title: "Alignment, mapping, and variant calling"
+format:
+  html:
+    toc: true
+---
+
+
+## Wifi details
+[Make slides full screen](slides.qmd)
+
+```{=html}
+<iframe class="slide-deck" src="slides.html" height="420" width="747" style="border: 1px solid #2e3846;"></iframe>
+```
+
+
+## Slides
+
+```{=html}
+
+<iframe src="https://docs.google.com/presentation/d/e/2PACX-1vR9tPyPsytCG61tkO4oKHRh4m72XDsdu0s0ss_1RbWrmXOWug_-_l5-cSQjnI951EOeiNxkxWT5V9wW/embed?start=false&loop=false&delayms=3000" frameborder="0" width="640" height="389" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+```
+
+
+
+

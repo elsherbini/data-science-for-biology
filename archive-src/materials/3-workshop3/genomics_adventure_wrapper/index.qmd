@@ -1,0 +1,33 @@
+---
+title: "Genomics Adventure in Durban"
+format:
+  html:
+    toc: true
+---
+  
+The Genomics Adventure module has been run many times by Guy Leonard in a workshop held in Cesky Krumlov. Now the adventure continues in Durban, SA.
+
+
+## Before we start, run the following command:
+
+```{.bash} 
+cd /home/genomics/workshop_materials/genomics_adventure/;
+mv sequencing_data .sequencing_data_backup;
+mv reference_sequences .reference_sequences_backup;
+mkdir -p sequencing_data/ecoli;
+mkdir -p reference_sequences/ecoli;
+cp .sequencing_data_backup/ecoli/*SRR857279* sequencing_data/ecoli;
+cp .reference_sequences_backup/ecoli/GCF_000005845.2_ASM584v2_genomic.fna reference_sequences/ecoli;
+cp .reference_sequences_backup/ecoli/GCF_000005845.2_ASM584v2_genomic.gff reference_sequences/ecoli;
+```
+
+
+## Now follow the adventure here:
+[https://github.com/guyleonard/genomics_adventure/blob/release/README.md#a-few-notes-on-styles](https://github.com/guyleonard/genomics_adventure/blob/release/README.md#a-few-notes-on-styles)
+
+## to download your fastqc results
+
+```{.bash}
+# replace <your-ip-address> with the correct IP address
+scp genomics@<your-ip-address>:`/home/genomics/workshop_materials/genomics_adventure/sequencing_data/ecoli/*.html` ./ 
+```

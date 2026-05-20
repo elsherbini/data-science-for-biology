@@ -1,0 +1,12 @@
+---
+title: "Past Workshops"
+sidebar: false
+---
+
+These are the frozen 2024 workshop materials, kept for reference. They are not
+maintained and may not match the current 2026 environment, but the lesson
+content and exercises remain available to browse.
+
+- [Workshop 1 — Reproducible Data Analysis with R](archive/materials/1-workshop1/0-welcome/index.html)
+- [Workshop 2 — High-Dimensional Data: The Human Microbiome](archive/materials/2-workshop2/0-welcome/index.html)
+- [Workshop 3 — Bioinformatics & Viral Genomics](archive/materials/3-workshop3/0-welcome/index.html)

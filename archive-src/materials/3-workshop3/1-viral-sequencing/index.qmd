@@ -1,0 +1,30 @@
+---
+title: "Building Sucessful Sequencing Libraries"
+format:
+  html:
+    toc: true
+---
+  
+## Slides
+
+```{=html}
+<style>
+  #myid {
+    border: 10px solid rgba(20,130,130,.2);
+    margin: 0;
+  }
+  .myclass {
+    max-width: 100%;
+    width: 100%;
+    height: 450px;
+  }
+</style>
+```
+
+
+
+![](module_1_lindsay_droit_20250224.pdf){#myid .myclass}
+
+
+<a href=module_1_lindsay_droit_20250224.pdf>Download Slides</a>
+  

@@ -1,0 +1,41 @@
+---
+title: "Workshop summary and path forward"
+format: qmdrslides-revealjs
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+#| echo: false
+library(countdown)
+```
+
+
+## Goals for this workshop
+
+
+What happens to the instances?  
+
+Discussion of best practices  
+
+What to do next?
+
+## Practicalities
+
+::: r-fit-text
+WiFi:
+
+Network: KTB Free Wifi (no password needed)
+
+Network AHRI  
+Password: `@hR1W1F1!17`
+
+Network AHRI Internet only  
+Password: `AHRI twenty three!`  
+
+Network CAPRISA-Corp Password: `corp@caprisa17`
+
+Bathrooms are out the lobby to your left
+:::
+
+{{< include ../_wooclap.qmd >}}

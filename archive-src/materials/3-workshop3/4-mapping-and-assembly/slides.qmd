@@ -1,0 +1,21 @@
+---
+title: "Wifi details</code>"
+format: qmdrslides-revealjs
+editor_options: 
+  chunk_output_type: inline
+---
+
+## Practicalities
+:::{.r-fit-text}
+
+WiFi:
+
+Network: Southernsunconference
+
+Network Password: S0uthernsun1
+
+:::
+
+
+
+
