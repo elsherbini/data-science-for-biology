@@ -11,9 +11,7 @@ Follow the steps below to get a working environment.
 
 ## 1. Create a codespace from the participant environment
 
-<!-- TODO(Phase E): participant-env repo URL -->
-
-1. Open the [participant environment repo](#) on GitHub.
+1. Open the [participant environment repo](https://github.com/elsherbini/data-science-for-biology-june2026-codespace) on GitHub.
 2. Click the green **"Use this template"** button near the top right.
 3. Choose **"Create a new repository"** and give it a name (for example,
    `workshop-2026`). This makes your own copy of the environment.
