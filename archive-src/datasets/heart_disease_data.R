@@ -3,8 +3,8 @@ library(here)
 
 #csv downloaded from kaggle
 # Found here: https://www.kaggle.com/datasets/kamilpytlak/personal-key-indicators-of-heart-disease?resource=download
-# TODO(Phase D): point at Release asset URL for heart_2020_cleaned.csv
-heart_data <- read_csv(here("datasets", "heart_2020_cleaned.csv"))
+# heart_2020_cleaned.csv is too large for git — hosted as a GitHub Release asset.
+heart_data <- read_csv("https://github.com/elsherbini/data-science-for-biology/releases/download/data-v1/heart_2020_cleaned.csv")
 
 set.seed(11859)
 new_heart <- heart_data %>%
