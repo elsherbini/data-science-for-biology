@@ -1,0 +1,799 @@
+---
+title: "Intro to R, Quarto, and VSCode"
+subtitle: "<em>remixed from <a href='https://github.com/wilkelab/SDS375'>Claus O. Wilke's SDS375 course</a></em> and <a href='https://github.com/posit-conf-2023/quarto-r'> Andrew P. Bray's quarto workshop</a></em>"
+format: qmdrslides-revealjs
+editor_options:
+  chunk_output_type: inline
+
+---
+
+```{r}
+#| echo: false
+library(countdown)
+library(tidyverse)
+library(here)
+table_01 <- read_csv(here("datasets/instructional_dataset/01_participant_metadata_UKZN_workshop_2023.csv"))
+```
+
+## {data-menu-item="Workshop Goals"}
+
+\
+\
+
+### Goals for this session {style="font-size: 2.5em; text-align: center"}
+
+:::{.incremental style="font-size: 1.5em"}
+1. Answer the question "Why R?"
+
+2. Find your way around VS Code.
+
+3. Use Quarto to make notebook reports.
+
+4. Begin interacting with data in R.
+:::
+
+---
+
+## What is R?
+
+R is a general purpose programming language that's really well suited to statistics, manipulating tabular data, and plotting.
+
+
+
+---
+
+## Why R?
+
+![](images/Data_science_venn.svg){fig-alt="Venn diagram showing overlaps of programming, statistics, and communication yielding data science" width=100%}
+
+
+## Why R?
+
+
+- R is completely free and open source
+- Using R connects you with a community around the whole world
+- R has a huge amount of packages - code someone else wrote so you don't have to!
+
+::::: {.columns style='display: flex !important; height: 40%;'}
+
+::: {.column width="10%" style='display: flex; justify-content: center; align-items: center;'}
+
+![](images/Rlogo.svg){fig-alt="R logo"}
+:::
+
+::: {.column width="10%" style='display: flex; justify-content: center; align-items: center;'}
+
+![](images/package-hexlogos.svg){fig-alt="hexagonal stickers representing different packages availale in R"}
+:::
+::::
+---
+
+
+# A tour of VS Code
+
+## You are already running VS Code {data-menu-title="VS Code in the browser"}
+
+Your Codespace is VS Code running in a browser tab. It behaves the same as the desktop app you might have used before.
+
+R, Quarto, and the editor extensions are already installed. There is nothing to download and nothing to set up -- open the Codespace and start working.
+
+## The window layout {data-menu-title="VS Code layout"}
+
+A VS Code window has a few parts you will use all day:
+
+- The **Explorer** on the left lists the files in your project. Click a file to open it.
+- The **editor** in the middle is where you read and write files. Open files show up as tabs across the top.
+- The **panel** along the bottom holds the terminal and other output. You can show or hide it.
+- The **Activity Bar** on the far left switches the side view between the Explorer, search, source control, and extensions.
+
+## The integrated terminal {data-menu-title="Integrated terminal"}
+
+The terminal is a command line built into the window. You type commands here, and this is where Claude Code runs.
+
+Open it from the menu: **Terminal -> New Terminal**, or with the keyboard shortcut <kbd>Ctrl</kbd>+<kbd>`</kbd> (the backtick key).
+
+![](images/vscode-tour/vscode-integrated-terminal.png){fig-alt="The VS Code window with the integrated terminal open in a panel along the bottom." width="70%"}
+
+::: footer
+Screenshot from the [VS Code terminal documentation](https://code.visualstudio.com/docs/terminal/basics).
+:::
+
+## Several terminals at once {data-menu-title="Terminal tabs"}
+
+You can keep more than one terminal open. Each gets a tab in the panel, and you can split the panel to see two side by side.
+
+This is handy when Claude Code is running in one terminal and you want another for your own commands.
+
+![](images/vscode-tour/vscode-terminal-tabs.png){fig-alt="The terminal panel showing several terminal tabs listed on the right side." width="75%"}
+
+::: footer
+Screenshot from the [VS Code terminal documentation](https://code.visualstudio.com/docs/terminal/basics).
+:::
+
+## Opening and editing a `.qmd` {data-menu-title="Editing a .qmd"}
+
+A Quarto document has the `.qmd` extension. It is a plain-text file that mixes writing, R code, and formatting.
+
+Open one from the Explorer and it appears in the editor. You can edit the plain-text source directly, or switch to the visual editor for a word-processor-style view. The two are the same file -- changes in one show up in the other.
+
+## Render and Preview {data-menu-title="Render and Preview"}
+
+The **Preview** button at the top right of an open `.qmd` renders the document and opens the result next to your source.
+
+When the preview is open, Quarto re-renders each time you save, so the rendered output stays in step with the file you are editing.
+
+![](images/vscode-tour/quarto-vscode-render.png){fig-alt="VS Code showing a Quarto document source on the left and the rendered HTML preview on the right." width="55%"}
+
+::: footer
+Screenshot from the [Quarto VS Code documentation](https://quarto.org/docs/tools/vscode/).
+:::
+
+## Running code cells {data-menu-title="Running code cells"}
+
+A code cell has a **Run Cell** link just above it. Click it to run that cell's R code; the output appears inline, right under the cell.
+
+You can run cells one at a time as you build up an analysis, without rendering the whole document.
+
+![](images/vscode-tour/quarto-vscode-code-cell.png){fig-alt="A Quarto code cell in VS Code with a Run Cell link above it and the output shown inline below." width="60%"}
+
+::: footer
+Screenshot from the [Quarto VS Code documentation](https://quarto.org/docs/tools/vscode/).
+:::
+
+## The document outline {data-menu-title="Document outline"}
+
+A long document is easier to navigate with the **outline**, which lists the document's headings.
+
+Click a heading in the outline to jump straight to that section.
+
+![](images/vscode-tour/quarto-vscode-outline.png){fig-alt="The VS Code outline view listing the section headings of a Quarto document." width="35%"}
+
+::: footer
+Screenshot from the [Quarto VS Code documentation](https://quarto.org/docs/tools/vscode/).
+:::
+
+{{< include ../_wooclap.qmd >}}
+
+
+# Let's start programming
+
+## What is programming?
+
+Programming is giving the computer instructions using text. The tricky part is learning how to speak to a computer.
+
+:::{layout="[0.25,0.25,0.25]"}
+:::{#column1 .fragment}
+1. Computers are incredibly literal
+
+```{r}
+#| echo: fenced
+"a" == "A"
+```
+:::
+:::{#column2 .fragment}
+2. Computers care about punctuation
+
+```{r error=TRUE}
+#| echo: fenced
+
+max(c(1,2,3,4))
+```
+:::
+:::{#column3 .fragment}
+3. Computers only know what you tell them
+
+```{r error=TRUE}
+#| echo: fenced
+# how old will I be in 10 years?
+my_age + 10
+
+```
+:::
+:::
+
+[Most bugs happen because of one of these things.]{style="color: red;font-size: 1.2em" .fragment}
+
+
+## What is programming?
+
+So why bother at all? Because if you can tell a computer how to do it once, it is reproducible!
+
+[If the data changes or you find a mistake, just rerun!]{style="color: green;font-size: 1.2em" .fragment}
+
+[You can run the same code on new data]{style="color: green;font-size: 1.2em" .fragment}
+
+[You can share your code with others so they can start where you left off]{style="color: green;font-size: 1.2em" .fragment}
+
+
+## Let's use R for math {.your-turn}
+
+```{r}
+#| echo: false
+countdown::countdown(8)
+```
+
+In the console, try typing some commands:
+
+```{r}
+#| echo: true
+#| eval: false
+
+# arithmetic
+3 + 5 + 10
+10 * (5 + 1)
+3**2 # what does the ** operator do in R?
+# check inequalities and equalities
+4 >= 1 # what does this mean?
+5 + 4 == 9
+# make some errors
+"3" + 5 # why is this an error?
+my_age + 5  # why is this an error?
+
+# write a math expression to calculate what percentage
+# of your life has been in post-secondary school/training
+# (university, training programs, masters, PhD)
+```
+
+
+## Say hello to the text-editor
+
+When you write code in the console, it is gone.
+
+It is better to work inside quarto notebooks in order to be able to save and share your code and results.
+
+# What can you do with Quarto?
+
+
+## Articles
+
+::: {layout-ncol="2"}
+![](images/gallery-doc-html.png)
+
+![](images/gallery-doc-pdf.png)
+:::
+
+## Presentations
+
+::: {layout-ncol="2"}
+![](images/gallery-pres-3.png)
+
+![](images/gallery-pres-4.png)
+:::
+
+## Websites
+
+::: {layout-ncol="2"}
+![](images/gallery-web-nasa.png)
+
+![](images/gallery-web-quarto.png)
+:::
+
+
+## Books
+
+::: {layout-ncol="2"}
+![](images/gallery-books-viz.png)
+
+![](images/gallery-books-r4ds.png)
+:::
+
+## Quarto Render
+
+**Quarto works inside VS Code**
+
+   Click ![](images/render-icon.png){fig-alt="small icon of render arrow" width="100"} (the Preview button) at the top of a `.qmd` open in VS Code.
+
+Render input file to various document formats.
+
+::: {layout="[[1, 1, 1, 1]]" style="font-size: .7em; text-align: center"}
+
+### Input
+
+-   `*.qmd`
+-   `*.ipynb`
+-   `*.md`
+-   `*.Rmd`
+
+### Format
+
+-   `html`
+-   `pdf`
+-   `revealjs` (like these slides!)
+-   `docx`
+-   `ppt`
+-   and many more!
+
+\
+
+\
+:::
+
+# Anatomy of a Document
+
+1. Code Cells
+2. Text
+3. Metadata
+
+
+# Code Chunks
+
+
+## Quarto's Code Chunk
+
+::: columns
+::: {.column width=25%}
+:::
+
+::: {.column width=50%}
+    ```{{r}}
+    #| echo: false
+    rnorm(3)
+    ```
+:::
+
+::: {.column width=25%}
+:::
+:::
+
+::: fragment
+[**This is a Quarto Code Chunk.**]{style="color: green;font-size: 1.2em"}
+:::
+
+## Let's explore the survey data {.our-turn}
+
+
+
+## Quarto's Code Chunk {.your-turn}
+
+::: columns
+::: {.column width=25%}
+:::
+
+::: {.column width=50%}
+    ```{{r}}
+    #| echo: false
+    rnorm(3)
+    ```
+:::
+
+::: {.column width=25%}
+:::
+:::
+
+
+[**This is a Quarto Code Chunk.**]{style="color: green;font-size: 1.2em"}
+
+Make a new code chunk in three ways:
+
+1. Type it out
+2. Use the **Insert Code Cell** command from the command palette
+3. click in your document and hit the key combination `Ctrl+Alt+i`
+
+Write a math expression in a chunk and press the Run Cell link at the top of the chunk.
+
+## Execution Options
+
+Control how the code is executed with options.
+Options are denoted with the "hash-pipe" `#|`
+
+::: {style="font-size: .8em"}
+| Option    | Description                                                                                                                                                                                       |
+|------------|------------------------------------------------------------|
+| `eval`    | Evaluate the code chunk (if `false`, just echos the code into the output).                                                                                                                        |
+| `echo`    | Include the source code in output                                                                                                                                                                 |
+| `output`  | Include the results of executing the code in the output (`true`, `false`, or `asis` to indicate that the output is raw markdown and should not have any of Quarto's standard enclosing markdown). |
+| `warning` | Include warnings in the output.                                                                                                                                                                   |
+| `error`   | Include errors in the output.                                                                                                                                                                     |
+| `include` | Catch all for preventing any output (code or results) from being included (e.g. `include: false` suppresses all output from the code block).                                                      |
+:::
+
+## Example: Figures from Code {auto-animate=true}
+
+:::columns
+:::{.column width=54%}
+````markdown
+```{{r}}
+library(palmerpenguins)
+library(ggplot2)
+
+ggplot(penguins,
+       aes(x = bill_length_mm,
+           y = bill_depth_mm,
+           col = island)) +
+  geom_point()
+```
+````
+:::
+:::{.column width=46% .fragment}
+```{r}
+#| echo: false
+library(palmerpenguins)
+library(ggplot2)
+
+ggplot(penguins,
+       aes(x = bill_length_mm,
+           y = bill_depth_mm,
+           col = island)) +
+  geom_point() +
+  theme_grey(base_size = 18)
+```
+:::
+:::
+
+## Example: Figures from Code {auto-animate=true}
+
+:::columns
+:::{.column width=54%}
+````markdown
+```{{r}}
+#| fig-width: 5
+#| fig-height: 3
+
+library(palmerpenguins)
+library(ggplot2)
+
+ggplot(penguins,
+       aes(x = bill_length_mm,
+           y = bill_depth_mm,
+           col = island)) +
+  geom_point()
+```
+````
+:::
+:::{.column width=46% .fragment}
+```{r}
+#| echo: false
+#| fig-width: 5
+#| fig-height: 3
+#|
+library(palmerpenguins)
+library(ggplot2)
+
+ggplot(penguins,
+       aes(x = bill_length_mm,
+           y = bill_depth_mm,
+           col = island)) +
+  geom_point() +
+  theme_grey(base_size = 18)
+```
+:::
+:::
+
+
+# Text
+
+[The Basics of Markdown]{style="font-family: 'Nanum Myeongjo', serif; font-size:1.7em"}
+
+##  {data-menu-title="Markdown is for writing"}
+
+::: {style="font-size: 4em; text-align: center; color: green"}
+{{< fa brands markdown >}}
+:::
+
+-   Markdown is designed to be easy to write and easy to read:
+
+    > A Markdown-formatted document should be publishable as-is, as plain text, without looking like it's been marked up with tags or formatting instructions.\
+    > -John Gruber
+
+. . .
+
+- Quarto uses extended version of **Pandoc markdown**.
+- Pandoc classifies markdown in terms of [Inline]{.inline-el} and [Block]{.block-el} elements.
+
+
+## [Inline Elements:]{.inline-el} Text Formatting
+
+::: columns
+::: {.column width="65%"}
+#### Markdown
+
+```{.markdown}
+Markdown allows you to format text
+with *emphasis* and **strong emphasis**.
+You can also add superscripts^2^,
+subscripts~2~, and display code
+`verbatim`. Little known fact: you can
+also ~~strikethrough~~ text and present
+it in [small caps]{.smallcaps}.
+```
+:::
+
+::: {.column width="35%" .fragment}
+#### Output
+
+Markdown allows you to format text with *emphasis* and **strong emphasis**. You can also add superscripts^2^, subscripts~2~, and display code `verbatim`. Little known fact: you can also ~~strikethrough~~ text and present it in [small caps]{.smallcaps}.
+:::
+:::
+
+::: footer
+^[Either the `*` or `_` can be used for emphasis and strong.]
+:::
+
+
+## [Inline Elements:]{.inline-el} Links and Images
+
+#### Markdown
+
+```markdown
+You can embed [links with names](https://quarto.org/), direct urls
+like <https://quarto.org/>, and links to
+[other places](#inline-elements-text-formatting) in the document.
+The syntax is similar for embedding an inline image:
+![render icon](images/render-icon.png).
+```
+
+\
+
+:::{.fragment}
+#### Output
+
+You can embed [links with names](https://quarto.org/), direct urls like <https://quarto.org/>, and links to [other places](#inline-elements-text-formatting) in the document. The syntax is similar for embedding an inline image: ![render icon](images/render-icon.png){fig-alt="small icon of render arrow" width="100"}.
+:::
+
+## Markdown can do so much more
+
+To learn about footnotes, Math, tables, and diagrams, check out the [quarto documentation on markdown](https://quarto.org/docs/authoring/markdown-basics.html)
+
+
+::: columns
+::: {.column width="50%" .fragment}
+#### Markdown
+
+```markdown
+A short note.^[Fits inline.]
+
+|        |  1   |  2   |
+|--------|------|------|
+| **A**  | 0    | 0    |
+: example table {#tbl-1}
+
+$$
+f(x)={\sqrt{\frac{\tau}{2\pi}}}
+      e^{-\tau (x-\mu )^{2}/2}
+$$
+
+```
+:::
+
+::: {.column width="50%" .fragment}
+#### Output
+
+A short note.^[Fits inline.]
+
+|        |  1   |  2   |
+|--------|------|------|
+| **A**  | 0    | 0    |
+: example table {#tbl-1}
+
+$$
+f(x)=\sqrt{\frac{\tau}{2\pi}}
+    e^{-\tau (x-\mu )^{2}/2}
+$$
+:::
+:::
+
+
+## [Metadata:]{.meta-el} YAML
+
+"Yet Another Markup Language" or "YAML Ain't Markup Language" is used to provide document level metadata ...
+
+:::columns
+
+:::{.column width=10%}
+:::
+
+:::{.column width=50%}
+[... in key-value pairs,]
+
+[... that can nest,]
+
+[... are fussy about indentation,]
+
+[... and are kept between `---`.]
+
+:::
+
+:::{.column width=40% .fragment}
+
+\
+
+``` yaml
+---
+format:
+  title: "Intro to R"
+  author: "Yours Truly"
+  html:
+    toc: true
+    code-fold: true
+---
+```
+:::
+
+:::
+
+[There are many options for [front matter](https://quarto.org/docs/authoring/front-matter.html) and [configuring rendering](https://quarto.org/docs/reference/formats/html.html).]{.fragment}
+
+# Quarto in VS Code:<br>analysis code, documentation, and interpretation combined.
+
+## Ok, but how do you write code?
+
+## Assignment
+
+You can use `<-` or `=` to assign values to variables
+
+```r
+a <- 6
+b = 8
+c <- 5.44
+d = TRUE
+e = "hello world"
+e <- 'hello world' # same as double quote
+```
+
+We will use `<-` for all examples going forward, but do whichever melts your brain less
+
+## Naming variables
+
+A lot of R people use `.` inside variable names, but in most languages besides R this would be an error. It's good practice these days to use the `_` underscore if you want separation in your variable names.
+
+```r
+r.people.sometimes.put.dots <- TRUE
+dots.are.confusing <- "maybe"
+just_use_underscores <- "please"
+```
+
+## Functions {auto-animate="true"}
+
+Functions are named bits of code that take parameters as input and return some output
+
+```{r}
+#| echo: true
+library(tidyverse)
+word_1 <- "hello"
+word_2 <- "world"
+str_c(word_1, word_2)
+```
+
+`str_c` is a function that puts **c**oncatenates **str**ings.
+
+
+## Functions {auto-animate="true"}
+
+Functions are named bits of code that take parameters as input and return some output
+
+```{r}
+#| echo: true
+library(tidyverse)
+word_1 <- "hello"
+word_2 <- "world"
+str_c(word_1, word_2, sep = " ")
+```
+
+`str_c` is a function that puts **c**oncatenates **str**ings.
+
+functions can have *named parameters* as well as *positional parameters.*
+
+## Functions {auto-animate="true"}
+
+Functions are named bits of code that take parameters as input and return some output
+
+```{r}
+#| echo: true
+library(tidyverse)
+word_1 <- "hello"
+word_2 <- "world"
+str_c(word_1, word_2, sep = " ")
+```
+
+`str_c` is a function that puts **c**oncatenates **str**ings.
+
+functions can have *named parameters* as well as *positional parameters.*
+*named parameters* always take an `=` sign for assignment.
+
+## Getting help with functions {auto-animate="true"}
+
+Type `?str_c` in the console to open that function's help page. Check out [this guide](https://socviz.co/appendix.html?s=09#a-little-more-about-r) on how to read the R help pages.
+
+The help page tells you what parameters a function takes and shows examples at the bottom.
+
+You can also ask Claude Code, the AI assistant from Module 1. It is good at explaining what a function does and suggesting how to call it. Treat its answers as a starting point and check them against the help page, since it is not always correct.
+
+## "Everything is a vector" {auto-animate="true"}
+
+This sounds like nonsense at first:
+
+```{r}
+#| echo: true
+c(1, 2, 3, 4)
+```
+
+1. A Vector is a collection of values surrounded by `c()` and separated with `,`
+
+
+## "Everything is a vector" {auto-animate="true"}
+
+This sounds like nonsense at first:
+
+```{r}
+#| echo: true
+c(1, 2, 3, 4) * 3
+```
+
+1. A vector is a collection of values surrounded by `c()` and separated with `,`
+
+2. Vectors in R do smart things with most functions and operations.
+
+
+## "Everything is a vector" {auto-animate="true"}
+
+This sounds like nonsense at first:
+
+```{r}
+#| echo: true
+#| error: true
+c(1, 2, 3, "potato") * 3
+```
+
+1. A vector is a collection of values surrounded by `c()` and separated with `,`
+
+2. Vectors in R do smart things with most functions and operations.
+
+3. Vectors have only one type of value.
+
+## Value types in R
+
+The type of the value can be
+
+```r
+# numeric
+c(1,2,3,4)
+
+# character
+c("a","b","c","d")
+
+# boolean
+c(TRUE, FALSE)
+
+# factor
+c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun") %>% as_factor()
+```
+
+## `tibble`s (aka data frames)
+
+`tibble`s are the big reason R is great for working with tabular data.
+
+A data frame is a rectangular collection of variables (in the columns) and observations (in the rows).
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+library(here)
+table_02 <- read_csv(here("datasets/instructional_dataset/02_visit_clinical_measurements_UKZN_workshop_2023.csv"))
+```
+
+```{r}
+#| echo: true
+table_02
+```
+
+## How to read in data?
+
+Data is often in tables, and the easiest way to store tabular data is in `csv` or `tsv` format.
+
+`csv` - comma separated values
+`tsv` - tab separated values
+
+to read in data stored this way use `read_csv(filename)` or `read_tsv(filename)`
+
+```r
+table_02 <- read_csv("02_visit_clinical_measurements_UKZN_workshop_2023.csv")
+```
+
+## Exercise {.your-turn}
+
+That's enough slides for now time to try for yourself! Go to [the module](index.html) and go to the first exercise.
+
+```{r}
+countdown::countdown(30)
+```

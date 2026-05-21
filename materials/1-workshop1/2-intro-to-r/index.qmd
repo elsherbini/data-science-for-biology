@@ -1,0 +1,19 @@
+---
+title: "Intro to R, Quarto, and VSCode"
+format:
+  html:
+    toc: true
+---
+
+> Get comfortable in VS Code, run R code, and render documents with Quarto.
+
+## Slides
+[Make slides full screen](slides.qmd)
+
+```{=html}
+<iframe class="slide-deck" src="slides.html" height="420" width="747" style="border: 1px solid #2e3846;"></iframe>
+```
+
+{{< include r_midsession_exercise.Qmd >}}
+
+{{< include exercise_1.qmd >}}
