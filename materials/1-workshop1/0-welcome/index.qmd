@@ -1,5 +1,23 @@
 ---
-title: "Module 0: Welcome"
+title: "Welcome to the Workshop"
+format:
+  html:
+    toc: true
 ---
 
-Welcome to Workshop 1 — Intro to R for Data Science with LLMs. Lesson content is coming soon.
+> Meet your instructors and neighbors, and see what to expect from the week.
+
+## Slides
+
+[Make slides full screen](slides.qmd)
+
+```{=html}
+<iframe class="slide-deck" src="slides.html" height="420" width="747" style="border: 1px solid #2e3846;"></iframe>
+```
+
+## Before you start
+
+This year the workshop runs entirely in GitHub Codespaces, so there is no
+software to install on your laptop. The [Get Started](../../../getting-started.qmd) page
+walks through opening the workshop Codespace and setting your OpenRouter API
+key. Do that before Module 1.
