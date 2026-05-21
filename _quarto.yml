@@ -36,9 +36,9 @@ website:
   sidebar:
     style: docked
     align: left
-    collapse-level: 1
+    collapse-level: 2
     contents:
-      - section: "<em>1. Intro to R for Data Science with LLMs</em>"
+      - section: "<b>1. Intro to R for Data Science with LLMs</b>"
         contents:
           - text: "<b>Module 0</b>: Welcome to the Workshop"
             href: materials/1-workshop1/0-welcome/index.qmd
