@@ -3,6 +3,7 @@ title: "Intro to R, Quarto, and VSCode"
 format:
   html:
     toc: true
+    code-link: true
 ---
 
 > Get comfortable in VS Code, run R code, and render documents with Quarto.

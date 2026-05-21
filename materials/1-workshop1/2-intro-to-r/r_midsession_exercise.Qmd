@@ -1,10 +1,4 @@
----
-format:
-  html:
-    code-link: true
-  editor_options: 
-    chunk_output_type: console
----
+<!-- Included partial: rendering is controlled by the parent index.qmd. -->
 
 ##  Worksheet: Introduction to R and Quarto
 
