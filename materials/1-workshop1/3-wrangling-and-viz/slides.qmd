@@ -90,7 +90,7 @@ table_02 |> filter(ph < 4)
 ```
 
 ```{r}
-table_02 |> filter(arm == "placebo", time_point == "early")
+table_02 |> filter(arm == "placebo", time_point == "baseline")
 ```
 
 Also useful: `&`, `|`, `%in%`, `is.na()`.
@@ -152,14 +152,14 @@ Same rows, reordered. The table's meaning is unchanged.
 
 ```{r}
 table_02 |>
-  filter(time_point == "early")
+  filter(time_point == "baseline")
 ```
 
 ## A growing pipeline {auto-animate=true}
 
 ```{r}
 table_02 |>
-  filter(time_point == "early") |>
+  filter(time_point == "baseline") |>
   select(pid, arm, ph, nugent_score, crp_blood)
 ```
 
@@ -167,7 +167,7 @@ table_02 |>
 
 ```{r}
 table_02 |>
-  filter(time_point == "early") |>
+  filter(time_point == "baseline") |>
   select(pid, arm, ph, nugent_score, crp_blood) |>
   mutate(high_ph = if_else(ph >= 4.5, "yes", "no"))
 ```
@@ -176,7 +176,7 @@ table_02 |>
 
 ```{r}
 table_02 |>
-  filter(time_point == "early") |>
+  filter(time_point == "baseline") |>
   select(pid, arm, ph, nugent_score, crp_blood) |>
   mutate(high_ph = if_else(ph >= 4.5, "yes", "no")) |>
   arrange(desc(ph))

@@ -9,7 +9,7 @@ Open `notebooks/03-wrangling.qmd` in your Codespace and work through the parts b
 Look at `table_02` and answer in the notebook (in plain words, no code yet):
 
 1. How many rows? What does one row represent?
-2. After `table_02 |> filter(time_point == "early")`, how many rows? What does each row represent now?
+2. After `table_02 |> filter(time_point == "baseline")`, how many rows? What does each row represent now?
 3. After `table_02 |> count(arm)`, how many rows? What does each row represent now?
 
 We'll briefly compare answers across the room before moving to code.
@@ -19,7 +19,7 @@ We'll briefly compare answers across the room before moving to code.
 Build one growing pipeline on `table_02`, one verb per step. Whatever your assigned mode, the goal is the same.
 
 1. Pipe `table_02` into `head()`.
-2. Filter to the early time point.
+2. Filter to the baseline time point.
 3. Add `select()` to keep `pid`, `arm`, `ph`, `nugent_score`, `crp_blood`.
 4. Add `mutate()` to create `high_ph = if_else(ph >= 4.5, "yes", "no")`.
 5. Add `arrange(desc(ph))`.

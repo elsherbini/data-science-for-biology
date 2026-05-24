@@ -28,7 +28,7 @@ Build one ggplot that grows step by step, on the raw `table_02`. Whatever your a
 
 ### Part 3 — Reach (optional)
 
-Produce a polished final figure for the question. Facet by visit, color by arm, axes labeled, `time_point` panels in chronological order (`early`, `mid`, `late`), and a clean theme.
+Produce a polished final figure for the question. Facet by visit, color by arm, axes labeled, `time_point` panels in chronological order (`baseline`, `week_1`, `week_7`), and a clean theme.
 
 ### Discussion
 
