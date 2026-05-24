@@ -1,0 +1,19 @@
+---
+title: "Intro to data wrangling and visualization with the tidyverse"
+format:
+  html:
+    toc: true
+---
+
+> Practice the single-table dplyr verbs and the fundamentals of plotting with ggplot2.
+
+## Slides
+[Make slides full screen](slides.qmd)
+
+```{=html}
+<iframe class="slide-deck" src="slides.html" height="420" width="747" style="border: 1px solid #2e3846;"></iframe>
+```
+
+{{< include exercise_1.qmd >}}
+
+{{< include exercise_2.qmd >}}

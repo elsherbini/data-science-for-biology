@@ -46,6 +46,8 @@ website:
             href: materials/1-workshop1/1-agentic-coding/index.qmd
           - text: "<b>Module 2</b>: Intro to R, Quarto, and VSCode"
             href: materials/1-workshop1/2-intro-to-r/index.qmd
+          - text: "<b>Module 3</b>: Intro to data wrangling and visualization with the tidyverse"
+            href: materials/1-workshop1/3-wrangling-and-viz/index.qmd
 
 format:
   html:
