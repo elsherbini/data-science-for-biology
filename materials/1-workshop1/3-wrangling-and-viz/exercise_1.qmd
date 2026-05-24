@@ -1,3 +1,44 @@
 ## Exercise 1: Data wrangling
 
-*Content lands in Phase 4.*
+> *Mode setup.* The room is split into Group A and Group B. For Exercise 1, Group A works **agentic** — Claude Code reads your notebook, writes code, and runs it. Group B works **manual** — you write each step yourself; you may ask a chat LLM conceptual questions, but it does not act in your environment. Exercise 2 flips the modes.
+
+Open `notebooks/03-wrangling.qmd` in your Codespace and work through the parts below.
+
+### Part 1 — Predict (no code)
+
+Look at `table_02` and answer in the notebook (in plain words, no code yet):
+
+1. How many rows? What does one row represent?
+2. After `table_02 |> filter(time_point == "early")`, how many rows? What does each row represent now?
+3. After `table_02 |> count(arm)`, how many rows? What does each row represent now?
+
+We'll briefly compare answers across the room before moving to code.
+
+### Part 2 — Build the pipeline
+
+Build one growing pipeline on `table_02`, one verb per step. Whatever your assigned mode, the goal is the same.
+
+1. Pipe `table_02` into `head()`.
+2. Filter to the early time point.
+3. Add `select()` to keep `pid`, `arm`, `ph`, `nugent_score`, `crp_blood`.
+4. Add `mutate()` to create `high_ph = if_else(ph >= 4.5, "yes", "no")`.
+5. Add `arrange(desc(ph))`.
+6. Assign the final pipeline to `early_visit`.
+7. As a separate one-liner, run `table_02 |> count(arm)` and confirm it matches your Part 1 prediction.
+
+### Part 3 — Reach (optional)
+
+Classify Nugent score into clinical categories with `case_when()`:
+
+- 0–3 → `"normal"`
+- 4–6 → `"intermediate"`
+- 7–10 → `"BV"`
+
+Add the category column to `early_visit`, then run `count(arm, nugent_category)` to see the distribution by treatment arm.
+
+### Discussion
+
+Once the room is back together:
+
+- What was easy in your mode? What was hard?
+- Which step would have taken longest if you'd done it the other way?
