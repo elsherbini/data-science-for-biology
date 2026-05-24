@@ -2,8 +2,212 @@
 title: "Intro to data wrangling and visualization with the tidyverse"
 subtitle: "Workshop 1, Module 3"
 format: qmdrslides-revealjs
+editor: source
+execute:
+  echo: true
+  message: false
+  warning: false
 ---
 
-## Coming soon
+```{r setup, include=FALSE}
+library(tidyverse)
+library(countdown)
+library(here)
 
-Slide content lands in Phase 2.
+table_01 <- read_csv(here("datasets/instructional_dataset/01_participant_metadata_UKZN_workshop_2023.csv"))
+table_02 <- read_csv(here("datasets/instructional_dataset/02_visit_clinical_measurements_UKZN_workshop_2023.csv"))
+```
+
+## Goals for this module
+
+By the end of this module you can:
+
+- look at a table and say what one row represents
+- pick rows with `filter()` and columns with `select()`
+- derive new columns with `mutate()`
+- sort rows with `arrange()`
+- count categories with `count()`
+- recognise verbs that keep what a row represents the same vs verbs that change it
+- read and write a basic ggplot: data, mapping, geom
+
+## The pipe `|>`
+
+`|>` is pronounced "and then".
+
+`table_02 |> head()` reads as "take `table_02`, and then call `head()` on it."
+
+R 4.1 added `|>` to base R. We use it everywhere in this module.
+
+One quirk: the right-hand side needs parentheses. Write `head()`, not `head`.
+
+## The pipe in action {auto-animate=true}
+
+```{r}
+head(table_02)
+```
+
+## The pipe in action {auto-animate=true}
+
+```{r}
+table_02 |> head()
+```
+
+## The pipe in action {auto-animate=true}
+
+```{r}
+table_02 |>
+  head() |>
+  nrow()
+```
+
+## What does a row represent?
+
+```{r}
+table_02
+```
+
+132 rows. Each row is one participant at one visit (44 participants × 3 visits).
+
+The whole wrangling half asks the same question: as we work on this table, does a row keep meaning the same?
+
+## `filter()` picks rows {auto-animate=true}
+
+![](images/filter.svg)
+
+## `filter()` picks rows {auto-animate=true}
+
+```{r}
+table_02 |>
+  filter(arm == "placebo")
+```
+
+Same kind of row (a participant-visit). Fewer of them.
+
+## `filter()` with logical operators
+
+```{r}
+table_02 |> filter(ph < 4)
+```
+
+```{r}
+table_02 |> filter(arm == "placebo", time_point == "early")
+```
+
+Also useful: `&`, `|`, `%in%`, `is.na()`.
+
+## `select()` picks columns {auto-animate=true}
+
+![](images/select.svg)
+
+## `select()` picks columns {auto-animate=true}
+
+```{r}
+table_02 |>
+  select(pid, arm, ph, nugent_score)
+```
+
+Same rows, fewer columns. Use `-column` to drop a column. Use `new = old` to rename inside `select()`.
+
+## `mutate()` adds derived columns {auto-animate=true}
+
+![](images/mutate.svg)
+
+## `mutate()` adds derived columns {auto-animate=true}
+
+```{r}
+table_02 |>
+  mutate(crp_blood_ugul = crp_blood / 1000)
+```
+
+Same rows, one more column.
+
+## `mutate()` with `if_else()`
+
+```{r}
+table_02 |>
+  mutate(high_ph = if_else(ph >= 4.5, "yes", "no")) |>
+  select(pid, time_point, ph, high_ph) |>
+  head()
+```
+
+`if_else(condition, value_if_true, value_if_false)`. The new column has one value per row.
+
+## `arrange()` sorts rows {auto-animate=true}
+
+![](images/arrange.svg)
+
+## `arrange()` sorts rows {auto-animate=true}
+
+```{r}
+table_02 |> arrange(ph)
+```
+
+```{r}
+table_02 |> arrange(desc(ph))
+```
+
+Same rows, reordered. The table's meaning is unchanged.
+
+## A growing pipeline {auto-animate=true}
+
+```{r}
+table_02 |>
+  filter(time_point == "early")
+```
+
+## A growing pipeline {auto-animate=true}
+
+```{r}
+table_02 |>
+  filter(time_point == "early") |>
+  select(pid, arm, ph, nugent_score, crp_blood)
+```
+
+## A growing pipeline {auto-animate=true}
+
+```{r}
+table_02 |>
+  filter(time_point == "early") |>
+  select(pid, arm, ph, nugent_score, crp_blood) |>
+  mutate(high_ph = if_else(ph >= 4.5, "yes", "no"))
+```
+
+## A growing pipeline {auto-animate=true}
+
+```{r}
+table_02 |>
+  filter(time_point == "early") |>
+  select(pid, arm, ph, nugent_score, crp_blood) |>
+  mutate(high_ph = if_else(ph >= 4.5, "yes", "no")) |>
+  arrange(desc(ph))
+```
+
+## `count()` — the bridge to Module 4
+
+```{r}
+table_01 |> count(smoker)
+```
+
+`table_01` has 44 rows, one per participant. `count(smoker)` returns 2 rows.
+
+A row is no longer a participant. It is a smoker-category.
+
+This is the first verb that changes what a row represents. Module 4 is mostly verbs like this.
+
+## `count()` on multiple columns
+
+```{r}
+table_01 |> count(arm, smoker)
+```
+
+Each row is one arm × smoker combination.
+
+## Exercise 1 {.your-turn}
+
+Open `notebooks/03-wrangling.qmd` in your Codespace.
+
+Group A: agentic. Group B: manual.
+
+```{r}
+countdown::countdown(30)
+```
