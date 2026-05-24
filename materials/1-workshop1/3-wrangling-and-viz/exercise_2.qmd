@@ -1,3 +1,39 @@
 ## Exercise 2: Data visualization
 
-*Content lands in Phase 5.*
+> *Mode flip.* If you were **agentic** in Exercise 1, you are **manual** now; if you were manual, you are agentic. Same definitions as before — manual means you may ask a chat LLM conceptual questions but it does not touch your notebook.
+
+Open `notebooks/03-visualization.qmd` in your Codespace.
+
+### Part 1 — Read two plots (no code)
+
+The notebook shows two pre-built plots: a scatter (`ph` vs `nugent_score`, colored by `arm`) and a boxplot (`ph` by `arm`). For each plot, answer in plain words:
+
+1. What is the mark?
+2. What property of the mark comes from what column?
+3. How many rows of data made each mark?
+
+Then sketch (paper or markdown) a plot that would answer "does pH differ between treatment arms?" Name the mark, the mappings, and how many rows make each mark.
+
+### Part 2 — Build the plot
+
+Build one ggplot that grows step by step, on the raw `table_02`. Whatever your assigned mode, the goal is the same.
+
+1. `ggplot(table_02, aes(x = ph, y = nugent_score)) + geom_point()`. Confirm each row is one point.
+2. Swap `geom_point()` for `geom_jitter()`.
+3. Add `aes(color = arm)`.
+4. Switch to a boxplot: `aes(x = arm, y = ph) + geom_boxplot()`. Notice the row-to-mark ratio changes.
+5. Compare `aes(fill = arm)` (mapping) with `fill = "navyblue"` (parameter). Run both.
+6. Add `labs(x = "Treatment arm", y = "Vaginal pH", fill = "Arm")`.
+7. Add `facet_wrap(~ time_point)`.
+
+### Part 3 — Reach (optional)
+
+Produce a polished final figure for the question. Facet by visit, color by arm, axes labeled, `time_point` panels in chronological order (`early`, `mid`, `late`), and a clean theme.
+
+### Discussion
+
+Once the room is back together:
+
+- What was easy in your mode for the plotting work? What was hard?
+- Of the two exercises you've now done, one each way — which mode felt better for which kind of task?
+- Where did the assistant misread what you wanted? How did you catch it?
