@@ -206,7 +206,11 @@ Each row is one arm × smoker combination.
 
 Open `notebooks/03-wrangling.qmd` in your Codespace.
 
+<br>
+
 Group A: agentic. Group B: manual.
+
+<br>
 
 ```{r}
 countdown::countdown(30)
@@ -220,13 +224,61 @@ In the wrangling half, every row of the table meant something specific (a partic
 
 In a plot, every row of the data becomes a mark — a point, a bar, a box.
 
-The plotting half asks: what is each mark, and how is each mark connected to a row?
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 2.6
+table_02 |>
+  head(8) |>
+  ggplot(aes(ph, nugent_score)) +
+  geom_point(size = 4, color = "navyblue") +
+  labs(x = "ph (one column)", y = "nugent_score (another column)") +
+  theme_minimal(base_size = 14)
+```
+
+Each of the 8 points above came from 8 rows of `table_02`. The plotting half asks: what is each mark, and how is each mark connected to a row?
 
 ## What plot answers your question?
 
 - compare a number across groups → boxplot
 - relate two numbers → scatter
 - compare counts across categories → bar
+
+::: {layout-ncol=3}
+
+```{r}
+#| echo: false
+#| fig-width: 3
+#| fig-height: 2.6
+ggplot(table_02, aes(arm, ph)) +
+  geom_boxplot(fill = "lightblue") +
+  theme_minimal(base_size = 11) +
+  labs(title = "boxplot", x = NULL, y = NULL)
+```
+
+```{r}
+#| echo: false
+#| fig-width: 3
+#| fig-height: 2.6
+ggplot(table_02, aes(ph, nugent_score)) +
+  geom_point(color = "navyblue") +
+  theme_minimal(base_size = 11) +
+  labs(title = "scatter", x = NULL, y = NULL)
+```
+
+```{r}
+#| echo: false
+#| fig-width: 3
+#| fig-height: 2.6
+table_01 |>
+  count(arm) |>
+  ggplot(aes(arm, n)) +
+  geom_col(fill = "navyblue") +
+  theme_minimal(base_size = 11) +
+  labs(title = "bar", x = NULL, y = NULL)
+```
+
+:::
 
 Pick the plot to fit the question.
 
@@ -235,6 +287,17 @@ Pick the plot to fit the question.
 - *geom* — the kind of mark and the rule for drawing it (`geom_point` draws round dots; `geom_boxplot` draws a five-number summary box)
 - *mark* — what you see on the plot. Marks are produced by the geom.
 - *mapping* — the link from a data column to a property of the mark, written in `aes()`
+
+```{r}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 2.4
+ggplot(table_02, aes(ph, nugent_score, color = arm)) +
+  geom_jitter(size = 2) +
+  theme_minimal(base_size = 13)
+```
+
+Geom: `geom_jitter`. Marks: the coloured dots. Mappings: `ph → x`, `nugent_score → y`, `arm → color`.
 
 ## What "aesthetic" means in ggplot
 
@@ -248,11 +311,60 @@ It is not a style choice. `aes()` is short for *aesthetic mapping* and connects 
 
 The same column can be shown on different aesthetics — `aes(y = ph)` or `aes(color = ph)`.
 
+::: {layout-ncol=2}
+
+```{r}
+#| echo: false
+#| fig-width: 4
+#| fig-height: 2.8
+ggplot(table_02, aes(arm, ph)) +
+  geom_jitter(width = 0.2, color = "navyblue") +
+  labs(title = "ph mapped to y") +
+  theme_minimal(base_size = 12)
+```
+
+```{r}
+#| echo: false
+#| fig-width: 4
+#| fig-height: 2.8
+ggplot(table_02, aes(arm, nugent_score, color = ph)) +
+  geom_jitter(width = 0.2) +
+  labs(title = "ph mapped to color") +
+  theme_minimal(base_size = 12)
+```
+
+:::
+
 ## Variable type matches aesthetic
 
 Continuous variables (`ph`, `crp_blood`) suit continuous aesthetics: y position, color gradient.
 
 Categorical variables (`arm`, `smoker`) suit categorical aesthetics: grouping x, fill, shape.
+
+::: {layout-ncol=2}
+
+```{r}
+#| echo: false
+#| fig-width: 4
+#| fig-height: 2.8
+ggplot(table_02, aes(ph, crp_blood)) +
+  geom_point(color = "navyblue") +
+  labs(title = "continuous → y and x") +
+  theme_minimal(base_size = 12)
+```
+
+```{r}
+#| echo: false
+#| fig-width: 4
+#| fig-height: 2.8
+ggplot(table_02, aes(arm, ph, fill = arm)) +
+  geom_boxplot() +
+  labs(title = "categorical → x and fill") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "none")
+```
+
+:::
 
 ## Your first ggplot
 
@@ -303,19 +415,22 @@ ggplot(table_02, aes(x = arm, y = ph)) +
 
 `color` is the outline. `fill` is the inside.
 
-## Mapping vs parameter
+## Mapping vs parameter {auto-animate=true}
 
 ```{r}
 ggplot(table_02, aes(x = arm, y = ph, fill = arm)) +
   geom_boxplot()
 ```
 
+Inside `aes()` — the fill varies with the data.
+
+## Mapping vs parameter {auto-animate=true}
+
 ```{r}
 ggplot(table_02, aes(x = arm, y = ph)) +
   geom_boxplot(fill = "navyblue")
 ```
 
-Inside `aes()` — the fill varies with the data.
 Outside `aes()` — the fill is one fixed value.
 
 The single most common beginner mistake.
@@ -338,12 +453,14 @@ We use `geom_col` instead of `geom_bar` so the count → bar mapping is explicit
 ```{r}
 table_01 |>
   count(arm) |>
-  ggplot(aes(x = fct_reorder(arm, n), y = n)) +
+  ggplot(aes(x = fct_relevel(arm, "placebo"), y = n)) +
   geom_col() +
   labs(x = "arm")
 ```
 
-`fct_reorder(arm, n)` orders the `arm` levels by `n`. The alphabetical default is rarely what you want.
+`fct_relevel(column, "level1", "level2", ...)` sets the order explicitly. Naming `"placebo"` puts it first; any unnamed level keeps its position after.
+
+R defaults to alphabetical order, which is rarely what you want. Set the order to mean something — control first, baseline first, lowest dose first.
 
 ## Labels
 
@@ -376,7 +493,11 @@ Each row in the data still becomes one mark, placed in its `time_point` panel.
 
 Open `notebooks/03-visualization.qmd` in your Codespace.
 
+<br>
+
 The modes flip: whoever was agentic in Exercise 1 is manual now, and vice versa.
+
+<br>
 
 ```{r}
 countdown::countdown(30)
