@@ -72,6 +72,45 @@ table_01 |>
 
 Defaults: continuous columns get *median (IQR)*, categorical columns get *counts (%)*. No p-values yet.
 
+## Mean (SD) and median (IQR), side by side
+
+The Table 1 above used median (IQR) by default. Here is what each summary looks like on two of the columns we will work with.
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 3.5
+library(patchwork)
+
+summary_overlay <- function(d, x_var, title) {
+  v <- d[[x_var]]
+  stats <- tibble(
+    label = c("mean (SD)", "median (IQR)"),
+    center = c(mean(v), median(v)),
+    lo = c(mean(v) - sd(v), quantile(v, 0.25)),
+    hi = c(mean(v) + sd(v), quantile(v, 0.75))
+  )
+  ggplot() +
+    geom_jitter(data = d, aes(.data[[x_var]], y = "data"),
+                height = 0.15, width = 0, alpha = 0.35, size = 1) +
+    geom_pointrange(data = stats,
+                    aes(x = center, xmin = lo, xmax = hi, y = label, color = label),
+                    linewidth = 1.2, fatten = 5) +
+    scale_y_discrete(limits = c("data", "mean (SD)", "median (IQR)")) +
+    scale_color_brewer(palette = "Set1") +
+    labs(title = title, x = x_var, y = NULL) +
+    theme_minimal(base_size = 11) +
+    theme(legend.position = "none")
+}
+
+p_sym <- summary_overlay(table_02, "ph", "ph — roughly symmetric")
+p_skew <- summary_overlay(table_02, "crp_blood", "crp_blood — right-skewed")
+
+p_sym + p_skew
+```
+
+For symmetric columns the two intervals agree. For skewed columns, the mean is pulled toward the tail; the IQR stays where most of the data sits.
+
 ## Look at the columns before you trust the summary
 
 ```{r}
