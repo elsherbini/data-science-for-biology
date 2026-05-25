@@ -1,3 +1,43 @@
 ## Exercise 2: Visualizing distributions and summaries
 
-*Content lands in Phase 5.*
+> *Mode flip.* If you were **agentic** in Exercise 1, you are **manual** now; if you were manual, you are agentic. Same definitions as before — manual means you may ask a chat LLM conceptual questions but it does not touch your notebook.
+
+Open `notebooks/04-visualization.qmd` in your Codespace.
+
+### Part 1 — Read three plots (no code)
+
+The notebook shows three pre-built plots of `ph` by `arm`: a histogram faceted by arm, a boxplot, and a quasirandom. For each plot, answer in plain words:
+
+1. What is the mark?
+2. What property of the mark comes from what column?
+3. How many rows of data made each mark?
+
+The three plots illustrate the spectrum — many rows per bar (histogram), many rows per box (boxplot), one row per dot (quasirandom). Same underlying data, three different answers to question 3.
+
+Then sketch (paper or text) a plot that would answer *does pH differ between arms?* using a **layered** approach — raw observations underneath a summary mark.
+
+### Part 2 — Build the plot
+
+Build the viz pieces, growing toward a layered final figure.
+
+1. `ggplot(table_02, aes(ph)) + geom_histogram()`, then add `+ facet_wrap(~ arm)`.
+2. `ggplot(table_02, aes(arm, ph)) + geom_boxplot()`.
+3. Swap `geom_boxplot()` for `geom_quasirandom()`.
+4. Swap for `geom_violin()`.
+5. Compute `ph_summary <- table_02 |> group_by(arm) |> summarise(mean_ph = mean(ph), sd_ph = sd(ph))`. Then plot `ggplot(ph_summary, aes(arm, mean_ph)) + geom_pointrange(aes(ymin = mean_ph - sd_ph, ymax = mean_ph + sd_ph))`.
+6. Layered: combine `geom_quasirandom(data = table_02, ...)` with `geom_pointrange(data = ph_summary, ...)` in one plot.
+7. From Exercise 1's `pivot_longer` step, facet by measurement: `long_table |> ggplot(aes(arm, value)) + geom_boxplot() + facet_wrap(~ measurement, scales = "free_y")`.
+
+### Part 3 — Reach (optional)
+
+Build the polished final figure: the layered plot from step 6, faceted by `time_point` (so we see the layered comparison at each visit), with `time_point` panels in chronological order (`baseline`, `week_1`, `week_7`), axis labels, and a clean theme.
+
+Optional add-on: density overlay on the histogram from step 1: `geom_histogram(aes(y = after_stat(density))) + geom_density()`.
+
+### Discussion
+
+Once the room is back together:
+
+- What was easy in your mode for the plotting work? What was hard?
+- Of the two exercises you've now done, one each way — which mode felt better for which kind of task?
+- Where did the assistant misread what you wanted? How did you catch it?
