@@ -51,6 +51,17 @@ Every paper has an analysis plan. Each row is one question.
 
 The whole module walks this list. The tool falls out of the question.
 
+## Refine your plan with an LLM
+
+Before you write any code, paste your analysis plan into a chat with an LLM and ask:
+
+- which questions are ambiguous?
+- which comparisons did I forget?
+- which defaults am I accepting without thinking?
+- where does my plan slip into causal language without earning it?
+
+The LLM does not know your study design, your hypotheses, or your prior literature. It can only push back on what you wrote. The plan stays yours.
+
 ## Who is in the study?
 
 ```{r}
@@ -166,6 +177,16 @@ table_01 |>
 ```
 
 `add_overall()` adds a column for the full sample. `bold_labels()` makes row labels bold. `modify_header()` renames columns. A few lines turn a default table into a publication-ready one.
+
+## Randomization protects the arm comparison
+
+Randomization is what justifies the unadjusted `add_p()` between placebo and treatment.
+
+It does not protect any other comparison.
+
+If you ran `tbl_summary(by = smoker)` instead of `by = arm`, you would be comparing two non-randomized groups. Smokers and non-smokers differ in many ways the table does not show — age, socioeconomic status, the environments they live in, the things they were exposed to before the study.
+
+This is the limit of what Table 1 can sanity-check. Anything beyond the arm comparison needs the causal machinery from Module 5.
 
 ## Exercise 1 {.your-turn}
 
