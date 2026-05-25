@@ -2,8 +2,181 @@
 title: "gtsummary and ggpubr for hypothesis testing"
 subtitle: "Workshop 1, Module 6"
 format: qmdrslides-revealjs
+editor: source
+execute:
+  echo: true
+  message: false
+  warning: false
 ---
 
-## Coming soon
+<!-- Task 0.1 decision (2026-05-25): M3/M4 audit has NOT landed.
+     Beat B4 in Phase 3 uses Variant B — prepend the 2-slide cytokine intro. -->
 
-Slide content lands in Phase 2.
+```{r setup, include=FALSE}
+library(tidyverse)
+library(countdown)
+library(here)
+library(gtsummary)
+library(ggpubr)
+
+table_01 <- read_csv(
+  here("datasets/instructional_dataset/01_participant_metadata_UKZN_workshop_2023.csv"),
+  col_types = cols(sex = col_character())
+)
+table_02 <- read_csv(here("datasets/instructional_dataset/02_visit_clinical_measurements_UKZN_workshop_2023.csv"))
+table_00 <- read_csv(here("datasets/instructional_dataset/00_sample_ids_UKZN_workshop_2023.csv"))
+table_03 <- read_csv(here("datasets/instructional_dataset/03_elisa_cytokines_UKZN_workshop_2023.csv"))
+```
+
+## Goals for this module
+
+By the end of this module you can:
+
+- read an analysis plan and pick the gtsummary or ggpubr call for each row
+- produce a Table 1 with `tbl_summary() |> add_p()` and override the default summary statistic and test per column
+- produce a Table 2 (outcome by arm) and the matching boxplot with `stat_compare_means()`
+- screen many outcomes at once with `facet_wrap()` and one `stat_compare_means()` per panel
+- recognise when a paired test is the right test
+- report an adjusted analysis with `lm() |> tbl_regression()`
+
+## The analysis plan comes first
+
+Every paper has an analysis plan. Each row is one question.
+
+- Who is in the study? → `tbl_summary()`
+- Did randomization balance the arms? → `tbl_summary() |> add_p()` (sanity check)
+- Does the outcome differ between arms? → same machinery, or a boxplot + `stat_compare_means()`
+- Did the outcome change pre vs post in the same person? → paired test
+- Does the effect hold after adjusting for a covariate? → `lm() |> tbl_regression()`
+
+The whole module walks this list. The tool falls out of the question.
+
+## Who is in the study?
+
+```{r}
+table_01 |>
+  select(-pid, -sex) |>
+  tbl_summary(by = arm)
+```
+
+Defaults: continuous columns get *median (IQR)*, categorical columns get *counts (%)*. No p-values yet.
+
+## Look at the columns before you trust the summary
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 3
+library(patchwork)
+
+p1 <- ggplot(table_01, aes(age, fill = arm)) +
+  geom_histogram(binwidth = 2, position = "identity", alpha = 0.6) +
+  scale_fill_brewer(palette = "Set1") +
+  theme_minimal(base_size = 11)
+
+p2 <- ggplot(table_01, aes(smoker, fill = arm)) +
+  geom_bar(position = position_dodge(0.8)) +
+  scale_fill_brewer(palette = "Set1") +
+  theme_minimal(base_size = 11)
+
+p3 <- ggplot(table_01, aes(education, fill = arm)) +
+  geom_bar(position = position_dodge(0.8)) +
+  scale_fill_brewer(palette = "Set1") +
+  theme_minimal(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1, size = 8))
+
+(p1 + p2 + p3) +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
+```
+
+The Table 1 is a summary of these distributions. Always know what they look like before you trust the summary.
+
+## Distribution drives two decisions
+
+The decision to describe a column as *median (IQR)* vs *mean (SD)* is the same decision as choosing Wilcoxon vs t-test. Both follow from how skewed the column is.
+
+- skewed continuous → median (IQR) + Wilcoxon
+- symmetric continuous → mean (SD) + t-test
+- sparse categorical (small cells) → counts (%) + Fisher exact
+- dense categorical → counts (%) + chi-squared
+
+gtsummary lets you set both with parallel `statistic = list(...)` and `test = list(...)` arguments.
+
+## Override the defaults for one column
+
+```{r}
+table_01 |>
+  select(-pid, -sex) |>
+  tbl_summary(
+    by = arm,
+    statistic = list(age ~ "{mean} ({sd})"),
+    digits = list(age ~ 1)
+  ) |>
+  add_p(test = list(age ~ "t.test"))
+```
+
+`statistic = list(age ~ "{mean} ({sd})")` controls how age is shown. `test = list(age ~ "t.test")` controls how it is tested. The same `<column> ~ <choice>` shape works for both.
+
+To do this for every continuous column at once: `all_continuous() ~ "{mean} ({sd})"`.
+
+## A read_csv gotcha worth knowing
+
+```{r}
+#| eval: false
+# Without col_types — sex parses as logical FALSE
+table_01_broken <- read_csv(
+  here("data/instructional_dataset/01_participant_metadata_UKZN_workshop_2023.csv")
+)
+
+table_01_broken |> count(sex)
+#> # A tibble: 1 × 2
+#>   sex       n
+#>   <lgl> <int>
+#> 1 FALSE    44
+```
+
+```{r}
+#| eval: false
+# With col_types — sex parses as character "F"
+table_01 <- read_csv(
+  here("data/instructional_dataset/01_participant_metadata_UKZN_workshop_2023.csv"),
+  col_types = cols(sex = col_character())
+)
+
+table_01 |> count(sex)
+#> # A tibble: 1 × 2
+#>   sex       n
+#>   <chr> <int>
+#> 1 F        44
+```
+
+`read_csv()` sees single-character "F" values and infers boolean. Always look at column types after reading; specify them when in doubt.
+
+## Polish for publication
+
+```{r}
+table_01 |>
+  select(-pid, -sex) |>
+  tbl_summary(by = arm) |>
+  add_p() |>
+  add_overall() |>
+  bold_labels() |>
+  modify_header(label ~ "**Characteristic**")
+```
+
+`add_overall()` adds a column for the full sample. `bold_labels()` makes row labels bold. `modify_header()` renames columns. A few lines turn a default table into a publication-ready one.
+
+## Exercise 1 {.your-turn}
+
+Open `notebooks/06-table-one.qmd` in your Codespace.
+
+<br>
+
+Group A: agentic. Group B: manual.
+
+<br>
+
+```{r}
+countdown::countdown(30)
+```
