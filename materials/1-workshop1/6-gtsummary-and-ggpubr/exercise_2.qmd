@@ -1,3 +1,38 @@
 ## Exercise 2: Figures with p-values
 
-*Content lands in Phase 5.*
+> *Mode flip.* If you were **agentic** in Exercise 1, you are **manual** now; if you were manual, you are agentic. Same definitions as before — manual means you may ask a chat LLM conceptual questions but it does not touch your notebook.
+
+Open `notebooks/06-figures-with-pvalues.qmd` in your Codespace.
+
+### Part 1 — Read three plots (no code)
+
+The notebook shows three pre-built plots: the single-outcome ggboxplot (pH by arm at week 7), the six-cytokine facet_wrap panel, and the paired pre-post line plot. For each plot:
+
+1. What is the mark?
+2. What is the comparison being tested?
+3. What test is on it, and how do you know?
+4. How many rows of data made each mark?
+
+### Part 2 — Build
+
+Build the four analyses, growing toward a publication-ready set.
+
+1. `ggboxplot(table_02 |> filter(time_point == "week_7"), x = "arm", y = "ph", fill = "arm") + stat_compare_means(method = "wilcox.test")`. The visual form of Table 2 row "ph".
+2. Build the same plot in plain ggplot: `ggplot(...) + geom_boxplot() + stat_compare_means(method = "wilcox.test")`. Confirm both give the same p-value.
+3. The cytokine panel: filter `table_03` to six chosen cytokines and `limits == "within limits"`, join `table_00` to attach `arm` and `time_point`, filter to `week_7`, then `ggplot + geom_boxplot + facet_wrap(~ cytokine, scales = "free_y") + stat_compare_means(method = "wilcox.test")`.
+4. The paired pre-post: filter `table_02` to baseline and week_7, `mutate(time_point = fct_relevel(time_point, "baseline", "week_7"))`, then `ggplot + geom_line(aes(group = pid)) + geom_point + facet_wrap(~ arm) + stat_compare_means(method = "wilcox.test", paired = TRUE, comparisons = list(c("baseline", "week_7")))`.
+5. The adjusted analysis: join `table_01` onto a week_7 slice of `table_02`, fit `lm(ph ~ arm + age + smoker)`, pipe to `tbl_regression()`.
+
+### Part 3 — Reach (optional)
+
+Pick *one* of the four analyses and polish it for publication (axis labels, theme, panel ordering, p-value formatting, color palette).
+
+Or, repeat the full analysis arc on `nugent_score` or `crp_blood` instead of `ph`. The pattern is identical; only the column name changes.
+
+### Discussion
+
+Once the room is back together:
+
+- What was easy in your mode for the plotting work? What was hard?
+- Of the two exercises you've now done, one each way — which mode felt better for which task?
+- Where did the assistant misread what you wanted? How did you catch it?
