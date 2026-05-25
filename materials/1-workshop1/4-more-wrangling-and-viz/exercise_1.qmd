@@ -1,3 +1,45 @@
 ## Exercise 1: Reshaping and combining tables
 
-*Content lands in Phase 4.*
+> *Mode setup.* The room is split into Group A and Group B. For Exercise 1, Group A works **agentic** — Claude Code reads your notebook, writes code, and runs it. Group B works **manual** — you write each step yourself; you may ask a chat LLM conceptual questions, but it does not act in your environment. Exercise 2 flips the modes.
+
+Open `notebooks/04-wrangling.qmd` in your Codespace. The wrapper question for both exercises is: *how does vaginal pH change across the study, and does it differ between arms or by participant characteristics?*
+
+### Part 1 — Predict (no code)
+
+For each pipeline below, write — in plain words, before running anything — how many rows the result has and what one row represents.
+
+1. `table_02 |> group_by(pid) |> summarise(mean_ph = mean(ph))`
+2. `table_02 |> group_by(arm, time_point) |> summarise(mean_ph = mean(ph))`
+3. `per_person |> left_join(table_01, by = "pid")`, where `per_person` is the 44-row result from prediction 1.
+4. `arm_timepoint |> pivot_wider(names_from = time_point, values_from = mean_ph)`, where `arm_timepoint` is the 6-row result from prediction 2.
+
+We'll briefly compare answers across the room before moving to code.
+
+### Part 2 — Build the pipeline
+
+Build one growing pipeline on `table_02`, one verb per step.
+
+1. Pipe `table_02` into `head()` — remind yourself of the starting shape (132 rows).
+2. `group_by(pid) |> summarise(mean_ph = mean(ph), mean_nugent = mean(nugent_score))` — collapse visits per participant.
+3. Add `|> left_join(table_01, by = "pid")` — attach demographics.
+4. Separately, `table_02 |> group_by(arm, time_point) |> summarise(mean_ph = mean(ph))` — collapse to arm-timepoint.
+5. Add `|> pivot_wider(names_from = time_point, values_from = mean_ph)` — compare time points side-by-side.
+6. Separately, `table_02 |> pivot_longer(c(ph, nugent_score, crp_blood), names_to = "measurement", values_to = "value")` — long-format setup that Exercise 2 will use.
+
+### Part 3 — Reach (optional)
+
+Use `semi_join` to filter the per-participant summary to smokers only:
+
+```r
+smokers <- table_01 |> filter(smoker == "smoker")
+per_person |> semi_join(smokers, by = "pid")
+```
+
+Then `group_by(arm) |> summarise(...)` on the result to compare per-arm pH means among smokers only.
+
+### Discussion
+
+Once the room is back together:
+
+- Which step's *result* surprised you most? Was your prediction right?
+- Where did your mode help most? Where did it slow you down?
