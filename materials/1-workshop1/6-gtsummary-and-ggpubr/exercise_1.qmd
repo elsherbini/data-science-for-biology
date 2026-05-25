@@ -1,3 +1,41 @@
 ## Exercise 1: Demographics and Table 1
 
-*Content lands in Phase 4.*
+> *Mode setup.* The room is split into Group A and Group B. For Exercise 1, Group A works **agentic** — Claude Code reads your notebook, writes code, and runs it. Group B works **manual** — you write each step yourself; you may ask a chat LLM conceptual questions, but it does not act in your environment. Exercise 2 flips the modes.
+
+Open `notebooks/06-table-one.qmd` in your Codespace. The wrapper question across both exercises: *can you defend the analysis you would put in a paper?*
+
+### Part 1 — Predict (no code)
+
+For each non-pid column of `table_01` (`arm`, `smoker`, `age`, `education`, `sex`), predict — in plain words, before running anything:
+
+1. How will `tbl_summary(by = arm)` summarise it? Mean (SD)? Median (IQR)? Counts (%)?
+2. What test will `add_p()` pick? t-test? Wilcoxon? Chi-squared? Fisher exact?
+
+The `sex` row should make you pause. The `education` row has a small cell count — does that affect the test choice?
+
+We will compare answers across the room before moving to code.
+
+### Part 2 — Build
+
+Build a publication-ready Table 1.
+
+1. Start with `table_01 |> select(-pid, -sex) |> tbl_summary(by = arm)`. Read the defaults.
+2. Add `|> add_p()`. Confirm `add_p()`'s test choices against your Part 1 predictions.
+3. Override `age` to use `"{mean} ({sd})"` and `t.test`. Run again and see what changed.
+4. Polish: add `|> add_overall() |> bold_labels() |> modify_header(label ~ "**Characteristic**")`.
+
+After each step, compare what changed in the output.
+
+### Part 3 — Reach (optional)
+
+Re-do the Table 1 with `by = smoker` instead of `by = arm`. Same data, different grouping.
+
+Discussion question: what question is this Table 1 now answering, and is that a question the paper needs answered?
+
+### Discussion
+
+Once the room is back together:
+
+- What was easy in your mode? What was hard?
+- Did `add_p()` pick what you predicted? Where was it wrong?
+- What would you change about gtsummary's defaults?
