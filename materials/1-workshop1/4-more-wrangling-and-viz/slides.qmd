@@ -233,3 +233,158 @@ Group A: agentic. Group B: manual.
 ```{r}
 countdown::countdown(30)
 ```
+
+# Visualization {.center}
+
+## Marks that summarise, or marks arranged by density
+
+Module 3 said *every row of the data becomes a mark.*
+
+Module 4 extends it. Some plots count rows into bins. Some summarise many rows into one mark. Some keep every row visible but use the layout to reveal density.
+
+Several ways to show a distribution.
+
+## `geom_histogram` — bin and count
+
+```{r}
+ggplot(table_02, aes(ph)) +
+  geom_histogram(binwidth = 0.2, fill = "navyblue")
+```
+
+One bar = count of rows in a bin. *Many rows per mark.* Bin width matters — try `binwidth = 0.05` and `binwidth = 1` to see how the picture changes.
+
+## `geom_bar` for counting
+
+```{r}
+ggplot(table_01, aes(education)) +
+  geom_bar(fill = "navyblue")
+```
+
+Same idea as `count(education) |> geom_col()`. `geom_bar` does the count internally; `geom_col` is for pre-counted data.
+
+## `geom_boxplot` revisited
+
+```{r}
+ggplot(table_02, aes(arm, ph)) +
+  geom_boxplot()
+```
+
+A five-number summary of many rows. Default choice for comparing distributions across many groups.
+
+## `geom_quasirandom` — every row visible
+
+```{r}
+ggplot(table_02, aes(arm, ph)) +
+  geom_quasirandom()
+```
+
+From `ggbeeswarm`. Each row is still one mark (1:1), but horizontal jitter is set by local density at that y-value. The cluster shape reveals the distribution without abstracting rows away.
+
+## Density, briefly
+
+The fat parts of a quasirandom plot are where density is high.
+
+That is what *density* means. We will see an explicit smoothed version in a moment.
+
+## Plotting your own summary
+
+```{r}
+ph_summary <- table_02 |>
+  group_by(arm) |>
+  summarise(mean_ph = mean(ph), sd_ph = sd(ph))
+
+ggplot(ph_summary, aes(arm, mean_ph)) +
+  geom_col(fill = "navyblue")
+```
+
+After you summarise, each row is one summary → one bar. Row-to-mark ratio is 1:1 again.
+
+## Adding uncertainty
+
+```{r}
+ggplot(ph_summary, aes(arm, mean_ph)) +
+  geom_pointrange(aes(ymin = mean_ph - sd_ph, ymax = mean_ph + sd_ph))
+```
+
+`geom_pointrange()` shows the mean as a point and ±SD as a line. The standard "mean ± SD" mark.
+
+## Layered: raw rows under a summary mark
+
+```{r}
+ggplot() +
+  geom_quasirandom(data = table_02, aes(arm, ph), alpha = 0.5) +
+  geom_pointrange(
+    data = ph_summary,
+    aes(arm, mean_ph, ymin = mean_ph - sd_ph, ymax = mean_ph + sd_ph),
+    color = "red", size = 0.8
+  )
+```
+
+Two layers. Two data tables. One figure. Layers can have different data.
+
+## `geom_violin`
+
+```{r}
+ggplot(table_02, aes(arm, ph)) +
+  geom_violin(fill = "lightblue")
+```
+
+Shape + summary in one mark. The smoothed sibling of `geom_boxplot` for comparing distributions across groups.
+
+## `geom_density`
+
+```{r}
+ggplot(table_02, aes(ph)) +
+  geom_density(fill = "lightblue")
+```
+
+A smoothed density curve for one continuous variable. The explicit version of the "fat parts" idea from earlier.
+
+## Layered: violin + quasirandom
+
+```{r}
+ggplot(table_02, aes(arm, ph)) +
+  geom_violin(fill = "lightblue") +
+  geom_quasirandom(alpha = 0.6)
+```
+
+Group shape from the violin, individual rows from quasirandom on top.
+
+## Faceted plots from long-format data
+
+```{r}
+table_02 |>
+  pivot_longer(
+    cols = c(ph, nugent_score, crp_blood),
+    names_to = "measurement",
+    values_to = "value"
+  ) |>
+  ggplot(aes(arm, value)) +
+  geom_boxplot() +
+  facet_wrap(~ measurement, scales = "free_y")
+```
+
+The `pivot_longer` from the wrangling half *enables* this kind of small-multiples plot. Each facet sees one slice of the long table.
+
+## Choosing a distribution geom
+
+- One variable's distribution → `geom_histogram` or `geom_density`
+- Compare many groups concisely → `geom_boxplot`
+- Show every observation → `geom_quasirandom`
+- Shape + observations together → `geom_violin` + `geom_quasirandom`
+
+The choice depends on what you want the reader to see.
+
+## Exercise 2 {.your-turn}
+
+Open `notebooks/04-visualization.qmd` in your Codespace.
+
+<br>
+
+The modes flip: whoever was agentic in Exercise 1 is manual now, and vice versa.
+
+<br>
+
+```{r}
+countdown::countdown(30)
+```
