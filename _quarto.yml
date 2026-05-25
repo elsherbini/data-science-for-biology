@@ -48,6 +48,8 @@ website:
             href: materials/1-workshop1/2-intro-to-r/index.qmd
           - text: "<b>Module 3</b>: Intro to data wrangling and visualization with the tidyverse"
             href: materials/1-workshop1/3-wrangling-and-viz/index.qmd
+          - text: "<b>Module 4</b>: More data wrangling and visualization"
+            href: materials/1-workshop1/4-more-wrangling-and-viz/index.qmd
 
 format:
   html:

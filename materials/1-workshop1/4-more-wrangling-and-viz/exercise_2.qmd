@@ -1,0 +1,3 @@
+## Exercise 2: Visualizing distributions and summaries
+
+*Content lands in Phase 5.*

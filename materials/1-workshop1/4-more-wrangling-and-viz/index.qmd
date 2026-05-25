@@ -1,0 +1,19 @@
+---
+title: "More data wrangling and visualization"
+format:
+  html:
+    toc: true
+---
+
+> Reshape and combine tables with summarise, joins, and pivots; visualize distributions and layered raw-plus-summary plots.
+
+## Slides
+[Make slides full screen](slides.qmd)
+
+```{=html}
+<iframe class="slide-deck" src="slides.html" height="420" width="747" style="border: 1px solid #2e3846;"></iframe>
+```
+
+{{< include exercise_1.qmd >}}
+
+{{< include exercise_2.qmd >}}
