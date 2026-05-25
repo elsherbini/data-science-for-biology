@@ -180,3 +180,164 @@ Group A: agentic. Group B: manual.
 ```{r}
 countdown::countdown(30)
 ```
+
+# Outcomes & Table 2 questions {.center}
+
+## From describe to compare
+
+Half A asked who is in the study.
+
+Half B asks whether the outcome differs between arms, within participants over time, or after adjusting for a covariate.
+
+Same dataset, new family of questions.
+
+## Table 2: outcome by arm
+
+```{r}
+table_02 |>
+  filter(time_point == "week_7") |>
+  select(-pid, -time_point) |>
+  tbl_summary(by = arm) |>
+  add_p()
+```
+
+Three outcome rows, two arms. `add_p()` picks Wilcoxon for all three (the columns are non-normal at this n). The p-values are now real inferential answers, not sanity checks.
+
+## Same question, visual form
+
+```{r}
+table_02 |>
+  filter(time_point == "week_7") |>
+  ggboxplot(x = "arm", y = "ph", fill = "arm", palette = "Set1") +
+  stat_compare_means(method = "wilcox.test", label.x = 1.3)
+```
+
+`ggboxplot()` is ggpubr's themed boxplot wrapper. `stat_compare_means()` is a ggplot layer that adds the p-value. The table-form and figure-form of this test should give the same p-value, and they do.
+
+## A new table: cytokines
+
+```{r}
+table_03 |> head()
+```
+
+`table_03` is *long format*: one row per (sample, cytokine). Each `sample_id` has one row per cytokine measured on it.
+
+The `limits` column flags whether the measured concentration fell within the assay's detection range.
+
+## Linking cytokines to participant data
+
+```{r}
+table_03 |>
+  left_join(table_00, by = "sample_id") |>
+  head()
+```
+
+`table_00` is the junction: it maps `sample_id` to `pid` + `time_point` + `arm`. One left_join gets us from cytokine values to study arm.
+
+## Same idea, multiple outcomes at once
+
+```{r}
+#| fig-width: 9
+#| fig-height: 6
+cytokines_keep <- c("IL-1a", "IL-6", "IL-8", "IL-1b", "MIG", "IP-10")
+
+cytokine_panel_df <- table_03 |>
+  filter(cytokine %in% cytokines_keep, limits == "within limits") |>
+  left_join(table_00, by = "sample_id") |>
+  filter(time_point == "week_7")
+
+ggplot(cytokine_panel_df, aes(arm, conc, fill = arm)) +
+  geom_boxplot() +
+  facet_wrap(~ cytokine, scales = "free_y") +
+  stat_compare_means(method = "wilcox.test", label.x = 1.3) +
+  scale_fill_brewer(palette = "Set1") +
+  theme_minimal(base_size = 11) +
+  theme(legend.position = "none")
+```
+
+Six cytokines, one figure, one Wilcoxon p-value per panel.
+
+## Multiple panels means multiple tests
+
+Six panels means six p-values. Each is a separate hypothesis test.
+
+Correcting for multiple testing (Bonferroni, FDR) belongs to Module 5. Here, just know it is a thing — a single panel with a small p-value among six is not the same kind of evidence as a single panel with a small p-value standing alone.
+
+## Paired pre-post: visual
+
+```{r}
+#| fig-width: 8
+#| fig-height: 4
+pre_post_df <- table_02 |>
+  filter(time_point %in% c("baseline", "week_7")) |>
+  mutate(time_point = fct_relevel(time_point, "baseline", "week_7"))
+
+ggplot(pre_post_df, aes(time_point, ph)) +
+  geom_line(aes(group = pid), alpha = 0.4) +
+  geom_point(aes(color = arm), size = 2) +
+  facet_wrap(~ arm) +
+  scale_color_brewer(palette = "Set1") +
+  theme_minimal(base_size = 12)
+```
+
+Each line is one participant's trajectory from baseline to week 7. Same data as the boxplot a few slides back. Different question: instead of comparing two groups, we are looking at change within each person.
+
+## Paired pre-post: the test changes too
+
+```{r}
+#| fig-width: 8
+#| fig-height: 4.5
+ggplot(pre_post_df, aes(time_point, ph)) +
+  geom_line(aes(group = pid), alpha = 0.4) +
+  geom_point(aes(color = arm), size = 2) +
+  facet_wrap(~ arm) +
+  stat_compare_means(
+    method = "wilcox.test",
+    paired = TRUE,
+    comparisons = list(c("baseline", "week_7"))
+  ) +
+  scale_color_brewer(palette = "Set1") +
+  theme_minimal(base_size = 12)
+```
+
+`paired = TRUE` tells `stat_compare_means()` that each row at "baseline" pairs with the same participant's row at "week_7". The test is a paired Wilcoxon (signed-rank).
+
+The data did not change. The unit of comparison did — each participant's *delta* is now the unit. So the test changed too.
+
+## Adjusted analysis with tbl_regression
+
+```{r}
+outcome_table <- table_02 |>
+  filter(time_point == "week_7") |>
+  left_join(table_01, by = c("pid", "arm"))
+
+lm(ph ~ arm + age + smoker, data = outcome_table) |>
+  tbl_regression()
+```
+
+`tbl_regression()` turns a model fit into a publication-ready coefficient table. Each row is one coefficient with its estimate, confidence interval, and p-value.
+
+In a randomized trial, adjustment is mostly cosmetic: the unadjusted t-test is the primary analysis. In a case-control study or any non-randomized design, you genuinely need this.
+
+## The analysis plan, recap
+
+- one outcome, two groups, cross-sectional → `tbl_summary + add_p` or `ggboxplot + stat_compare_means`
+- many outcomes, two groups → `facet_wrap` + `stat_compare_means`
+- same person pre vs post → paired test on a line plot
+- need to adjust for a covariate → `lm` + `tbl_regression`
+
+The right tool depends on the question you are asking.
+
+## Exercise 2 {.your-turn}
+
+Open `notebooks/06-figures-with-pvalues.qmd` in your Codespace.
+
+<br>
+
+The modes flip: whoever was agentic in Exercise 1 is manual now, and vice versa.
+
+<br>
+
+```{r}
+countdown::countdown(30)
+```
