@@ -1,5 +1,19 @@
 ---
-title: "Module 6: gtsummary and ggpubr for hypothesis testing"
+title: "gtsummary and ggpubr for hypothesis testing"
+format:
+  html:
+    toc: true
 ---
 
-Lesson content is coming soon.
+> Produce Table 1, Table 2, and figures-with-p-values for a randomized cohort using gtsummary and ggpubr.
+
+## Slides
+[Make slides full screen](slides.qmd)
+
+```{=html}
+<iframe class="slide-deck" src="slides.html" height="420" width="747" style="border: 1px solid #2e3846;"></iframe>
+```
+
+{{< include exercise_1.qmd >}}
+
+{{< include exercise_2.qmd >}}

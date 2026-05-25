@@ -1,0 +1,9 @@
+---
+title: "gtsummary and ggpubr for hypothesis testing"
+subtitle: "Workshop 1, Module 6"
+format: qmdrslides-revealjs
+---
+
+## Coming soon
+
+Slide content lands in Phase 2.
