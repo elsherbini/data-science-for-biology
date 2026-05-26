@@ -3,7 +3,7 @@ title: "About"
 sidebar: false
 ---
 
-## Intro to R for Data Science with LLMs - Teaching Team
+## Data Science with R and Agentic Coding - Teaching Team
 
 ::: {.grid}
 
@@ -38,6 +38,26 @@ Director of Agentic AI, McDonnell Genome Institute
 :::
 
 ::: {.g-col-2}
+![](images/Bertha.jpg){fig-align="left"}
+:::
+::: {.g-col-4}
+[*Instructor*]{style="font-size: 0.8em"} \
+**Bertha Baye** \
+Bioinformatician \
+Centre for the AIDS Programme of Research in South Africa (CAPRISA) - UKZN
+:::
+
+::: {.g-col-2}
+![](images/Kris.png){fig-align="left"}
+:::
+::: {.g-col-4}
+[*Instructor*]{style="font-size: 0.8em"} \
+**Dr. Kris Sankaran** \
+Assistant Professor, Statistics \
+University of Wisconsin
+:::
+
+::: {.g-col-2}
 ![](images/Marothi.png){fig-align="left"}
 :::
 ::: {.g-col-4}
@@ -54,18 +74,7 @@ Africa Health Research Institute (AHRI) - UKZN
 [*Keynote Speaker*]{style="font-size: 0.8em"} \
 **Dr. Lenine Liebenberg** \
 Chief Researcher \
-Centre for Epidemic Response and Innovation (CERI) - Stellenbosch \
-Centre for the AIDS Programme of Research in South Africa (CAPRISA) - UKZN
-:::
-
-::: {.g-col-2}
-![](images/Kris.png){fig-align="left"}
-:::
-::: {.g-col-4}
-[*Instructor*]{style="font-size: 0.8em"} \
-**Dr. Kris Sankaran** \
-Assistant Professor, Statistics \
-University of Wisconsin
+Centre for Epidemic Response and Innovation (CERI) - Stellenbosch
 :::
 
 :::
