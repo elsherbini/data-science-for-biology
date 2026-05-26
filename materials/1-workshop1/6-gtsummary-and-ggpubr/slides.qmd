@@ -28,10 +28,19 @@ table_00 <- read_csv(here("datasets/instructional_dataset/00_sample_ids_UKZN_wor
 table_03 <- read_csv(here("datasets/instructional_dataset/03_elisa_cytokines_UKZN_workshop_2023.csv"))
 ```
 
+## From models to reports
+
+Yesterday: you built data stories. You picked a likelihood, fit a model, simulated from it, and revised until it matched what you saw.
+
+Today: you write up what you found. A clinical paper has a Table 1 (who was in the study), a Table 2 (what differed between groups), and figures with p-values for the headline comparisons. Different audience, different tools — same statistical thinking underneath.
+
+The right tool still falls out of the question. The question now is "how do I present this to a reader?"
+
 ## Goals for this module
 
 By the end of this module you can:
 
+- report the findings of a fitted model (including one of Kris's) in a publication-ready table
 - read an analysis plan and pick the gtsummary or ggpubr call for each row
 - produce a Table 1 with `tbl_summary() |> add_p()` and override the default summary statistic and test per column
 - produce a Table 2 (outcome by arm) and the matching boxplot with `stat_compare_means()`
