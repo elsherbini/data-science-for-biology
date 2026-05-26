@@ -225,7 +225,7 @@ It does not protect any other comparison.
 
 If you ran `tbl_summary(by = smoker)` instead of `by = arm`, you would be comparing two non-randomized groups. Smokers and non-smokers differ in many ways the table does not show — age, socioeconomic status, the environments they live in, the things they were exposed to before the study.
 
-This is the limit of what Table 1 can sanity-check. Anything beyond the arm comparison needs the causal machinery from Module 5.
+This is the limit of what Table 1 can sanity-check. Comparing non-randomized groups validly requires causal-inference machinery — DAGs, propensity scores, sensitivity analyses — which is beyond this workshop's scope.
 
 ## Exercise 1 {.your-turn}
 
