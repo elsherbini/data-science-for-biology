@@ -33,17 +33,19 @@ table_03 <- read_csv(here("datasets/instructional_dataset/03_elisa_cytokines_UKZ
 
 ## From models to reports
 
-Yesterday: you built data stories. You picked a likelihood, fit a model, simulated from it, and revised until it matched what you saw.
+Module 5 built models. Module 6 reports what they found.
 
-Today: you write up what you found. A clinical paper has a Table 1 (who was in the study), a Table 2 (what differed between groups), and figures with p-values for the headline comparisons. Different audience, different tools — same statistical thinking underneath.
+A paper expects:
 
-The right tool still falls out of the question. The question now is "how do I present this to a reader?"
+- Table 1 — who was in the study
+- Table 2 — what differed between groups
+- Figures with p-values for the headline comparisons
 
 ## Goals for this module
 
 By the end of this module you can:
 
-- report the findings of a fitted model (including one of Kris's) in a publication-ready table
+- report the findings of a fitted model (`lm`, `glm`, `lmer`) in a publication-ready table
 - read an analysis plan and pick the gtsummary or ggpubr call for each row
 - produce a Table 1 with `tbl_summary() |> add_p()` and override the default summary statistic and test per column
 - produce a Table 2 (outcome by arm) and the matching boxplot with `stat_compare_means()`
@@ -333,15 +335,17 @@ Six cytokines, one figure, one Wilcoxon p-value per panel.
 
 Six panels means six p-values. Each is a separate hypothesis test.
 
-With six tests at α = 0.05, expecting one false positive by chance is the baseline, not the exception. Two standard fixes follow.
+At α = 0.05, expecting one false positive out of six by chance alone is normal.
+
+Two standard corrections follow.
 
 ## Two ways to correct
 
-**Bonferroni** multiplies each p-value by the number of tests. Strict — controls the chance of *any* false positive.
+**Bonferroni** multiplies each p-value by the number of tests. Strict: controls the chance of any false positive.
 
-**Benjamini-Hochberg (FDR)** controls the *proportion* of false positives among the calls you make. More tolerant — appropriate when you expect some real effects in a screen.
+**Benjamini-Hochberg (FDR)** controls the proportion of false positives among the calls you make. More tolerant: appropriate when you expect some real effects in a screen.
 
-Both live in base R: `p.adjust(p_values, method = "bonferroni")` and `p.adjust(p_values, method = "BH")`.
+Base R: `p.adjust(p_values, method = "bonferroni")` and `p.adjust(p_values, method = "BH")`.
 
 ## Applied to the cytokine panel
 
@@ -357,7 +361,9 @@ cytokine_p |>
   )
 ```
 
-Which cytokines survive correction is the result worth reporting. Bonferroni answers "any false positives?"; BH answers "what fraction of my calls are wrong?". For a 6-cytokine screen, BH is usually what you want.
+Which cytokines survive correction is the result worth reporting.
+
+For a 6-cytokine screen, BH is usually the right choice. Use Bonferroni when even a single false positive would be costly.
 
 ## Paired pre-post: visual
 
@@ -432,9 +438,11 @@ fit <- lmer(
 )
 ```
 
-Treatment effect on log(IL-1a) varies by time point, accounting for within-participant correlation. The model exists. Now: how do we put it in a paper?
+Treatment effect on log(IL-1a) varies by time point, accounting for within-participant correlation.
 
-## Figure 1: the result, visible
+How do we put this in a paper?
+
+## Figure 1: longitudinal trajectories
 
 ```{r}
 #| fig-width: 9
@@ -445,7 +453,7 @@ ggplot(cytokines_il1) +
   theme_minimal(base_size = 12)
 ```
 
-The figure tells the same story the model does: the gap between arms is largest at week 1 and narrows by week 7.
+The gap between arms is largest at week 1 and narrows by week 7. Figure and model are telling the same story.
 
 ## Table 2: the regression
 
@@ -453,9 +461,11 @@ The figure tells the same story the model does: the gap between arms is largest 
 fit |> tbl_regression()
 ```
 
-`tbl_regression()` works on `lmer()` fits the same way it works on `lm()`. The output is the same shape — coefficient, estimate, CI, p-value — and the reader sees the treatment × time-point interaction estimates Kris's model produced.
+`tbl_regression()` accepts `lmer()` fits the same way it accepts `lm()`. Same output shape: coefficient, estimate, CI, p-value.
 
-The model and the report are different jobs. You build a model once (Module 5) and report it many times (Module 6) — never refit just to make a table.
+The reader sees the same treatment × time-point estimates from Kris's model.
+
+You fit a model once and report it many times. Never refit just to make a table.
 
 ## The analysis plan, recap
 
