@@ -17,10 +17,14 @@ instructions linearly.
 <iframe class="slide-deck" src="getting-started-slides.html" height="420" width="747" style="border: 1px solid #2e3846;"></iframe>
 ```
 
+The order matters: create your repo, then add the API-key secret so it can
+target that repo, **then** launch the codespace. A codespace launched before
+the secret is in place won't see the key until you restart it.
+
 ## 1. Create your own copy of the workshop environment
 
-The workshop environment lives in a **template** repository. You will create
-your own copy of it, then launch a codespace from that copy.
+The workshop environment lives in a **template** repository. You'll start by
+making your own copy of it.
 
 ### Open the template
 
@@ -44,18 +48,11 @@ as your username.
 
 ![](assets/images/getting-started/3-give-repo-name.png){.img-fluid fig-alt="New repository form with the Repository name field highlighted"}
 
-### Launch a codespace
-
-On the new repository's page, click the green **"Code"** button, switch to the
-**"Codespaces"** tab, and click **"Create codespace on main"**.
-
-GitHub will build the environment for you. The first build takes a few
-minutes — after that, reopening the codespace is fast.
-
 ## 2. Add your OpenRouter API key
 
-The workshop uses AI models through OpenRouter. You need to store your
-OpenRouter API key as a Codespaces secret so the environment can use it.
+The workshop uses AI models through OpenRouter. Store your OpenRouter API
+key as a Codespaces secret **before** you launch your codespace — that way
+the codespace has the key from the moment it boots.
 
 ### Open your Codespaces settings
 
@@ -84,9 +81,16 @@ Then click **"Add secret"** at the bottom.
 
 ![](assets/images/getting-started/6-name-key-and-add-to-repo.png){.img-fluid fig-alt="New secret form with the Name field, Repository access dropdown, and Add secret button highlighted"}
 
-If your codespace was already open, restart it so it picks up the new secret.
+## 3. Launch a codespace
 
-## 3. Open a notebook
+Go back to your new repository's page. Click the green **"Code"** button,
+switch to the **"Codespaces"** tab, and click **"Create codespace on main"**.
+
+The first build takes **around 10 minutes or more** — GitHub is provisioning
+a container and installing R, Quarto, the workshop's R packages, and the Pi
+coding agent. After this first build, reopening the codespace is fast.
+
+## 4. Open a notebook
 
 Once the codespace has finished building:
 
@@ -95,7 +99,7 @@ Once the codespace has finished building:
 2. Open one to start working. You can edit text and code cells directly in
    the browser.
 
-## 4. Meet Pi in the terminal
+## 5. Meet Pi in the terminal
 
 Your codespace includes **Pi**, an AI coding assistant, in the integrated
 terminal. We will use Pi for the first couple of days; later in the workshop

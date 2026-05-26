@@ -6,7 +6,7 @@ format: qmdrslides-revealjs
 
 ## What you'll do
 
-Set up your own copy of the workshop environment in **GitHub Codespaces**, then add your OpenRouter API key.
+Make your own copy of the workshop environment, add your OpenRouter API key, then launch a codespace.
 
 You only need a web browser and a GitHub account.
 
@@ -28,17 +28,7 @@ Give it a name (for example, `workshop-2026`) and click the green **"Create repo
 
 ![](assets/images/getting-started/3-give-repo-name.png){width=900 fig-align="center" fig-alt="New repository form with the Repository name field highlighted"}
 
-## Step 4: Launch a codespace
-
-On your new repository's page:
-
-1. Click the green **"Code"** button
-2. Switch to the **"Codespaces"** tab
-3. Click **"Create codespace on main"**
-
-The first build takes a few minutes.
-
-## Step 5: Open Codespaces settings
+## Step 4: Open Codespaces settings
 
 Click your profile photo (top right) → **Settings**, then navigate to **Codespaces** in the left sidebar.
 
@@ -46,20 +36,30 @@ Direct link: <https://github.com/settings/codespaces>
 
 ![](assets/images/getting-started/4-open-settings.png){width=380 fig-align="center" fig-alt="GitHub profile dropdown with Settings highlighted"}
 
-## Step 6: Click "New secret"
+## Step 5: Click "New secret"
 
 Scroll to **"Codespace user secrets"** and click **"New secret"**.
 
 ![](assets/images/getting-started/5-add-new-secret.png){width=1200 fig-align="center" fig-alt="Codespace user secrets section with the New secret button highlighted"}
 
-## Step 7: Fill in and save the secret
+## Step 6: Fill in and save the secret
 
 - **Name**: `OPENROUTER_API_KEY` (exact spelling)
 - **Value**: paste the workshop API key
-- **Repository access**: select the repo you created
+- **Repository access**: select the repo you created in step 3
 - Click **"Add secret"**
 
 ![](assets/images/getting-started/6-name-key-and-add-to-repo.png){width=750 fig-align="center" fig-alt="New secret form with Name, Repository access, and Add secret highlighted"}
+
+## Step 7: Launch a codespace
+
+Go back to your new repo. On its page:
+
+1. Click the green **"Code"** button
+2. Switch to the **"Codespaces"** tab
+3. Click **"Create codespace on main"**
+
+First build takes **~10 minutes or more** (installing R, Quarto, packages, Pi).
 
 ## Step 8: Open a notebook
 
