@@ -321,7 +321,31 @@ Six cytokines, one figure, one Wilcoxon p-value per panel.
 
 Six panels means six p-values. Each is a separate hypothesis test.
 
-Correcting for multiple testing (Bonferroni, FDR) belongs to Module 5. Here, just know it is a thing — a single panel with a small p-value among six is not the same kind of evidence as a single panel with a small p-value standing alone.
+With six tests at α = 0.05, expecting one false positive by chance is the baseline, not the exception. Two standard fixes follow.
+
+## Two ways to correct
+
+**Bonferroni** multiplies each p-value by the number of tests. Strict — controls the chance of *any* false positive.
+
+**Benjamini-Hochberg (FDR)** controls the *proportion* of false positives among the calls you make. More tolerant — appropriate when you expect some real effects in a screen.
+
+Both live in base R: `p.adjust(p_values, method = "bonferroni")` and `p.adjust(p_values, method = "BH")`.
+
+## Applied to the cytokine panel
+
+```{r}
+cytokine_p <- cytokine_panel_df |>
+  group_by(cytokine) |>
+  summarise(p_value = wilcox.test(conc ~ arm)$p.value)
+
+cytokine_p |>
+  mutate(
+    p_bonferroni = p.adjust(p_value, method = "bonferroni"),
+    p_fdr        = p.adjust(p_value, method = "BH")
+  )
+```
+
+Which cytokines survive correction is the result worth reporting. Bonferroni answers "any false positives?"; BH answers "what fraction of my calls are wrong?". For a 6-cytokine screen, BH is usually what you want.
 
 ## Paired pre-post: visual
 
