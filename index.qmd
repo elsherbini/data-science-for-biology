@@ -29,10 +29,30 @@ assistant to learn as you go.
 
 :::
 
-::: {.g-col-4 .text-start}
+::: {.g-col-4 .text-start .align-self-start}
 
-![](assets/images/durban_workshop_stickers_front_page.png){width=50%}
+![](assets/images/workshop_logo.svg){fig-alt="Workshop logo" width=100%}
 
+:::
+
+:::
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-6}
+![](assets/images/workshop-teaching-1.jpg){.img-fluid fig-alt="Instructor working with participants at laptops"}
+:::
+
+::: {.g-col-12 .g-col-md-6}
+![](assets/images/workshop-room.jpg){.img-fluid fig-alt="Wide view of the workshop room with participants at tables"}
+:::
+
+::: {.g-col-12 .g-col-md-6}
+![](assets/images/workshop-lecture.jpg){.img-fluid fig-alt="Participants watching a presentation"}
+:::
+
+::: {.g-col-12 .g-col-md-6}
+![](assets/images/workshop-teaching-2.jpg){.img-fluid fig-alt="Instructor helping a participant at their laptop"}
 :::
 
 :::
