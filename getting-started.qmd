@@ -7,33 +7,84 @@ This workshop runs entirely in the cloud using **GitHub Codespaces**. There is
 nothing to install on your laptop — you only need a web browser and a free
 GitHub account.
 
-Follow the steps below to get a working environment.
+Step through the slides one at a time, or scroll down to read the full
+instructions linearly.
 
-## 1. Create a codespace from the participant environment
+## Instructions in slide form (long form below)
+[Make slides full screen](getting-started-slides.qmd)
 
-1. Open the [participant environment repo](https://github.com/elsherbini/data-science-for-biology-june2026-codespace) on GitHub.
-2. Click the green **"Use this template"** button near the top right.
-3. Choose **"Create a new repository"** and give it a name (for example,
-   `workshop-2026`). This makes your own copy of the environment.
-4. On your new repository, click the green **"Code"** button.
-5. Open the **"Codespaces"** tab and click **"Create codespace on main"**.
+```{=html}
+<iframe class="slide-deck" src="getting-started-slides.html" height="420" width="747" style="border: 1px solid #2e3846;"></iframe>
+```
+
+## 1. Create your own copy of the workshop environment
+
+The workshop environment lives in a **template** repository. You will create
+your own copy of it, then launch a codespace from that copy.
+
+### Open the template
+
+Open the [participant environment repo](https://github.com/elsherbini/data-science-for-biology-june2026-codespace)
+on GitHub and click the green **"Use this template"** button near the top
+right.
+
+![](assets/images/getting-started/1-use-this-template.png){.img-fluid fig-alt="GitHub repo page with the 'Use this template' button highlighted in the top right"}
+
+### Create a new repository
+
+In the dropdown, choose **"Create a new repository"**.
+
+![](assets/images/getting-started/2-create-new-repository.png){.img-fluid fig-alt="Use this template dropdown with 'Create a new repository' highlighted"}
+
+### Name it
+
+Give the repository a name (for example, `workshop-2026`) and click the green
+**"Create repository"** button at the bottom of the form. The owner can stay
+as your username.
+
+![](assets/images/getting-started/3-give-repo-name.png){.img-fluid fig-alt="New repository form with the Repository name field highlighted"}
+
+### Launch a codespace
+
+On the new repository's page, click the green **"Code"** button, switch to the
+**"Codespaces"** tab, and click **"Create codespace on main"**.
 
 GitHub will build the environment for you. The first build takes a few
 minutes — after that, reopening the codespace is fast.
 
-## 2. Set the `OPENROUTER_API_KEY` Codespaces secret
+## 2. Add your OpenRouter API key
 
 The workshop uses AI models through OpenRouter. You need to store your
 OpenRouter API key as a Codespaces secret so the environment can use it.
 
-1. Go to your GitHub **Settings** → **Codespaces**.
-2. Under **"Codespaces secrets"**, click **"New secret"**.
-3. Name the secret exactly `OPENROUTER_API_KEY`.
-4. Paste in the API key you were given for the workshop.
-5. Under **"Repository access"**, select the repository you created in
-   step 1 so the secret is available to your codespace.
-6. Save the secret. If your codespace is already open, rebuild or restart it
-   so it picks up the new secret.
+### Open your Codespaces settings
+
+In the top-right of GitHub, click your profile photo and then **"Settings"**.
+In the left sidebar of the settings page, navigate to **Codespaces** (or go
+directly to <https://github.com/settings/codespaces>).
+
+![](assets/images/getting-started/4-open-settings.png){.img-fluid fig-alt="GitHub profile dropdown with Settings highlighted"}
+
+### Click "New secret"
+
+Scroll to **"Codespace user secrets"** and click **"New secret"**.
+
+![](assets/images/getting-started/5-add-new-secret.png){.img-fluid fig-alt="Codespace user secrets section with the New secret button highlighted"}
+
+### Fill in and save the secret
+
+In the form:
+
+- **Name**: `OPENROUTER_API_KEY` (exact spelling, all caps)
+- **Value**: paste the API key you were given for the workshop
+- **Repository access**: click **"Select repositories"** and choose the
+  repository you created in step 1
+
+Then click **"Add secret"** at the bottom.
+
+![](assets/images/getting-started/6-name-key-and-add-to-repo.png){.img-fluid fig-alt="New secret form with the Name field, Repository access dropdown, and Add secret button highlighted"}
+
+If your codespace was already open, restart it so it picks up the new secret.
 
 ## 3. Open a notebook
 
@@ -44,14 +95,15 @@ Once the codespace has finished building:
 2. Open one to start working. You can edit text and code cells directly in
    the browser.
 
-## 4. Meet Claude Code in the terminal
+## 4. Meet Pi in the terminal
 
-Your codespace includes **Claude Code**, an AI coding assistant, in the
-integrated terminal.
+Your codespace includes **Pi**, an AI coding assistant, in the integrated
+terminal. We will use Pi for the first couple of days; later in the workshop
+we will switch to Claude Code.
 
 1. Open the integrated terminal (**Terminal → New Terminal**, or use the
    keyboard shortcut).
-2. Start Claude Code by typing `claude` and pressing Enter.
+2. Start Pi by typing `pi` and pressing Enter.
 3. Ask it questions in plain language — it can read your notebook, explain
    code, and help you make changes.
 

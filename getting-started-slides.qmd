@@ -1,0 +1,85 @@
+---
+title: "Get Started"
+subtitle: "Set up your workshop environment"
+format: qmdrslides-revealjs
+---
+
+## What you'll do
+
+Set up your own copy of the workshop environment in **GitHub Codespaces**, then add your OpenRouter API key.
+
+You only need a web browser and a GitHub account.
+
+## Step 1: Open the template
+
+Open the [participant environment repo](https://github.com/elsherbini/data-science-for-biology-june2026-codespace) and click the green **"Use this template"** button.
+
+![](assets/images/getting-started/1-use-this-template.png){width=900 fig-align="center" fig-alt="GitHub repo page with the 'Use this template' button highlighted"}
+
+## Step 2: Create a new repository
+
+In the dropdown, choose **"Create a new repository"**.
+
+![](assets/images/getting-started/2-create-new-repository.png){width=400 fig-align="center" fig-alt="Use this template dropdown with 'Create a new repository' highlighted"}
+
+## Step 3: Name your repository
+
+Give it a name (for example, `workshop-2026`) and click the green **"Create repository"** button.
+
+![](assets/images/getting-started/3-give-repo-name.png){width=900 fig-align="center" fig-alt="New repository form with the Repository name field highlighted"}
+
+## Step 4: Launch a codespace
+
+On your new repository's page:
+
+1. Click the green **"Code"** button
+2. Switch to the **"Codespaces"** tab
+3. Click **"Create codespace on main"**
+
+The first build takes a few minutes.
+
+## Step 5: Open Codespaces settings
+
+Click your profile photo (top right) → **Settings**, then navigate to **Codespaces** in the left sidebar.
+
+Direct link: <https://github.com/settings/codespaces>
+
+![](assets/images/getting-started/4-open-settings.png){width=380 fig-align="center" fig-alt="GitHub profile dropdown with Settings highlighted"}
+
+## Step 6: Click "New secret"
+
+Scroll to **"Codespace user secrets"** and click **"New secret"**.
+
+![](assets/images/getting-started/5-add-new-secret.png){width=1200 fig-align="center" fig-alt="Codespace user secrets section with the New secret button highlighted"}
+
+## Step 7: Fill in and save the secret
+
+- **Name**: `OPENROUTER_API_KEY` (exact spelling)
+- **Value**: paste the workshop API key
+- **Repository access**: select the repo you created
+- Click **"Add secret"**
+
+![](assets/images/getting-started/6-name-key-and-add-to-repo.png){width=750 fig-align="center" fig-alt="New secret form with Name, Repository access, and Add secret highlighted"}
+
+## Step 8: Open a notebook
+
+Once the codespace finishes building:
+
+- Use the file explorer (left side) to find a `.qmd` notebook
+- Open it to start working — edit text and code right in the browser
+
+## Step 9: Meet Pi
+
+Open the integrated terminal (**Terminal → New Terminal**), then run:
+
+```
+pi
+```
+
+Ask in plain language — Pi can read your notebook, explain code, and help you edit. (We will introduce Claude Code later in the workshop.)
+
+## You're ready
+
+Head into the workshop materials.
+
+If you get stuck, ask an instructor or a teaching assistant.
