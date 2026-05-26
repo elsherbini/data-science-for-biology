@@ -18,6 +18,9 @@ library(countdown)
 library(here)
 library(gtsummary)
 library(ggpubr)
+library(lme4)
+library(lmerTest)
+library(broom.mixed)
 
 table_01 <- read_csv(
   here("datasets/instructional_dataset/01_participant_metadata_UKZN_workshop_2023.csv"),
@@ -28,10 +31,21 @@ table_00 <- read_csv(here("datasets/instructional_dataset/00_sample_ids_UKZN_wor
 table_03 <- read_csv(here("datasets/instructional_dataset/03_elisa_cytokines_UKZN_workshop_2023.csv"))
 ```
 
+## From models to reports
+
+Module 5 built models. Module 6 reports what they found.
+
+A paper expects:
+
+- Table 1 — who was in the study
+- Table 2 — what differed between groups
+- Figures with p-values for the headline comparisons
+
 ## Goals for this module
 
 By the end of this module you can:
 
+- report the findings of a fitted model (`lm`, `glm`, `lmer`) in a publication-ready table
 - read an analysis plan and pick the gtsummary or ggpubr call for each row
 - produce a Table 1 with `tbl_summary() |> add_p()` and override the default summary statistic and test per column
 - produce a Table 2 (outcome by arm) and the matching boxplot with `stat_compare_means()`
@@ -225,7 +239,7 @@ It does not protect any other comparison.
 
 If you ran `tbl_summary(by = smoker)` instead of `by = arm`, you would be comparing two non-randomized groups. Smokers and non-smokers differ in many ways the table does not show — age, socioeconomic status, the environments they live in, the things they were exposed to before the study.
 
-This is the limit of what Table 1 can sanity-check. Anything beyond the arm comparison needs the causal machinery from Module 5.
+This is the limit of what Table 1 can sanity-check. Comparing non-randomized groups validly requires causal-inference machinery — DAGs, propensity scores, sensitivity analyses — which is beyond this workshop's scope.
 
 ## Exercise 1 {.your-turn}
 
@@ -321,7 +335,35 @@ Six cytokines, one figure, one Wilcoxon p-value per panel.
 
 Six panels means six p-values. Each is a separate hypothesis test.
 
-Correcting for multiple testing (Bonferroni, FDR) belongs to Module 5. Here, just know it is a thing — a single panel with a small p-value among six is not the same kind of evidence as a single panel with a small p-value standing alone.
+At α = 0.05, expecting one false positive out of six by chance alone is normal.
+
+Two standard corrections follow.
+
+## Two ways to correct
+
+**Bonferroni** multiplies each p-value by the number of tests. Strict: controls the chance of any false positive.
+
+**Benjamini-Hochberg (FDR)** controls the proportion of false positives among the calls you make. More tolerant: appropriate when you expect some real effects in a screen.
+
+Base R: `p.adjust(p_values, method = "bonferroni")` and `p.adjust(p_values, method = "BH")`.
+
+## Applied to the cytokine panel
+
+```{r}
+cytokine_p <- cytokine_panel_df |>
+  group_by(cytokine) |>
+  summarise(p_value = wilcox.test(conc ~ arm)$p.value)
+
+cytokine_p |>
+  mutate(
+    p_bonferroni = p.adjust(p_value, method = "bonferroni"),
+    p_fdr        = p.adjust(p_value, method = "BH")
+  )
+```
+
+Which cytokines survive correction is the result worth reporting.
+
+For a 6-cytokine screen, BH is usually the right choice. Use Bonferroni when even a single false positive would be costly.
 
 ## Paired pre-post: visual
 
@@ -379,12 +421,59 @@ lm(ph ~ arm + age + smoker, data = outcome_table) |>
 
 In a randomized trial, adjustment is mostly cosmetic: the unadjusted t-test is the primary analysis. In a case-control study or any non-randomized design, you genuinely need this.
 
+# Reporting a model {.center}
+
+## Kris's IL-1a model, refit
+
+Module 5 ended with this fit:
+
+```{r}
+cytokines_il1 <- table_03 |>
+  left_join(table_00, by = "sample_id") |>
+  filter(cytokine == "IL-1a")
+
+fit <- lmer(
+  log(conc) ~ arm + arm:time_point + (1 | pid),
+  data = cytokines_il1
+)
+```
+
+Treatment effect on log(IL-1a) varies by time point, accounting for within-participant correlation.
+
+How do we put this in a paper?
+
+## Figure 1: longitudinal trajectories
+
+```{r}
+#| fig-width: 9
+#| fig-height: 4
+ggplot(cytokines_il1) +
+  geom_line(aes(time_point, log(conc), group = pid, col = arm)) +
+  scale_color_brewer(palette = "Set1") +
+  theme_minimal(base_size = 12)
+```
+
+The gap between arms is largest at week 1 and narrows by week 7. Figure and model are telling the same story.
+
+## Table 2: the regression
+
+```{r}
+fit |> tbl_regression()
+```
+
+`tbl_regression()` accepts `lmer()` fits the same way it accepts `lm()`. Same output shape: coefficient, estimate, CI, p-value.
+
+The reader sees the same treatment × time-point estimates from Kris's model.
+
+You fit a model once and report it many times. Never refit just to make a table.
+
 ## The analysis plan, recap
 
 - one outcome, two groups, cross-sectional → `tbl_summary + add_p` or `ggboxplot + stat_compare_means`
 - many outcomes, two groups → `facet_wrap` + `stat_compare_means`
 - same person pre vs post → paired test on a line plot
-- need to adjust for a covariate → `lm` + `tbl_regression`
+- adjust for a covariate → `lm` + `tbl_regression`
+- report any fitted model (`lm`, `glm`, `lmer`, ...) → `tbl_regression(fit)`
 
 The right tool depends on the question you are asking.
 
