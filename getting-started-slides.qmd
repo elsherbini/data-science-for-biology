@@ -53,13 +53,11 @@ Scroll to **"Codespace user secrets"** and click **"New secret"**.
 
 ## Step 7: Launch a codespace
 
-Go back to your new repo. On its page:
-
-1. Click the green **"Code"** button
-2. Switch to the **"Codespaces"** tab
-3. Click **"Create codespace on main"**
+Go back to your new repo. Click **"Code"** → **"Codespaces"** tab → **"Create codespace on main"**.
 
 First build takes **~10 minutes or more** (installing R, Quarto, packages, Pi).
+
+![](assets/images/getting-started/7-launch-codespace.png){width=800 fig-align="center" fig-alt="Repository page with the Code button and Create codespace on main button highlighted in the Codespaces tab"}
 
 ## Step 8: Open a notebook
 
@@ -70,13 +68,11 @@ Once the codespace finishes building:
 
 ## Step 9: Meet Pi
 
-Open the integrated terminal (**Terminal → New Terminal**), then run:
-
-```
-pi
-```
+Open the integrated terminal (**Terminal → New Terminal**), then run `pi`.
 
 Ask in plain language — Pi can read your notebook, explain code, and help you edit. (We will introduce Claude Code later in the workshop.)
+
+![](assets/images/getting-started/8-meet-pi.png){width=800 fig-align="center" fig-alt="Codespace with the integrated terminal open and the pi command typed at the prompt"}
 
 ## You're ready
 

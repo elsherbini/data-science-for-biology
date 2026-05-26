@@ -86,6 +86,8 @@ Then click **"Add secret"** at the bottom.
 Go back to your new repository's page. Click the green **"Code"** button,
 switch to the **"Codespaces"** tab, and click **"Create codespace on main"**.
 
+![](assets/images/getting-started/7-launch-codespace.png){.img-fluid fig-alt="Repository page with the Code button and Create codespace on main button highlighted in the Codespaces tab"}
+
 The first build takes **around 10 minutes or more** — GitHub is provisioning
 a container and installing R, Quarto, the workshop's R packages, and the Pi
 coding agent. After this first build, reopening the codespace is fast.
@@ -110,6 +112,8 @@ we will switch to Claude Code.
 2. Start Pi by typing `pi` and pressing Enter.
 3. Ask it questions in plain language — it can read your notebook, explain
    code, and help you make changes.
+
+![](assets/images/getting-started/8-meet-pi.png){.img-fluid fig-alt="Codespace with the integrated terminal open and the pi command typed at the prompt"}
 
 You are now ready to begin the workshop. If you get stuck, ask an instructor
 or a teaching assistant.
