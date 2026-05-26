@@ -18,6 +18,9 @@ library(countdown)
 library(here)
 library(gtsummary)
 library(ggpubr)
+library(lme4)
+library(lmerTest)
+library(broom.mixed)
 
 table_01 <- read_csv(
   here("datasets/instructional_dataset/01_participant_metadata_UKZN_workshop_2023.csv"),
@@ -412,12 +415,55 @@ lm(ph ~ arm + age + smoker, data = outcome_table) |>
 
 In a randomized trial, adjustment is mostly cosmetic: the unadjusted t-test is the primary analysis. In a case-control study or any non-randomized design, you genuinely need this.
 
+# Reporting a model {.center}
+
+## Kris's IL-1a model, refit
+
+Module 5 ended with this fit:
+
+```{r}
+cytokines_il1 <- table_03 |>
+  left_join(table_00, by = "sample_id") |>
+  filter(cytokine == "IL-1a")
+
+fit <- lmer(
+  log(conc) ~ arm + arm:time_point + (1 | pid),
+  data = cytokines_il1
+)
+```
+
+Treatment effect on log(IL-1a) varies by time point, accounting for within-participant correlation. The model exists. Now: how do we put it in a paper?
+
+## Figure 1: the result, visible
+
+```{r}
+#| fig-width: 9
+#| fig-height: 4
+ggplot(cytokines_il1) +
+  geom_line(aes(time_point, log(conc), group = pid, col = arm)) +
+  scale_color_brewer(palette = "Set1") +
+  theme_minimal(base_size = 12)
+```
+
+The figure tells the same story the model does: the gap between arms is largest at week 1 and narrows by week 7.
+
+## Table 2: the regression
+
+```{r}
+fit |> tbl_regression()
+```
+
+`tbl_regression()` works on `lmer()` fits the same way it works on `lm()`. The output is the same shape — coefficient, estimate, CI, p-value — and the reader sees the treatment × time-point interaction estimates Kris's model produced.
+
+The model and the report are different jobs. You build a model once (Module 5) and report it many times (Module 6) — never refit just to make a table.
+
 ## The analysis plan, recap
 
 - one outcome, two groups, cross-sectional → `tbl_summary + add_p` or `ggboxplot + stat_compare_means`
 - many outcomes, two groups → `facet_wrap` + `stat_compare_means`
 - same person pre vs post → paired test on a line plot
-- need to adjust for a covariate → `lm` + `tbl_regression`
+- adjust for a covariate → `lm` + `tbl_regression`
+- report any fitted model (`lm`, `glm`, `lmer`, ...) → `tbl_regression(fit)`
 
 The right tool depends on the question you are asking.
 
