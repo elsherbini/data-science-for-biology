@@ -51,7 +51,7 @@ website:
           - text: "<b>Module 4</b>: More data wrangling and visualization"
             href: materials/1-workshop1/4-more-wrangling-and-viz/index.qmd
           - text: "<b>Module 5</b>: Modelling and Uncertainty"
-            href: materials/1-workshop1/5-modelling-and-uncertainty/index.qmd
+            href: materials/1-workshop1/5-modeling/index.qmd
           - text: "<b>Module 6</b>: gtsummary and ggpubr for hypothesis testing"
             href: materials/1-workshop1/6-gtsummary-and-ggpubr/index.qmd
           - text: "<b>Group Project</b>"
