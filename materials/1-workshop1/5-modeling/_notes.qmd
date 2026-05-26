@@ -12,6 +12,7 @@ format:
 
 ```{r}
 #| label: load-libraries
+library(here)
 library(MASS)
 library(lme4)
 library(lmerTest)
@@ -53,8 +54,8 @@ post-treatment visit.
 
    ```{r}
 #| label: load-data-il1
-ids <- read_csv("data/00_sample_ids_UKZN_workshop_2023.csv")
-il1 <- read_csv("data/03_elisa_cytokines_UKZN_workshop_2023.csv") |>
+ids <- read_csv(here("datasets/instructional_dataset/00_sample_ids_UKZN_workshop_2023.csv"))
+il1 <- read_csv(here("datasets/instructional_dataset/03_elisa_cytokines_UKZN_workshop_2023.csv")) |>
     filter(cytokine == "IL-1a") |>
     left_join(ids)
 head(il1)
@@ -588,8 +589,8 @@ below the limit of detection.
 #| label: load-cytokines-all
 #| fig-height: 4.5
 #| fig-width: 8
-ids <- read_csv("data/00_sample_ids_UKZN_workshop_2023.csv")
-cytokines <- read_csv("data/03_elisa_cytokines_UKZN_workshop_2023.csv") |>
+ids <- read_csv(here("datasets/instructional_dataset/00_sample_ids_UKZN_workshop_2023.csv"))
+cytokines <- read_csv(here("datasets/instructional_dataset/03_elisa_cytokines_UKZN_workshop_2023.csv")) |>
     left_join(ids)
 
 ggplot(cytokines) +
@@ -713,9 +714,9 @@ these sample IDs. The `right_join` then drops the other timepoints.
 
    ```{r}
 #| label: load-flow-cytometry
-ids <- read_csv("data/00_sample_ids_UKZN_workshop_2023.csv") |>
+ids <- read_csv(here("datasets/instructional_dataset/00_sample_ids_UKZN_workshop_2023.csv")) |>
     filter(time_point == "week_1")
-flow <- read_csv("data/04_flow_cytometry_UKZN_workshop_2023.csv") |>
+flow <- read_csv(here("datasets/instructional_dataset/04_flow_cytometry_UKZN_workshop_2023.csv")) |>
     right_join(ids) |>
     mutate(arm = as.factor(arm))
 
