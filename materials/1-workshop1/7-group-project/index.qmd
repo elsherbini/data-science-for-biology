@@ -1,5 +1,67 @@
 ---
 title: "Group Project"
+format:
+  html:
+    toc: true
 ---
 
-Group project content is coming soon.
+> Work with your group across three afternoon sessions to take a real
+> dataset from raw CSVs to a short presentation.
+
+## Datasets
+
+Your group will work with one of two datasets, both included in the
+participant codespace under `data/`:
+
+- **Group A — Yogurt study** (`data/group_a_yogurt/`): participant
+  metadata, qPCR results, and Luminex cytokine measurements from a
+  randomized study of yogurt consumption.
+- **Group B — Menstruation study** (`data/group_b_menstruation/`):
+  longitudinal sampling across the menstrual cycle, with participant
+  metadata, Luminex cytokines, and flow cytometry.
+
+Pick a biological question that interests your group and build toward a
+short presentation by Friday.
+
+## Session 1 — Wednesday: Get to know your dataset
+
+The first session is exploratory. You're not analyzing yet — you're
+building a mental map of the dataset so you can decide what's worth asking.
+
+Read the CSVs into R, look at the tables, and discuss as a group:
+
+- What does each table contain, and what does one row mean?
+- How are the tables linked together?
+- Which variables look interesting? What looks suspicious or missing?
+- What biological question might your group want to explore by Thursday?
+
+Full prompts live in `group_project/README_session1.md` in your codespace.
+
+## Session 2 — Thursday: Table 1 and group comparisons
+
+Pick a question. Pick the groups you want to compare. Then build a Table 1
+with **gtsummary** to describe your participants, and use **ggpubr** to
+show comparisons with p-values.
+
+By the end of Thursday you should have:
+
+- A Table 1 you would feel OK putting in a paper
+- One or two ggpubr figures of the comparisons you care about
+- A clear sense of what your group will say on Friday
+
+Full prompts live in `group_project/README_session2.md` in your codespace.
+
+## Session 3 — Friday: Present your findings
+
+Each group gives a short presentation (about five minutes) to the rest of
+the workshop. The goal isn't to impress — it's to share what you found,
+what surprised you, and what you'd want to do next.
+
+Bring:
+
+- Your question
+- One or two takeaways from your Table 1
+- The figure that best tells your story
+- A short list of limitations and next steps
+
+Full prompts live in `group_project/README_session3.md` in your codespace.
