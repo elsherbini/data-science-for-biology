@@ -1,0 +1,15 @@
+{
+  "hash": "ea3f45cf7a9f690f6f74f189b12e771a",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Modeling and Uncertainty\"\nformat:\n  html:\n    toc: true\n---\n\n\n::: {.cell}\n\n:::\n\n\n## Slides\n[Make slides full screen](slides.qmd)\n\n```{=html}\n<iframe class=\"slide-deck\" src=\"slides.html\" height=\"420\" width=\"747\" style=\"border: 1px solid #2e3846;\"></iframe>\n```\n\n\n\\\n\n\n---\nformat:\n  html:\n    code-link: true\n\nexecute:\n  cache: true\n---\n\n\n::: {.cell}\n\n:::\n\n\n## Coding exercise\n\nFor this exercise we'll be using the instructional dataset. [Download the dataset here](../../../datasets.html).\n\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
