@@ -88,7 +88,7 @@ A VS Code window has a few parts you will use all day:
 
 ## The integrated terminal {data-menu-title="Integrated terminal"}
 
-The terminal is a command line built into the window. You type commands here, and this is where Claude Code runs.
+The terminal is a command line built into the window. You type commands here, and this is where Pi runs.
 
 Open it from the menu: **Terminal -> New Terminal**, or with the keyboard shortcut <kbd>Ctrl</kbd>+<kbd>`</kbd> (the backtick key).
 
@@ -102,7 +102,7 @@ Screenshot from the [VS Code terminal documentation](https://code.visualstudio.c
 
 You can keep more than one terminal open. Each gets a tab in the panel, and you can split the panel to see two side by side.
 
-This is handy when Claude Code is running in one terminal and you want another for your own commands.
+This is handy when Pi is running in one terminal and you want another for your own commands.
 
 ![](images/vscode-tour/vscode-terminal-tabs.png){fig-alt="The terminal panel showing several terminal tabs listed on the right side." width="75%"}
 
@@ -198,21 +198,22 @@ my_age + 10
 
 So why bother at all? Because if you can tell a computer how to do it once, it is reproducible!
 
-[If the data changes or you find a mistake, just rerun!]{style="color: green;font-size: 1.2em" .fragment}
+[Find a mistake? Fix the code, then rerun.]{style="color: green;font-size: 1.2em" .fragment}
 
-[You can run the same code on new data]{style="color: green;font-size: 1.2em" .fragment}
+[Want to repeat the same analysis on new data? Swap the file and rerun — minimal edits.]{style="color: green;font-size: 1.2em" .fragment}
 
-[You can share your code with others so they can start where you left off]{style="color: green;font-size: 1.2em" .fragment}
+[Share your code with others so they can start where you left off.]{style="color: green;font-size: 1.2em" .fragment}
 
 
 ## Let's use R for math {.your-turn}
 
 ```{r}
 #| echo: false
-countdown::countdown(8)
+countdown::countdown(4)
 ```
 
 In the console, try typing some commands:
+You don't have to finish all of them — get a feel for how R responds.
 
 ```{r}
 #| echo: true
@@ -696,7 +697,7 @@ Type `?str_c` in the console to open that function's help page. Check out [this 
 
 The help page tells you what parameters a function takes and shows examples at the bottom.
 
-You can also ask Claude Code, the AI assistant from Module 1. It is good at explaining what a function does and suggesting how to call it. Treat its answers as a starting point and check them against the help page, since it is not always correct.
+You can also ask Pi, the coding agent from Module 1. It is good at explaining what a function does and suggesting how to call it. Treat its answers as a starting point and check them against the help page, since it is not always correct.
 
 ## "Everything is a vector" {auto-animate="true"}
 
