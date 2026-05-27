@@ -213,6 +213,7 @@ countdown::countdown(4)
 ```
 
 In the console, try typing some commands:
+
 You don't have to finish all of them — get a feel for how R responds.
 
 ```{r}
