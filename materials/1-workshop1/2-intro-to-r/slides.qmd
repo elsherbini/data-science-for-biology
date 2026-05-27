@@ -248,39 +248,19 @@ It is better to work inside quarto notebooks in order to be able to save and sha
 
 # What can you do with Quarto?
 
-
-## Articles
-
-::: {layout-ncol="2"}
-![](images/gallery-doc-html.png)
-
-![](images/gallery-doc-pdf.png)
-:::
-
-## Presentations
+## Many formats, one source
 
 ::: {layout-ncol="2"}
-![](images/gallery-pres-3.png)
+![Articles](images/gallery-doc-pdf.png){fig-alt="Example Quarto-rendered PDF article"}
 
-![](images/gallery-pres-4.png)
+![Presentations](images/gallery-pres-4.png){fig-alt="Example Quarto-rendered slide deck"}
+
+![Websites](images/gallery-web-quarto.png){fig-alt="Example Quarto-rendered website"}
+
+![Books](images/gallery-books-r4ds.png){fig-alt="Example Quarto-rendered book"}
 :::
 
-## Websites
-
-::: {layout-ncol="2"}
-![](images/gallery-web-nasa.png)
-
-![](images/gallery-web-quarto.png)
-:::
-
-
-## Books
-
-::: {layout-ncol="2"}
-![](images/gallery-books-viz.png)
-
-![](images/gallery-books-r4ds.png)
-:::
+All from the same `.qmd` source -- change the format in the YAML.
 
 ## Quarto Render
 
