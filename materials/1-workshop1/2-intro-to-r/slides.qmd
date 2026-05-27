@@ -200,7 +200,7 @@ So why bother at all? Because if you can tell a computer how to do it once, it i
 
 [Find a mistake? Fix the code, then rerun.]{style="color: green;font-size: 1.2em" .fragment}
 
-[Want to repeat the same analysis on new data? Swap the file and rerun — minimal edits.]{style="color: green;font-size: 1.2em" .fragment}
+[Repeat the same analysis on new data — swap the file and rerun.]{style="color: green;font-size: 1.2em" .fragment}
 
 [Share your code with others so they can start where you left off.]{style="color: green;font-size: 1.2em" .fragment}
 
