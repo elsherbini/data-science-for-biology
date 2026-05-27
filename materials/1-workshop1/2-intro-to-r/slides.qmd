@@ -657,6 +657,33 @@ Type `?function_name` in the console to open the help page. For example:
 
 Or ask **Pi** (the coding agent from Module 1). Pi is good at explaining what a function does and suggesting how to call it. Treat its answers as a starting point -- check them against the help page or run them and see, since Pi can hallucinate functions and arguments.
 
+# Using Pi in VS Code
+
+## Pi lives in your terminal
+
+Pi is the coding agent you met in Module 1. Launch it with `pi` in the integrated terminal. It reads and writes files in your project.
+
+Keep two terminals open: one for Pi, one for your own commands. (Remember the terminal-tabs trick from earlier in this module.)
+
+## Prompting Pi well
+
+- **Be specific about goal and inputs.**
+  "Read `02_visit_clinical_measurements.csv` and show me the mean `nugent_score` by arm" beats "look at the data."
+- **Show, don't just tell.** Paste the error. Paste the table head. Paste the chunk that broke.
+- **Ask why before what.** "Explain what this does line by line" before accepting the code.
+- **Verify.** Pi can hallucinate column names, function names, even packages. Run the code, read the output, push back when something looks off.
+- **Use Pi when syntax stumps you.** Keep doing the thinking yourself -- you learn by typing.
+
+## Models and cost
+
+- **Default**: `deepseek/deepseek-v4-flash` -- cheap, fast, good for ~80% of what you'll do.
+- **Step up**: `deepseek/deepseek-v4-pro` -- harder reasoning, multi-step debugging, when flash is stuck.
+- **Switch** with `/model` or `Ctrl+L` inside Pi.
+
+Your budget: **~$1.50/day, ~$30 for the week.** Start with flash; step up only when you're stuck.
+
+{{< include ../_wooclap_2.qmd >}}
+
 ## Exercise {.your-turn}
 
 That's enough slides for now -- time to try for yourself. Go to [the module](index.html) and work through the worksheet.

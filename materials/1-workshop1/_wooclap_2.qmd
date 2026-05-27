@@ -1,0 +1,5 @@
+## Let's take another poll {.your-turn}
+
+Go to `TODO: paste this year's wooclap event URL for the R + Pi quiz`
+
+![](../../../images/wooclap_info.png)
