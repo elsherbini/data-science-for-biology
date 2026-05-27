@@ -423,3 +423,9 @@ filter(df, year_of_birth > 1995 | favourite_colour=="red")
 
 Congratulations!
 You have successfully reached the end of this exercise. You now possess the most important skill: google your query!
+
+### Pi mini-task
+
+Pick one exercise above that confused you. Ask Pi to explain its solution, then push back: *"why did you use X instead of Y?"*
+
+Notice when Pi sounds confident vs. guessing. This habit -- using Pi as a study partner rather than an answer-machine -- is what will keep you learning all week.
