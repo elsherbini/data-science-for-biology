@@ -114,7 +114,10 @@ Screenshot from the [VS Code terminal documentation](https://code.visualstudio.c
 
 A Quarto document has the `.qmd` extension. It is a plain-text file that mixes writing, R code, and formatting.
 
-Open one from the Explorer and it appears in the editor. You can edit the plain-text source directly, or switch to the visual editor for a word-processor-style view. The two are the same file -- changes in one show up in the other.
+- `.R` files hold pure R code — useful for scripts, but no narrative.
+- `.qmd` files weave narrative, code, and output into one document — so a future reader (including future-you) can follow the reasoning, not just the syntax.
+
+Open a `.qmd` from the Explorer and it appears in the editor. You can edit the plain-text source directly, or switch to the visual editor for a word-processor-style view. The two are the same file -- changes in one show up in the other.
 
 ## Render and Preview {data-menu-title="Render and Preview"}
 
