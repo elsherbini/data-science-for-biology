@@ -35,6 +35,16 @@ table_02 <- read_csv(here("datasets/instructional_dataset/02_visit_clinical_meas
 
 ---
 
+## Discussions: discord
+
+Ask questions in the **#workshop-questions** channel.
+
+Join the Discord server: [https://discord.gg/zSBTQ9ctt](https://discord.gg/zSBTQ9ctt)
+
+![](../0-welcome/images/discord_durban.png){fig-alt="Screenshot of the discord server app that serves as the forum for the workshop." fig-align="center" width="546"}
+
+---
+
 ## What is R?
 
 R is a general purpose programming language that's really well suited to statistics, manipulating tabular data, and plotting.

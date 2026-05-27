@@ -30,6 +30,14 @@ By the end of this module you can:
 - recognise verbs that keep what a row represents the same vs verbs that change it
 - read and write a basic ggplot: data, mapping, geom
 
+## Discussions: discord
+
+Ask questions in the **#workshop-questions** channel.
+
+Join the Discord server: [https://discord.gg/zSBTQ9ctt](https://discord.gg/zSBTQ9ctt)
+
+![](../0-welcome/images/discord_durban.png){fig-alt="Screenshot of the discord server app that serves as the forum for the workshop." fig-align="center" width="546"}
+
 ## The pipe `|>`
 
 `|>` is pronounced "and then".

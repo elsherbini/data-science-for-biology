@@ -46,7 +46,7 @@ Workshop materials are at:
 
 Ask questions in the **#workshop-questions** channel.
 
-Join the Discord server: `TODO: paste this year's Discord invite link`
+Join the Discord server: [https://discord.gg/zSBTQ9ctt](https://discord.gg/zSBTQ9ctt)
 
 ![](images/discord_durban.png){fig-alt="Screenshot of the discord server app that serves as the forum for the workshop." fig-align="center" width="546"}
 

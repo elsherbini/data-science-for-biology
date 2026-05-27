@@ -4,11 +4,21 @@ toc: true
 ---
 
 This workshop runs entirely in the cloud using **GitHub Codespaces**. There is
-nothing to install on your laptop — you only need a web browser and a free
-GitHub account.
+nothing to install on your laptop — you only need a web browser, a free
+GitHub account, and a Discord account.
 
-Step through the slides one at a time, or scroll down to read the full
-instructions linearly.
+## Quick checklist
+
+Five things to do before the first session:
+
+1. [Get on the workshop Discord](#sec-discord) and claim your API key with `/claim`
+2. [Make sure you have a GitHub account](https://github.com/signup) (free)
+3. [Create your copy of the workshop repo](#sec-repo)
+4. [Add the API key as a Codespaces secret](#sec-secret) on GitHub
+5. [Launch your codespace](#sec-launch)
+
+Each item below walks through one of these steps in detail. You can also step
+through the slides one at a time.
 
 ## Instructions in slide form (long form below)
 [Make slides full screen](getting-started-slides.qmd)
@@ -17,11 +27,39 @@ instructions linearly.
 <iframe class="slide-deck" src="getting-started-slides.html" height="420" width="747" style="border: 1px solid #2e3846;"></iframe>
 ```
 
-The order matters: create your repo, then add the API-key secret so it can
-target that repo, **then** launch the codespace. A codespace launched before
-the secret is in place won't see the key until you restart it.
+The order matters: claim your key in Discord, create your repo, add the key
+as a Codespaces secret targeting that repo, **then** launch the codespace. A
+codespace launched before the secret is in place won't see the key until you
+restart it.
 
-## 1. Create your own copy of the workshop environment
+## 1. Claim your OpenRouter API key in Discord {#sec-discord}
+
+Workshop API keys are handed out by a bot in our Discord server.
+
+### Join the server
+
+Open the [workshop Discord invite](https://discord.gg/zSBTQ9ctt) and accept
+it.
+
+### Get the Participant role
+
+Ask a TA or an instructor (in the server or in person) to give you the
+**Participant** role. The bot only hands out keys to people who have it.
+
+### Run `/claim`
+
+In any channel, type `/claim` and press Enter. The bot replies right in the
+channel, but its message is visible only to you. The reply contains your
+personal OpenRouter API key and your daily budget. **Copy the key now** —
+you'll paste it into GitHub in step 3.
+
+Two other commands you may want later:
+
+- `/key` — show your key again if you lose track of it
+- `/usage` — see how much of today's budget you've used (it resets at
+  midnight UTC)
+
+## 2. Create your own copy of the workshop environment {#sec-repo}
 
 The workshop environment lives in a **template** repository. You'll start by
 making your own copy of it.
@@ -48,11 +86,10 @@ as your username.
 
 ![](assets/images/getting-started/3-give-repo-name.png){.img-fluid fig-alt="New repository form with the Repository name field highlighted"}
 
-## 2. Add your OpenRouter API key
+## 3. Add your OpenRouter API key as a Codespaces secret {#sec-secret}
 
-The workshop uses AI models through OpenRouter. Store your OpenRouter API
-key as a Codespaces secret **before** you launch your codespace — that way
-the codespace has the key from the moment it boots.
+Store the key from step 1 as a Codespaces secret **before** you launch your
+codespace — that way the codespace has the key from the moment it boots.
 
 ### Open your Codespaces settings
 
@@ -73,15 +110,15 @@ Scroll to **"Codespace user secrets"** and click **"New secret"**.
 In the form:
 
 - **Name**: `OPENROUTER_API_KEY` (exact spelling, all caps)
-- **Value**: paste the API key you were given for the workshop
+- **Value**: paste the API key the Discord bot gave you in step 1
 - **Repository access**: click **"Select repositories"** and choose the
-  repository you created in step 1
+  repository you created in step 2
 
 Then click **"Add secret"** at the bottom.
 
 ![](assets/images/getting-started/6-name-key-and-add-to-repo.png){.img-fluid fig-alt="New secret form with the Name field, Repository access dropdown, and Add secret button highlighted"}
 
-## 3. Launch a codespace
+## 4. Launch a codespace {#sec-launch}
 
 Go back to your new repository's page. Click the green **"Code"** button,
 switch to the **"Codespaces"** tab, and click **"Create codespace on main"**.
@@ -92,7 +129,7 @@ The first build takes **around 10 minutes or more** — GitHub is provisioning
 a container and installing R, Quarto, the workshop's R packages, and the Pi
 coding agent. After this first build, reopening the codespace is fast.
 
-## 4. Open a notebook
+## 5. Open a notebook
 
 Once the codespace has finished building:
 
@@ -101,7 +138,7 @@ Once the codespace has finished building:
 2. Open one to start working. You can edit text and code cells directly in
    the browser.
 
-## 5. Meet Pi in the terminal
+## 6. Meet Pi in the terminal
 
 Your codespace includes **Pi**, an AI coding assistant, in the integrated
 terminal. We will use Pi for the first couple of days; later in the workshop
