@@ -792,7 +792,7 @@ table_02 <- read_csv("02_visit_clinical_measurements_UKZN_workshop_2023.csv")
 
 ## Exercise {.your-turn}
 
-That's enough slides for now time to try for yourself! Go to [the module](index.html) and go to the first exercise.
+That's enough slides for now — time to try for yourself. Go to [the module](index.html) and work through the worksheet.
 
 ```{r}
 countdown::countdown(30)

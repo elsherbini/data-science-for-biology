@@ -16,5 +16,3 @@ format:
 ```
 
 {{< include r_midsession_exercise.Qmd >}}
-
-{{< include exercise_1.qmd >}}
