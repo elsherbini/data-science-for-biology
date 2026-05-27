@@ -1,19 +1,20 @@
 ---
-title: "Exploring Data for Patterns"
-subtitle: "<em>reproduced from a Schmidt Science Fellowship activity, thanks to Fatima Hussain</em>"
-
 execute:
   cache: true
 ---
 
+## Exploring Data for Patterns
+
+<em>reproduced from a Schmidt Science Fellowship activity, thanks to Fatima Hussain</em>
+
 \
 
-## Activity
+### Activity
 
 > Patterns are the essence of data exploration and our eyes' ability to pick them out is integral to data understanding. Much of the data we work with, however, do not have a natural form and we need to make decisions about how they are to be represented. Try different ways to visualize the datasets so meaningful patterns may be found.  
 
 
-### Genetic profiles of cancer  
+#### Genetic profiles of cancer
 These datasets contains 10 cancer samples. @tbl-1 describes the mutational status for a set of genes (A-E) and whether a mutation if absent (0) or present (1). @tbl-2 summarizes the expression levels of those genes, ranging from no expression (0) to high expression (3). 
 
  
@@ -61,7 +62,7 @@ These datasets contains 10 cancer samples. @tbl-1 describes the mutational statu
 
 :::{.g-col-12  .text-center}
 
-### Patterns
+#### Patterns
 
 Patterns are the essence of data exploration. What kinds of representation will produce the most meaningful insights? 
 
@@ -70,7 +71,7 @@ Patterns are the essence of data exploration. What kinds of representation will 
 ![](images/ws_patterns3.png){width=200}
 ![](images/ws_patterns4.png){width=200}
 
-### Encodings
+#### Encodings
 Some visual estimations are easier to make than others. How might you use **encodings** that are less accurate but otherwise better at conveying overall trends?
 
 ![](images/ws_encod1.png){width=45%}
@@ -79,7 +80,7 @@ Some visual estimations are easier to make than others. How might you use **enco
 :::
 
 :::{.g-col-12 .text-center}
-### Color
+#### Color
 **Color** is a powerful encoding that presents several challenges. Have you chosen a color scale that is optimal for that data type?
 
 ![](images/ws_color1.png){width=19%}
@@ -87,7 +88,7 @@ Some visual estimations are easier to make than others. How might you use **enco
 ![](images/ws_color3.png){width=19%}
 ![](images/ws_color4.png){width=19%}
 
-### Salience and Relevance
+#### Salience and Relevance
 
 Pop-out effects enable quick recognition. Are the most **noticeable** elements of your visualizations also the most **relevant**?
 
