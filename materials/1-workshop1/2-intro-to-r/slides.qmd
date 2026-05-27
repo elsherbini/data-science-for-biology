@@ -303,27 +303,6 @@ Render input file to various document formats.
 # Code Chunks
 
 
-## Quarto's Code Chunk
-
-::: columns
-::: {.column width=25%}
-:::
-
-::: {.column width=50%}
-    ```{{r}}
-    #| echo: false
-    rnorm(3)
-    ```
-:::
-
-::: {.column width=25%}
-:::
-:::
-
-::: fragment
-[**This is a Quarto Code Chunk.**]{style="color: green;font-size: 1.2em"}
-:::
-
 ## Let's explore the survey data {.our-turn}
 
 
@@ -378,49 +357,17 @@ Options are denoted with the "hash-pipe" `#|`
 :::{.column width=54%}
 ````markdown
 ```{{r}}
-library(palmerpenguins)
-library(ggplot2)
-
-ggplot(penguins,
-       aes(x = bill_length_mm,
-           y = bill_depth_mm,
-           col = island)) +
-  geom_point()
-```
-````
-:::
-:::{.column width=46% .fragment}
-```{r}
-#| echo: false
-library(palmerpenguins)
-library(ggplot2)
-
-ggplot(penguins,
-       aes(x = bill_length_mm,
-           y = bill_depth_mm,
-           col = island)) +
-  geom_point() +
-  theme_grey(base_size = 18)
-```
-:::
-:::
-
-## Example: Figures from Code {auto-animate=true}
-
-:::columns
-:::{.column width=54%}
-````markdown
-```{{r}}
 #| fig-width: 5
 #| fig-height: 3
 
-library(palmerpenguins)
-library(ggplot2)
+library(tidyverse)
+library(here)
 
-ggplot(penguins,
-       aes(x = bill_length_mm,
-           y = bill_depth_mm,
-           col = island)) +
+table_02 <- read_csv(here(
+  "datasets/instructional_dataset/02_visit_clinical_measurements_UKZN_workshop_2023.csv"))
+
+ggplot(table_02,
+       aes(x = ph, y = nugent_score, col = arm)) +
   geom_point()
 ```
 ````
@@ -430,14 +377,13 @@ ggplot(penguins,
 #| echo: false
 #| fig-width: 5
 #| fig-height: 3
-#|
-library(palmerpenguins)
-library(ggplot2)
-
-ggplot(penguins,
-       aes(x = bill_length_mm,
-           y = bill_depth_mm,
-           col = island)) +
+library(tidyverse)
+library(here)
+table_02 <- read_csv(here(
+  "datasets/instructional_dataset/02_visit_clinical_measurements_UKZN_workshop_2023.csv"),
+  show_col_types = FALSE)
+ggplot(table_02,
+       aes(x = ph, y = nugent_score, col = arm)) +
   geom_point() +
   theme_grey(base_size = 18)
 ```
