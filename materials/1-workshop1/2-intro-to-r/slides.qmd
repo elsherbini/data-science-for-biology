@@ -241,7 +241,7 @@ So why bother at all? Because if you can tell a computer how to do it once, it i
 
 [Find a mistake? Fix the code, then rerun.]{style="color: green;font-size: 1.2em" .fragment}
 
-[Repeat the same analysis on new data — swap the file and rerun.]{style="color: green;font-size: 1.2em" .fragment}
+[Repeat the same analysis on new data -- swap the file and rerun.]{style="color: green;font-size: 1.2em" .fragment}
 
 [Share your code with others so they can start where you left off.]{style="color: green;font-size: 1.2em" .fragment}
 
@@ -255,7 +255,7 @@ countdown::countdown(4)
 
 In the console, try typing some commands:
 
-You don't have to finish all of them — get a feel for how R responds.
+You don't have to finish all of them -- get a feel for how R responds.
 
 ```{r}
 #| echo: true
@@ -582,186 +582,84 @@ format:
 
 [There are many options for [front matter](https://quarto.org/docs/authoring/front-matter.html) and [configuring rendering](https://quarto.org/docs/reference/formats/html.html).]{.fragment}
 
-# Quarto in VS Code:<br>analysis code, documentation, and interpretation combined.
+# R fundamentals, by way of our data
 
-## Ok, but how do you write code?
+## Read the data
 
-## Assignment
-
-You can use `<-` or `=` to assign values to variables
-
-```r
-a <- 6
-b = 8
-c <- 5.44
-d = TRUE
-e = "hello world"
-e <- 'hello world' # same as double quote
-```
-
-We will use `<-` for all examples going forward, but do whichever melts your brain less
-
-## Naming variables
-
-A lot of R people use `.` inside variable names, but in most languages besides R this would be an error. It's good practice these days to use the `_` underscore if you want separation in your variable names.
-
-```r
-r.people.sometimes.put.dots <- TRUE
-dots.are.confusing <- "maybe"
-just_use_underscores <- "please"
-```
-
-## Functions {auto-animate="true"}
-
-Functions are named bits of code that take parameters as input and return some output
+The dataset lives in `csv` files (comma-separated values). Read one in with `read_csv()`:
 
 ```{r}
 #| echo: true
-library(tidyverse)
-word_1 <- "hello"
-word_2 <- "world"
-str_c(word_1, word_2)
-```
-
-`str_c` is a function that puts **c**oncatenates **str**ings.
-
-
-## Functions {auto-animate="true"}
-
-Functions are named bits of code that take parameters as input and return some output
-
-```{r}
-#| echo: true
-library(tidyverse)
-word_1 <- "hello"
-word_2 <- "world"
-str_c(word_1, word_2, sep = " ")
-```
-
-`str_c` is a function that puts **c**oncatenates **str**ings.
-
-functions can have *named parameters* as well as *positional parameters.*
-
-## Functions {auto-animate="true"}
-
-Functions are named bits of code that take parameters as input and return some output
-
-```{r}
-#| echo: true
-library(tidyverse)
-word_1 <- "hello"
-word_2 <- "world"
-str_c(word_1, word_2, sep = " ")
-```
-
-`str_c` is a function that puts **c**oncatenates **str**ings.
-
-functions can have *named parameters* as well as *positional parameters.*
-*named parameters* always take an `=` sign for assignment.
-
-## Getting help with functions {auto-animate="true"}
-
-Type `?str_c` in the console to open that function's help page. Check out [this guide](https://socviz.co/appendix.html?s=09#a-little-more-about-r) on how to read the R help pages.
-
-The help page tells you what parameters a function takes and shows examples at the bottom.
-
-You can also ask Pi, the coding agent from Module 1. It is good at explaining what a function does and suggesting how to call it. Treat its answers as a starting point and check them against the help page, since it is not always correct.
-
-## "Everything is a vector" {auto-animate="true"}
-
-This sounds like nonsense at first:
-
-```{r}
-#| echo: true
-c(1, 2, 3, 4)
-```
-
-1. A Vector is a collection of values surrounded by `c()` and separated with `,`
-
-
-## "Everything is a vector" {auto-animate="true"}
-
-This sounds like nonsense at first:
-
-```{r}
-#| echo: true
-c(1, 2, 3, 4) * 3
-```
-
-1. A vector is a collection of values surrounded by `c()` and separated with `,`
-
-2. Vectors in R do smart things with most functions and operations.
-
-
-## "Everything is a vector" {auto-animate="true"}
-
-This sounds like nonsense at first:
-
-```{r}
-#| echo: true
-#| error: true
-c(1, 2, 3, "potato") * 3
-```
-
-1. A vector is a collection of values surrounded by `c()` and separated with `,`
-
-2. Vectors in R do smart things with most functions and operations.
-
-3. Vectors have only one type of value.
-
-## Value types in R
-
-The type of the value can be
-
-```r
-# numeric
-c(1,2,3,4)
-
-# character
-c("a","b","c","d")
-
-# boolean
-c(TRUE, FALSE)
-
-# factor
-c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun") %>% as_factor()
-```
-
-## `tibble`s (aka data frames)
-
-`tibble`s are the big reason R is great for working with tabular data.
-
-A data frame is a rectangular collection of variables (in the columns) and observations (in the rows).
-
-```{r}
-#| echo: false
 #| message: false
-#| warning: false
-library(here)
-table_02 <- read_csv(here("datasets/instructional_dataset/02_visit_clinical_measurements_UKZN_workshop_2023.csv"))
+table_02 <- read_csv(here(
+  "datasets/instructional_dataset/02_visit_clinical_measurements_UKZN_workshop_2023.csv"))
 ```
+
+`<-` assigns the result to a name. After this line, `table_02` *is* the data.
+
+## This is a tibble
 
 ```{r}
 #| echo: true
 table_02
 ```
 
-## How to read in data?
+A tibble (R's word for "data frame") is rectangular: rows are observations, columns are variables.
 
-Data is often in tables, and the easiest way to store tabular data is in `csv` or `tsv` format.
+## Columns are vectors
 
-`csv` - comma separated values
-`tsv` - tab separated values
+Pull one column out with `$`:
 
-to read in data stored this way use `read_csv(filename)` or `read_tsv(filename)`
+```{r}
+#| echo: true
+table_02$nugent_score
+```
+
+That's a **vector** -- a sequence of values, all the same type.
+
+- `nugent_score`: numeric
+- `arm`: character (`"placebo"`, `"treatment"`)
+- `time_point`: character (later we'll make it a factor for ordering)
+
+## Functions
+
+A function takes inputs and gives back a value:
+
+```{r}
+#| echo: true
+mean(table_02$crp_blood, na.rm = TRUE)
+```
+
+- `table_02$crp_blood` is the **positional** argument -- the data.
+- `na.rm = TRUE` is a **named** argument -- tells `mean` to skip missing values.
+
+Most R verbs are functions called on a column or a tibble.
+
+## Assignment and naming
 
 ```r
-table_02 <- read_csv("02_visit_clinical_measurements_UKZN_workshop_2023.csv")
+nugent_mean <- mean(table_02$nugent_score, na.rm = TRUE)
 ```
+
+- Use `<-` to assign (R people prefer it; `=` also works).
+- Names: lowercase with `_` separators. No leading numbers, no special characters.
+- Good: `nugent_mean`, `cytokine_panel`, `n_participants`
+- Avoid: `mean.nugent` (dots are fine in R but confuse other languages), `1st_table`, `mean nugent`
+
+## Getting help
+
+Type `?function_name` in the console to open the help page. For example:
+
+```r
+?mean
+?read_csv
+```
+
+Or ask **Pi** (the coding agent from Module 1). Pi is good at explaining what a function does and suggesting how to call it. Treat its answers as a starting point -- check them against the help page or run them and see, since Pi can hallucinate functions and arguments.
 
 ## Exercise {.your-turn}
 
-That's enough slides for now — time to try for yourself. Go to [the module](index.html) and work through the worksheet.
+That's enough slides for now -- time to try for yourself. Go to [the module](index.html) and work through the worksheet.
 
 ```{r}
 countdown::countdown(30)
