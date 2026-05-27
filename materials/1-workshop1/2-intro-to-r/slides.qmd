@@ -13,6 +13,7 @@ library(countdown)
 library(tidyverse)
 library(here)
 table_01 <- read_csv(here("datasets/instructional_dataset/01_participant_metadata_UKZN_workshop_2023.csv"))
+table_02 <- read_csv(here("datasets/instructional_dataset/02_visit_clinical_measurements_UKZN_workshop_2023.csv"))
 ```
 
 ## {data-menu-item="Workshop Goals"}
@@ -156,6 +157,43 @@ Screenshot from the [Quarto VS Code documentation](https://quarto.org/docs/tools
 :::
 
 {{< include ../_wooclap.qmd >}}
+
+
+# The workshop dataset {.center}
+
+## The study
+
+A randomized trial of a hypothetical anti-inflammatory drug aimed at lowering HIV-acquisition risk by reducing genital inflammation.
+
+- **44 participants**: 23 placebo, 21 treatment
+- **3 visits per participant**: baseline, week 1, week 7
+- All participants are female
+
+At each visit, samples flow into five tables: `00_sample_ids`, `01_participant_metadata`, `02_visit_clinical_measurements`, `03_elisa_cytokines`, `04_flow_cytometry`.
+
+::: footer
+A fictitious dataset built to look like a real trial. See the [dataset page](../../../datasets.qmd) for full descriptions.
+:::
+
+## Clinical measures (`02_visit_clinical_measurements`)
+
+The low-dimensional measurements -- one number per participant per visit:
+
+- **`nugent_score`** (0-10): Gram-stain score for bacterial vaginosis. 0-3 normal, 4-6 intermediate, 7-10 BV.
+- **`crp_blood`**: C-reactive protein -- general systemic inflammation marker.
+- **`ph`**: vaginal pH. Low (~3.8-4.5) is the healthy lactobacillus-dominated state; higher suggests dysbiosis.
+
+```{r}
+#| echo: false
+table_02 |> head(3) |> knitr::kable()
+```
+
+## Inflammation panels (`03_elisa_cytokines`, `04_flow_cytometry`)
+
+The higher-dimensional measurements:
+
+- **Cytokines** (10 of them: IL-1α/β, IL-6, IL-8, IL-10, TNFα, IP-10, MIG, IFN-γ, MIP-3α) -- signaling proteins immune cells use to talk to each other. Higher concentration usually means more inflammation.
+- **Flow cytometry** -- counts cells by which proteins they display. We'll touch this lightly -- see the [dataset page](../../../datasets.qmd) for the gating hierarchy.
 
 
 # Let's start programming
