@@ -63,8 +63,6 @@ Every paper has an analysis plan. Each row is one question.
 - Did the outcome change pre vs post in the same person? → paired test
 - Does the effect hold after adjusting for a covariate? → `lm() |> tbl_regression()`
 
-The whole module walks this list. The tool falls out of the question.
-
 ## Refine your plan with an LLM
 
 Before you write any code, paste your analysis plan into a chat with an LLM and ask:
@@ -229,7 +227,7 @@ table_01 |>
   modify_header(label ~ "**Characteristic**")
 ```
 
-`add_overall()` adds a column for the full sample. `bold_labels()` makes row labels bold. `modify_header()` renames columns. A few lines turn a default table into a publication-ready one.
+`add_overall()` adds a column for the full sample. `bold_labels()` makes row labels bold. `modify_header()` renames columns.
 
 ## Randomization protects the arm comparison
 
@@ -474,8 +472,6 @@ You fit a model once and report it many times. Never refit just to make a table.
 - same person pre vs post → paired test on a line plot
 - adjust for a covariate → `lm` + `tbl_regression`
 - report any fitted model (`lm`, `glm`, `lmer`, ...) → `tbl_regression(fit)`
-
-The right tool depends on the question you are asking.
 
 ## Exercise 2 {.your-turn}
 
