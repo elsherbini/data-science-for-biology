@@ -21,6 +21,6 @@ library(tidyverse)
 <iframe class="slide-deck" src="slides.html" height="420" width="747" style="border: 1px solid #2e3846;"></iframe>
 ```
 
-{{< include _01_pen_and_paper.qmd >}}
+Additional models and case studies can be found [here](notes.html).
 
-{{< include _02_modeling_exercise.qmd >}}
+{{< include exercise_2.qmd >}}
