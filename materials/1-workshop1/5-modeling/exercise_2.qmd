@@ -1,0 +1,51 @@
+---
+title: "Exercise 2: Gene Expresssion of Drought Response"
+format: html
+editor: source
+execute:
+  warning: false
+  message: false
+---
+
+> *Mode flip.* If you were **agentic** in Exercise 1, you are **manual** now; if you were manual, you are agentic. Same definitions as before — manual means you may ask a chat LLM conceptual questions but it does not touch your notebook.
+
+Open `notebooks/05-modeling.qmd` in your Codespace.
+
+### Part 1 — Predict (no code)
+
+This exercise looks at gene expression of _Sorghum bicolor_ when exposed to
+drought stress, originally published in ["Transcriptomic analysis of field-droughted sorghum from seedling to maturity reveals biotic and metabolic responses"](https://doi.org/10.1073/pnas.1907500116).
+
+Before running any code:
+
+1. How would linear regression models created using the formulas below differ?
+   - `log_gene ~ Genotype`
+   - `log_gene ~ Timepoint`
+   - `log_gene ~ Timepoint + Genotype`
+
+2. For any of these formulas,is it better to use a linear regression or Poisson model?
+
+3. Review the plot of gene expression over time. Sketch what the fitted model
+would look like compared to the real data.
+
+### Part 2 — Build
+
+Fit and interpret a linear regression with the formula `log_gene ~ Timepoint + Genotype`:
+
+1. Use `lm()` to fit the model to the data
+2. Look at the output from `summary()`. How do you interpret the estimate for `GenotypeRT430`?
+3. Simulate new response values. Plot this like we plotted the real data above.
+Comment on the simulation quality.
+
+### Part 3 — Reach (optional)
+
+Redo the analysis for another gene (`Sobic.008G179900.v3.1`).  Judging from the
+plot, is there anything you would change in the formula passed to `lm()`?
+
+### Discussion
+
+Once the room is back together:
+
+- What was easy in your mode? What was hard?
+- How would you explain your model result to a colleague unfamiliar with linear regression?
+- If the experiment included fertilizer treatments, how might we modify the analysis above? What questions would be answered by your revised analysis?
