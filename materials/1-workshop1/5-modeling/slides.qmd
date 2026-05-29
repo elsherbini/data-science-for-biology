@@ -21,7 +21,6 @@ library(MASS)
 library(lme4)
 library(lmerTest)
 library(patchwork)
-library(modelsummary)
 library(survival)
 library(tidyverse)
 source(here("materials/1-workshop1/5-modeling/helpers.R"))
@@ -62,12 +61,6 @@ Workshop materials are at:
 4. Diagnose and address model failures .
 :::
 
-## Discussions: discord
-
-Ask questions at **#workshop-questions** on [https://discord.gg/UDAsYTzZE](https://discord.gg/UDAsYTzZE).
-
-![](images/discord_durban.png){fig-alt="Screenshot of the discord server app." fig-align="center" width="500"}
-
 # Part 1: What is a Model?
 
 ## Let's start with a picture
@@ -98,8 +91,8 @@ p1 / p2
 Imagine running the study again, keeping the recruitment and experimental protocols as similar as possible. Make two lists:
 
 ::: incremental
-- Aspects of these plots that you think **will continue to be true** in the new experiment.
-- Aspects of these plots that you think **will be different**.
+- Aspects of the plots that you think **will still be true** in the new experiment.
+- Aspects of the plots that you think **will change**.
 :::
 
 ```{r}
@@ -259,7 +252,7 @@ The `glm` function has three arguments:
 ```{r}
 #| echo: true
 fit <- glm(infected ~ social_contact, family = binomial(), data = infections)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
 ```
 
 \
@@ -267,7 +260,7 @@ We wrote `family = binomial()`, but since `infected` is 0/1, the code knows to r
 
 ## Interpreting the fit
 
--- The estimates are on the **log-odds scale**, which isn't directly interpretable.
+- The estimates are on the **log-odds scale**, which isn't directly interpretable.
 
 - `plogis()` converts them to the **probability scale**:
 
@@ -283,7 +276,7 @@ At social contact level `x`, the infection probability `≈ plogis(-2.37 + 3.09x
 
 ```{r}
 #| echo: true
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
 ```
 
 
@@ -354,7 +347,7 @@ For group-level counts, the formula's left-hand side becomes a proportion, and w
 #| echo: true
 fit <- glm(infected / total ~ social_level, family = binomial(),
            weights = total, data = infections_totals)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
 ```
 
 ## Poisson and Negative Binomial Models
@@ -411,7 +404,7 @@ outbreak |>
 ```{r}
 #| echo: true
 fit <- glm(infected ~ epicenter_distance, family = poisson(), data = outbreak)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
 ```
 
 The output is on the **log scale**, so exponentiate before interpreting.
@@ -424,7 +417,7 @@ At distance `x`, the average count is `≈ exp(2.4 - 0.5x)`
 - `x = 0.5` $\implies$ `exp(2.4 − 0.5 * 3.9) ≈ 1.6`
 
 ```{r}
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
 ```
 
 ## Interpreting the fit
@@ -476,7 +469,7 @@ package does. The syntax is the same as before.
 ```{r}
 #| echo: true
 fit <- glm.nb(infected ~ epicenter_distance, data = outbreak_nb)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
 ```
 
 ## Linear Regression Models
@@ -512,7 +505,7 @@ Same inputs as `glm`, but no `family`.
 ```{r}
 #| echo: true
 fit <- lm(antibody ~ age, data = antibody)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
 ```
 
 Predicted titre at age `x` is `19.6 + 0.058x`
@@ -584,7 +577,7 @@ The Cox PH model is the most popular survival model.
 ```{r}
 #| echo: true
 fit <- coxph(Surv(time, status) ~ treatment, data = surv_data)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
 ```
 
 
@@ -601,7 +594,7 @@ Each estimate is the effect of a variable **with all others held fixed**.
 ```{r}
 #| echo: true
 fit <- lm(antibody ~ age + blood_pressure, data = antibody)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
 ```
 
 
@@ -660,7 +653,7 @@ Replace `glm` with `glmer` and add `(1 | county)` to the formula.
 #| echo: true
 fit <- glmer(infected ~ social_contact + (1 | county),
              family = binomial(), data = mixed_effect_data)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
 ```
 
 ## Interpreting the random effect
@@ -702,7 +695,7 @@ Use `y ~ x1 + x1 : x2` — meaning the `x1` effect depends on the level of `x2`.
 ```{r}
 #| echo: true
 fit <- lm(antibody ~ age + age : group, data = interaction_data)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
 ```
 
 
@@ -758,7 +751,7 @@ below the detection limit.
 #| echo: true
 cytokines_il1 <- cytokines |> filter(cytokine == "IL-1a")
 fit <- lm(log(conc) ~ arm, data = cytokines_il1)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
 ```
 
 The treatment effect is significant, but we should only interpret a model after
@@ -802,7 +795,7 @@ We want the **treatment effect itself to depend on the week**, a type of interac
 ```{r}
 #| echo: true
 fit <- lm(log(conc) ~ arm + arm : time_point, data = cytokines_il1)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
 ```
 
 ## Interpreting the coefficients
@@ -856,7 +849,7 @@ plot_cytokine(sim_data)
 
 ```{r}
 #| echo: true
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
 ```
 
 ## Interpretation
