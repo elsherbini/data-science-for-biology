@@ -11,6 +11,7 @@ execute:
 ---
 
 ```{r}
+#| label: setup-libraries-data
 #| echo: false
 #| warning: false
 #| message: false
@@ -71,18 +72,21 @@ Workshop materials are at:
 ```{r}
 #| label: plot-il1
 #| echo: false
-#| fig-width: 9
+#| fig-width: 8
 #| fig-height: 4.5
 p1 <- ggplot(il1) +
     geom_line(aes(time_point, log(conc), group = pid, col = arm)) +
     scale_y_continuous(expand = c(0, 0)) +
-    scale_x_discrete(expand = c(0, 0))
+    scale_x_discrete(expand = c(0, 0)) +
+    labs(x = "Timepoint", y = "log(concentration)")
 
 p2 <- ggplot(il1) +
     geom_histogram(aes(log(conc), fill = arm), bins = 10, position = "identity", alpha = 0.6) +
-    facet_wrap(~ time_point)
+    facet_wrap(~ time_point) +
+    labs(y = "count", x = "log(concentration)")
 
-p1 / p2
+(p1 / p2) +
+    plot_layout(guides = "collect")
 ```
 
 ## Discussion {.your-turn}
@@ -90,8 +94,8 @@ p1 / p2
 Imagine running the study again, keeping the recruitment and experimental protocols as similar as possible. Make two lists:
 
 ::: incremental
-- Aspects of the plots that you think **will still be true** in the new experiment.
-- Aspects of the plots that you think **will change**.
+- Aspects of the plots that you think *will still be true* in the new experiment.
+- Aspects of the plots that you think *will change*.
 :::
 
 ```{r}
@@ -172,11 +176,7 @@ There will always be a gap between the two worlds. That gap is itself a source o
 
 Each type of statistical model is designed for a different kind of data or biological question.
 
-. . .
-
 Knowing all the "species" of model will let you adapt to whatever data or questions you encounter.
-
-. . .
 
 ::: {style="font-size: 0.9em"}
 Today's tour:
@@ -230,6 +230,7 @@ ggplot(infections) +
 - The outcome takes one of two values
 
 ```{r}
+#| label: tbl-infections-sample
 #| echo: true
 infections |>
     select(sample_id, social_contact, infected)
@@ -248,6 +249,7 @@ The `glm` function has three arguments:
 ## Bernoulli fit
 
 ```{r}
+#| label: fit-bernoulli-glm
 #| echo: true
 fit <- glm(infected ~ social_contact, family = binomial(), data = infections)
 summary(fit)
@@ -273,6 +275,7 @@ At social contact level `x`, the infection probability `≈ plogis(-2.37 + 3.09x
 - `x = 1` $\implies$ `plogis(-2.37 + 1 × 3.09) ≈ 0.50`
 
 ```{r}
+#| label: summary-bernoulli-fit
 #| echo: true
 summary(fit)
 ```
@@ -287,6 +290,7 @@ At social contact level `x`, the infection probability is `≈ plogis(-2.37 + 3.
 - `x = 1` $\implies$ `plogis(-2.37 + 1 * 3.09) ≈ 0.50`
 
 ```{r}
+#| label: plot-bernoulli-overlay
 #| echo: false
 ggplot(infections) +
     geom_jitter(aes(social_contact, infected, col = factor(infected)), height = 0.05, size = 2) +
@@ -302,6 +306,7 @@ If we only see **totals within categories**, then we can use a Binomial model.
 \
 
 ```{r}
+#| label: load-infection-totals
 #| echo: false
 infections_totals <- read_csv("https://huggingface.co/datasets/krisrs1128/durban_workshop_data/resolve/main/infections_props.csv") |>
     mutate(
@@ -316,6 +321,7 @@ infections_totals <- read_csv("https://huggingface.co/datasets/krisrs1128/durban
 ```
 
 ```{r}
+#| label: tbl-infection-totals
 #| echo: true
 infections_totals
 ```
@@ -323,6 +329,7 @@ infections_totals
 ## Aggregated (Binomial) data
 
 ```{r}
+#| label: plot-infection-totals
 #| echo: false
 #| fig-width: 8
 #| fig-height: 3.5
@@ -342,6 +349,7 @@ For group-level counts, the formula's left-hand side becomes a proportion, and w
 \
 
 ```{r}
+#| label: fit-binomial-glm
 #| echo: true
 fit <- glm(infected / total ~ social_level, family = binomial(),
            weights = total, data = infections_totals)
@@ -371,11 +379,13 @@ Counts can depend on sample characteristics, like more infections in counties cl
 The mean parameter is called the **Poisson rate**.
 
 ```{r}
+#| label: load-outbreak-data
 #| echo: false
 outbreak <- read_csv("https://huggingface.co/datasets/krisrs1128/durban_workshop_data/resolve/main/outbreak.csv")
 ```
 
 ```{r}
+#| label: plot-outbreak-mean-count
 #| echo: false
 #| fig-width: 8
 #| fig-height: 4
@@ -392,6 +402,7 @@ Counts can depend on sample characteristics, like more infections in counties cl
 The mean parameter is called the **Poisson rate**.
 
 ```{r}
+#| label: tbl-outbreak-sample
 #| echo: true
 outbreak |>
     select(sample_id, epicenter_distance, infected)
@@ -400,6 +411,7 @@ outbreak |>
 ## Fitting the Poisson
 
 ```{r}
+#| label: fit-poisson-glm
 #| echo: true
 fit <- glm(infected ~ epicenter_distance, family = poisson(), data = outbreak)
 summary(fit)
@@ -415,6 +427,7 @@ At distance `x`, the average count is `≈ exp(2.4 - 0.5x)`
 - `x = 0.5` $\implies$ `exp(2.4 − 0.5 * 3.9) ≈ 1.6`
 
 ```{r}
+#| label: summary-poisson-fit
 summary(fit)
 ```
 
@@ -426,6 +439,7 @@ At distance `x`, the average count is `≈ exp(2.4 - 0.5x)`
 - `x = 0.5` $\implies$ `exp(2.4 − 0.5 × 3.9) ≈ 1.6`
 
 ```{r}
+#| label: plot-outbreak-overlay
 ggplot(outbreak, aes(epicenter_distance)) +
     geom_line(aes(y = mean), col = "#414ca1", linewidth = 1) +
     geom_point(aes(y = infected), size = 2) +
@@ -444,11 +458,13 @@ The model assumes random Gaussian error around a mean value that depends on the 
 ## Antibody titre vs age
 
 ```{r}
+#| label: load-antibody-data
 #| echo: false
 antibody <- read_csv("https://huggingface.co/datasets/krisrs1128/durban_workshop_data/resolve/main/antibody.csv")
 ```
 
 ```{r}
+#| label: plot-antibody-age
 #| echo: false
 #| fig-width: 8
 #| fig-height: 4
@@ -463,6 +479,7 @@ ggplot(antibody) +
 Same inputs as `glm`, but no `family`.
 
 ```{r}
+#| label: fit-antibody-lm
 #| echo: true
 fit <- lm(antibody ~ age, data = antibody)
 summary(fit)
@@ -489,6 +506,7 @@ Formulas can have multiple covariates: `y ~ x1 + x2`
 Each estimate is the effect of a variable **with all others held fixed**.
 
 ```{r}
+#| label: fit-multiple-predictors
 #| echo: true
 fit <- lm(antibody ~ age + blood_pressure, data = antibody)
 summary(fit)
@@ -509,12 +527,14 @@ summary(fit)
 ## County-varying baselines
 
 ```{r}
+#| label: load-mixed-effects-data
 #| echo: false
 mixed_effect_data <- read_csv("https://huggingface.co/datasets/krisrs1128/durban_workshop_data/resolve/main/mixed_effect_data.csv") |>
     mutate(infected = ifelse(infected == "infected", 1, 0))
 ```
 
 ```{r}
+#| label: plot-county-baselines
 #| echo: false
 #| fig-width: 9
 #| fig-height: 4.2
@@ -547,6 +567,7 @@ ggplot(mixed_effect_data) +
 Replace `glm` with `glmer` and add `(1 | county)` to the formula.
 
 ```{r}
+#| label: fit-glmer-county-random-intercept
 #| echo: true
 fit <- glmer(infected ~ social_contact + (1 | county),
              family = binomial(), data = mixed_effect_data)
@@ -555,11 +576,12 @@ summary(fit)
 
 ## Interpreting the random effect
 
-The `SD` says estimates vary by roughly 0.71 across counties, at any level of social contact.
-
-Even at social contact = 0, the infection probabilities below would both be typical:
+The `SD` says estimates vary by roughly 0.71 across counties, at any level of
+social contact. Therefore, even at social contact = 0, the infection
+probabilities below would both be typical:
 
 ```{r}
+#| label: calc-random-effect-prob-range
 #| echo: true
 plogis(-2.28 - 2 * 0.71)
 plogis(-2.28 + 2 * 0.71)
@@ -571,11 +593,13 @@ Sometimes the effect of a variable on the response **depends on the value of
 other variables**. This is called an interaction.
 
 ```{r}
+#| label: load-interaction-data
 #| echo: false
 interaction_data <- read_csv("https://huggingface.co/datasets/krisrs1128/durban_workshop_data/resolve/main/interaction_data.csv")
 ```
 
 ```{r}
+#| label: plot-interaction-pattern
 #| echo: false
 #| fig-width: 7
 #| fig-height: 4
@@ -590,6 +614,7 @@ ggplot(interaction_data) +
 Use `y ~ x1 + x1 : x2` — meaning the `x1` effect depends on the level of `x2`.
 
 ```{r}
+#| label: fit-interaction-lm
 #| echo: true
 fit <- lm(antibody ~ age + age : group, data = interaction_data)
 summary(fit)
@@ -645,6 +670,7 @@ below the detection limit.
 ## A first model
 
 ```{r}
+#| label: fit-il1-main-effect
 #| echo: true
 cytokines_il1 <- cytokines |> filter(cytokine == "IL-1a")
 fit <- lm(log(conc) ~ arm, data = cytokines_il1)
@@ -657,11 +683,13 @@ checking its fidelity.
 ## Check by simulation
 
 ```{r}
+#| label: prep-cytokine-helper-data
 #| echo: false
 cytokines <- cytokines_il1   # for helper
 ```
 
 ```{r}
+#| label: sim-check-main-effect
 #| echo: true
 #| fig-height: 3.5
 #| fig-width: 9
@@ -690,6 +718,7 @@ We want the **treatment effect itself to depend on the week**, a type of interac
 ## Fitted interaction model
 
 ```{r}
+#| label: fit-il1-interaction-model
 #| echo: true
 fit <- lm(log(conc) ~ arm + arm : time_point, data = cytokines_il1)
 summary(fit)
@@ -713,6 +742,7 @@ The large negative coefficient for `armtreatment:time_pointweek_1` captures our 
 ## Simulate updated model
 
 ```{r}
+#| label: sim-check-interaction-model
 #| echo: false
 #| fig-height: 3.5
 #| fig-width: 9
@@ -728,6 +758,7 @@ The model treats each sample as independent, but measurements from the same part
 - We can add a participant-level random effect to introduce dependence.
 
 ```{r}
+#| label: fit-il1-mixed-effects
 #| echo: true
 fit <- lmer(log(conc) ~ arm + arm : time_point + (1 | pid), data = cytokines_il1)
 ```
@@ -735,6 +766,7 @@ fit <- lmer(log(conc) ~ arm + arm : time_point + (1 | pid), data = cytokines_il1
 ## Simulate updated model
 
 ```{r}
+#| label: sim-check-mixed-effects
 #| echo: false
 #| fig-height: 3.5
 #| fig-width: 9
@@ -745,6 +777,7 @@ plot_cytokine(sim_data)
 ## Model results
 
 ```{r}
+#| label: summary-il1-mixed-effects
 #| echo: true
 summary(fit)
 ```
@@ -762,7 +795,7 @@ summary(fit)
 ::: {.incremental style="font-size: 0.95em"}
 1. Models as **data stories** — small world vs. large world.
 2. A **modeling checklist** to guide our work: question → plot → assumptions → checks → revise.
-3. A tour through the **model zoo**: Bernoulli, Binomial, Poisson, Negative Binomial, Linear, Survival.
+3. A tour through the **model zoo**: Bernoulli, Binomial, Poisson, Linear.
 4. **Variations** for complex data: multiple predictors, mixed effects, interactions.
 5. **Case study** illustrating the checklist
 :::
@@ -773,6 +806,7 @@ summary(fit)
 \
 
 ```{r}
+#| label: discussion-timer
 #| echo: false
 countdown::countdown(5)
 ```
