@@ -21,7 +21,6 @@ library(MASS)
 library(lme4)
 library(lmerTest)
 library(patchwork)
-library(survival)
 library(tidyverse)
 source(here("materials/1-workshop1/5-modeling/helpers.R"))
 theme_set(theme_classic(base_size = 18))
@@ -183,9 +182,8 @@ Knowing all the "species" of model will let you adapt to whatever data or questi
 Today's tour:
 
 - **Bernoulli / Binomial** — binary outcomes
-- **Poisson / Negative Binomial** — count outcomes
+- **Poisson** — count outcomes
 - **Linear regression** — continuous outcomes
-- **Survival models** — time-to-event outcomes
 - **Variations** — multiple predictors, mixed effects, interactions
 :::
 
@@ -350,7 +348,7 @@ fit <- glm(infected / total ~ social_level, family = binomial(),
 summary(fit)
 ```
 
-## Poisson and Negative Binomial Models
+## Poisson Models
 
 These models apply to **count data**.
 
@@ -358,7 +356,7 @@ The Poisson arises whenever we count events spread uniformly across space and ti
 
 [draw a picture]
 
-## Poisson and Negative Binomial Models
+## Poisson Models
 
 Many biological counts have this flavor:
 
@@ -434,44 +432,6 @@ ggplot(outbreak, aes(epicenter_distance)) +
     labs(x = "Epicenter Distance", y = "Infection Count")
 ```
 
-## Overdispersion
-
-Often unmeasured factors influence the rates, making the data more heterogeneous than the Poisson can handle.
-
-   - E.g., infection might depend not only on distance but on unknown, county-specific population densities.
-
-The **negative binomial** addresses this — it arises as a mixture of Poissons with similar but slightly different rates.
-
-## Negative binomial data
-
-```{r}
-#| echo: false
-outbreak_nb <- read_csv("https://huggingface.co/datasets/krisrs1128/durban_workshop_data/resolve/main/outbreak_nb.csv")
-```
-
-```{r}
-#| echo: false
-#| fig-width: 8
-#| fig-height: 4
-ggplot(outbreak_nb, aes(epicenter_distance)) +
-    geom_line(aes(y = mean), col = "#414ca1", linewidth = 1) +
-    geom_point(aes(y = infected), size = 2) +
-    labs(x = "Epicenter Distance", y = "Infection Count")
-```
-
-The blue mean line is unchanged, but counts at a given distance are more spread out.
-
-## Fitting with `glm.nb`
-
-`glm` doesn't have a negative binomial model, but `glm.nb` from the **MASS**
-package does. The syntax is the same as before.
-
-```{r}
-#| echo: true
-fit <- glm.nb(infected ~ epicenter_distance, data = outbreak_nb)
-summary(fit)
-```
-
 ## Linear Regression Models
 
 Linear regression applies when the response is **continuous**. For example:
@@ -519,69 +479,6 @@ The **Central Limit Theorem**: the average of many small, independent effects te
 We implicitly assume many small, independent factors other than age that perturb the observed antibody measurement.
 
 [picture of gsn errors around regression line]
-
-## Survival Models
-
-Survival models describe **whether and when an event occurs**.
-
-- Time until heart attack
-- Time until loan default
-- Time until HIV acquisition
-
-
-If the event doesn't happen during the study, the participant's response is called **censored**.
-
-## The outcome has *two* parts
-
-Unlike the other models, the survival outcome is *two* numbers:
-
-::: incremental
-- `time` — when the event was observed (or the study ended)
-- `status` — whether the event happened (`1`) or was censored (`0`)
-:::
-
-## Example: HIV acquisition
-
-A hypothetical two-year study tracking participants on drug vs. control. Some
-have an event (triangles), the rest are censored.
-
-```{r}
-#| echo: false
-surv_data <- read_csv("https://huggingface.co/datasets/krisrs1128/durban_workshop_data/resolve/main/surv_data.csv")
-```
-
-```{r}
-#| echo: false
-#| fig-width: 9.5
-#| fig-height: 7.5
-surv_data |>
-    mutate(id = row_number()) |>
-    ggplot(aes(time, reorder(id, time), color = treatment, shape = factor(status))) +
-     geom_point(size = 3.5) +
-     labs(x = "Time", y = "Participant", color = "Treatment", shape = "Event?") +
-     theme(panel.grid.major.y = element_line(linewidth = 0.1))
-```
-
-## The Cox proportional hazards model
-
-The Cox PH model is the most popular survival model.
-
-- During any time interval, anyone who hasn't yet had an event is **at risk**.
-- Covariates can change the relative risk (the **"hazard"**) of the event.
-- A covariate shifts the hazard by the same factor at all times → *proportional* hazards.
-
-[picture for intuition]
-
-## Fitting `coxph`
-
-```{r}
-#| echo: true
-fit <- coxph(Surv(time, status) ~ treatment, data = surv_data)
-summary(fit)
-```
-
-
-The model output shows how each covariate **rescales the hazard**.
 
 # Variations: Multiple Predictors, Mixed Effects, Interactions
 
