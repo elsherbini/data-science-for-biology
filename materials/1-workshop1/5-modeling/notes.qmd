@@ -585,6 +585,8 @@ estimate the overall variation across counties. Statistically, this is an easier
 task, and it yields higher power.  Because they include both fixed and random
 effects, these models are called mixed effects models.
 
+   ![](images/random_effects_counties.png)
+
 1. To implement this, we replace `glm` with `glmer` and add `(1 | county)` to
 the formula, indicating that county is a random rather than fixed effect.
 

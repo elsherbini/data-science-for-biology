@@ -69,7 +69,7 @@ Workshop materials are at:
 
 3. Use R to estimate models and know how to explain the output.
 
-4. Diagnose and address model failures .
+4. Diagnose and address model failures.
 :::
 
 # Part 1: What is a Model?
@@ -252,7 +252,7 @@ The outcome probabilities can depend on sample covariates.
 
 ## Example data story
 
-- **Response $y$**: For all students at a school, did they get the flu (1) or not (0).
+- **Response $y$**: Who does (1) or doesn't (2) get infected during an outbreak?
 
 - **Covariates $x$**: Some people have larger social networks than others.
 
@@ -649,7 +649,7 @@ summary(fit)
 
 - Baseline effects often **vary across contexts**.
 
-- Infection probability might always increase with social contact, but the baseline rate varies across counties due to unmeasured factors, like population density.
+- In the Bernoulli example, the way infection probability increases with social contact may vary from county due to unmeasured factors, like population density.
 
 ## County-varying baselines
 
@@ -681,13 +681,16 @@ ggplot(mixed_effect_data) +
 - A better approach is to use a **random effect**
 - County effects are imagined as drawn from a larger source of randomness.
 
-[add a picture for intuition]
+![](images/random_effects_counties.png)
+
 
 ## Random effects
 
 - We estimate the **overall variation across counties**, not each one separately.
 - This is statistically easier, so yields higher power.
 - Because they include both fixed and random effects, these are called **mixed effects** models.
+
+![](images/random_effects_counties.png)
 
 ## Fitting with `glmer`
 
