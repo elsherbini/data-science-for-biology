@@ -1,11 +1,4 @@
----
-title: "Exercise 2: Gene Expresssion of Drought Response"
-format: html
-editor: source
-execute:
-  warning: false
-  message: false
----
+## Exercise 2: Gene Expresssion of Drought Response
 
 > *Mode flip.* If you were **agentic** in Exercise 1, you are **manual** now; if you were manual, you are agentic. Same definitions as before — manual means you may ask a chat LLM conceptual questions but it does not touch your notebook.
 
