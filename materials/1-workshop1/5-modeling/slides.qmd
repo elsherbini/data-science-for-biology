@@ -173,6 +173,8 @@ A dataset is like a photograph of a biological system, but the snapshot takes lo
 
 - It encodes a _data generating process_ that lets us simulate new data that preserves the key aspects of the original experiment without memorizing every sample's value
 
+![](images/example_small_worlds.png)
+
 ## Modeling Checklist
 
 ::: {.incremental style="font-size: 0.95em"}
@@ -246,7 +248,7 @@ The outcome probabilities can depend on sample covariates.
 
 - The data generating process not only samples the correct frequencies but maintains the covariate-response relationship.
 
-![](images/bernoulli_sizes_covariate.png)
+![](images/bernoulli_sizes_curve.png)
 
 ## Example data story
 
