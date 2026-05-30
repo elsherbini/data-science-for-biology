@@ -2,13 +2,23 @@
 title: "Modeling and Uncertainty"
 subtitle: "<em>Building models for biological data</em>"
 author: Kris Sankaran and Marothi Peter Letsoalo
-format: qmdrslides-revealjs
+format:
+    qmdrslides-revealjs:
+        fig-align: center
+        include-in-header:
+            text: |
+                <style>
+                .reveal .slides section img {
+                    display: block;
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+                </style>
 editor_options:
   chunk_output_type: inline
 
 execute:
   cache: false
-  fig-align: center
 ---
 
 ```{r}
@@ -100,7 +110,7 @@ Imagine running the study again, keeping the recruitment and experimental protoc
 :::
 
 ```{r}
-#| label: plot-copoy
+#| label: plot-copy
 p1 / p2
 ```
 
@@ -141,17 +151,21 @@ There will always be a gap between the two worlds. That gap is itself a source o
 
 ## Large Worlds
 
-A dataset is like a photograph, but the measurement process has many more steps.
+A dataset is like a photograph of a biological system, but the snapshot takes longer to generate and is more error prone.
 
-Consider the flow cytometry dataset on the workshop website.
+![](images/malaria.jpeg)
 
-- The study participant has > 1 trillion immune cells circulating throughout the body
-- They donate a sample, giving a small number of those cells, many die in the process
-- The sample is frozen and stored in a refrigerator
-- The sample is prepared for the flow cytometer and passed through the device
-- A computational biologist gates the machine outputs into cell counts.
-- The data are saved to a cloud server and downloaded in our workshop.
+## Large Worlds
 
+A dataset is like a photograph of a biological system, but the snapshot takes longer to generate and is more error prone.
+
+![](images/luminex_overview.png)
+
+## Large Worlds
+
+A dataset is like a photograph of a biological system, but the snapshot takes longer to generate and is more error prone.
+
+![](images/cytometry_csv.png)
 
 ## Small Worlds
 
@@ -208,23 +222,23 @@ The **Bernoulli** is for *individual outcomes*, the **Binomial** applies to thei
 Once fitted, the small-world Bernoulli and Binomial models can generate data
 with frequencies comparable to the observed data.
 
-<img src="images/bernoulli_circles.png"/>
+![](images/bernoulli_circles.png)
 
 ## Bernoulli and Binomial Models
 
-<img src="images/bernoulli_binomial_comparison.png"/>
+![](images/bernoulli_binomial_comparison.png)
 
 ## Bernoulli Model
 
 The outcome probabilities can depend on sample covariates.
 
-<img src="images/bernoulli_sizes_covariate.png"/>
+![](images/bernoulli_sizes_covariate.png)
 
 ## Bernoulli Model
 
 The outcome probabilities can depend on sample covariates.
 
-<img src="images/bernoulli_sizes_curve.png"/>
+![](images/bernoulli_sizes_curve.png)
 
 ## Small-world
 
@@ -232,15 +246,15 @@ The outcome probabilities can depend on sample covariates.
 
 - The data generating process not only samples the correct frequencies but maintains the covariate-response relationship.
 
-<img src="images/bernoulli_sizes_covariate.png"/>
+![](images/bernoulli_sizes_covariate.png)
 
 ## Example data story
 
-- **Response $y$**: For every person in a school, see whether they got the flu (1) or not (0).
+- **Response $y$**: For all students at a school, did they get the flu (1) or not (0).
 
 - **Covariates $x$**: Some people have larger social networks than others.
 
-- **Story**: Each interaction carries the risk for infection, so more social contact → higher probability of infection.
+- **Story**: More social contact → higher probability of infection.
 
 ```{r}
 #| label: load-bernoulli-data
@@ -253,12 +267,14 @@ infections <- read_csv("https://huggingface.co/datasets/krisrs1128/durban_worksh
 #| label: plot-bernoulli
 #| echo: false
 #| fig-width: 8
-#| fig-height: 4.5
+#| fig-height: 5.5
+#| out-width: 120%
 ggplot(infections) +
     geom_jitter(aes(social_contact, infected, col = factor(infected)), height = 0.05, size = 2) +
     geom_line(aes(social_contact, prob_infection), linewidth = 1, col = "#232323") +
     scale_x_continuous(expand = c(0, 0)) +
-    labs(y = "Status '1' → Infected", x = "Level of Social Contact", col = "Infection Status")
+    theme(legend.position = "bottom") +
+    labs(y = "Infection Probability", x = "Level of Social Contact", col = "Infection Status")
 ```
 
 ## Infection data
@@ -322,14 +338,14 @@ summary(fit)
 - The **intercept** parameter controls the height of the curve at 0.
 - The **slope** parameter controls the rate of its increase as a function of $x$.
 
-<img src="images/intercept_plogis.png"/>
+![](images/intercept_plogis.png)
 
 ## Interpreting the fit
 
 - The **intercept** parameter controls the height of the curve at 0.
 - The **slope** parameter controls the rate of its increase as a function of $x$.
 
-<img src="images/slope_plogis.png"/>
+![](images/slope_plogis.png)
 
 ## Interpreting the fit
 
@@ -339,12 +355,15 @@ summary(fit)
 
 ```{r}
 #| label: plot-bernoulli-overlay
+#| fig-width: 8
+#| fig-height: 5.5
 #| echo: false
 ggplot(infections) +
     geom_jitter(aes(social_contact, infected, col = factor(infected)), height = 0.05, size = 2) +
     geom_line(aes(social_contact, prob_infection), linewidth = 1, col = "#232323") +
     scale_x_continuous(expand = c(0, 0)) +
-    labs(y = "Status '1' → Infected", x = "Level of Social Contact", col = "Infection Status")
+    theme(legend.position = "bottom") +
+    labs(y = "Infection Probability", x = "Level of Social Contact", col = "Infection Status")
 ```
 
 ## Aggregated (Binomial) data
@@ -380,7 +399,7 @@ infections_totals
 #| label: plot-infection-totals
 #| echo: false
 #| fig-width: 8
-#| fig-height: 3.5
+#| fig-height: 5.5
 infections_totals |>
     select(-total) |>
     pivot_longer(-social_level) |>
@@ -404,7 +423,7 @@ summary(fit)
 
 ## Interpreting the fit
 
-<img src="images/binomial_fitted_probabilities.png"/>
+![](images/binomial_fitted_probabilities.png)
 
 ## Poisson Models
 
@@ -412,7 +431,7 @@ These models apply to **count data**.
 
 The Poisson arises whenever we count events spread uniformly across space and time — like raindrops landing on a window during a minute of rain.
 
-<img src="images/poisson_raindrop.png"/>
+![](images/poisson_raindrop.png)
 
 ## Poisson Models
 
@@ -420,13 +439,13 @@ These models apply to **count data**.
 
 The Poisson arises whenever we count events spread uniformly across space and time — like raindrops landing on a window during a minute of rain.
 
-<img src="images/poisson_histogram.png"/>
+![](images/poisson_histogram.png)
 
 ## Poisson Models
 
 Counts can depend on sample characteristics. The rain may have been falling harder earlier in the night.
 
-<img src="images/poisson_histogram_sequence.png"/>
+![](images/poisson_histogram_sequence.png)
 
 ## Poisson Models
 
@@ -522,7 +541,7 @@ The model assumes random Gaussian error around a mean value that depends on the 
 
 ## Gaussian Assumption
 
-<img src="images/regression_gsn_errors.png"/>
+![](images/regression_gsn_errors.png)
 
 ## Antibody titre vs age
 
@@ -566,11 +585,11 @@ We implicitly assume many small, independent factors other than age that perturb
 
 [picture of gsn errors around regression line]
 
-<img src="images/regression_gsn_clt.png"/>
+![](images/regression_gsn_clt.png)
 
 ## Why Gaussian errors?
 
-<iframe src="https://seeing-theory.brown.edu/probability-distributions/index.html#section3" height="800" width="1000" style="border: 1px solid #2e3846;"></iframe>
+<iframe src="https://seeing-theory.brown.edu/probability-distributions/index.html#section3" height="800" width="2000" style="border: 1px solid #2e3846;"></iframe>
 
 ## Categorical covariates
 
@@ -618,11 +637,11 @@ summary(fit)
 
 ## Multiple Predictors
 
-<img src="images/two_predictors_3d.png"/>
+![](images/two_predictors_3d.png)
 
 ## Multiple Predictors
 
-<img src="images/two_predictors_2d.png"/>
+![](images/two_predictors_2d.png)
 
 ## Mixed effects
 
@@ -810,6 +829,7 @@ simulated output matches the corresponding training sample.
 
 ```{r}
 #| label: simulate-intro
+#| echo: true
 simulate(fit)
 ```
 
