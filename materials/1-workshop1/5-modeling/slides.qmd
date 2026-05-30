@@ -8,6 +8,7 @@ editor_options:
 
 execute:
   cache: false
+  fig-align: center
 ---
 
 ```{r}
@@ -28,9 +29,9 @@ theme_set(theme_classic(base_size = 18))
 set.seed(202606)
 
 ids <- read_csv(here("datasets/instructional_dataset/00_sample_ids_UKZN_workshop_2023.csv"))
-cytokines <- read_csv(here("datasets/instructional_dataset/03_elisa_cytokines_UKZN_workshop_2023.csv")) |>
+cytokines_all <- read_csv(here("datasets/instructional_dataset/03_elisa_cytokines_UKZN_workshop_2023.csv")) |>
     left_join(ids)
-il1 <- cytokines |> filter(cytokine == "IL-1a")
+cytokines <- cytokines_all |> filter(cytokine == "IL-1a")
 flow_all <- read_csv(here("datasets/instructional_dataset/04_flow_cytometry_UKZN_workshop_2023.csv"))
 ```
 
@@ -74,13 +75,13 @@ Workshop materials are at:
 #| echo: false
 #| fig-width: 8
 #| fig-height: 4.5
-p1 <- ggplot(il1) +
+p1 <- ggplot(cytokines) +
     geom_line(aes(time_point, log(conc), group = pid, col = arm)) +
     scale_y_continuous(expand = c(0, 0)) +
     scale_x_discrete(expand = c(0, 0)) +
     labs(x = "Timepoint", y = "log(concentration)")
 
-p2 <- ggplot(il1) +
+p2 <- ggplot(cytokines) +
     geom_histogram(aes(log(conc), fill = arm), bins = 10, position = "identity", alpha = 0.6) +
     facet_wrap(~ time_point) +
     labs(y = "count", x = "log(concentration)")
@@ -115,23 +116,7 @@ countdown::countdown(5)
 
 - Model parameters let us answer substantive scientific questions, like how a treatment affects outcomes.
 
-- We observe just one realization of the data generating process -- things could have turned out differently.
-
-## The data story
-
-::: {layout="[[1,1,1]]" layout-valign="center" style="text-align: center"}
-**Biology**
-
-(true DGP)
-
-**Experiment**
-
-(one realization)
-
-**Model**
-
-(small-world story)
-:::
+- We observe just one realization of the data generating process -- things could have turned out differently if we ran the study again.
 
 ## Large vs. small worlds
 
@@ -152,14 +137,32 @@ countdown::countdown(5)
 :::
 :::
 
-. . .
-
 There will always be a gap between the two worlds. That gap is itself a source of uncertainty not captured by the model.
+
+## Large Worlds
+
+A dataset is like a photograph, but the measurement process has many more steps.
+
+Consider the flow cytometry dataset on the workshop website.
+
+- The study participant has > 1 trillion immune cells circulating throughout the body
+- They donate a sample, giving a small number of those cells, many die in the process
+- The sample is frozen and stored in a refrigerator
+- The sample is prepared for the flow cytometer and passed through the device
+- A computational biologist gates the machine outputs into cell counts.
+- The data are saved to a cloud server and downloaded in our workshop.
+
+
+## Small Worlds
+
+- The small-world model summarizes the aspects of the experiment that will continue to be true
+
+- It encodes a _data generating process_ that lets us simulate new data that preserves the key aspects of the original experiment without memorizing every sample's value
 
 ## Modeling Checklist
 
 ::: {.incremental style="font-size: 0.95em"}
-1. **Biological Question.** A good model should clarify our thinking about a real phenomenon and not be made for the sake of modeling.
+1. **Biological Question.** What real-world questions do you want  your model to answer?
 
 2. **Plot the Data.** What does the outcome look like? Do you notice relationships with other variables?
 
@@ -179,7 +182,7 @@ Each type of statistical model is designed for a different kind of data or biolo
 Knowing all the "species" of model will let you adapt to whatever data or questions you encounter.
 
 ::: {style="font-size: 0.9em"}
-Today's tour:
+_Today's tour:_
 
 - **Bernoulli / Binomial** — binary outcomes
 - **Poisson** — count outcomes
@@ -191,19 +194,53 @@ Today's tour:
 
 These models apply when outcomes fall into **two groups**.
 
+- Heads vs. tails
 - Infected vs. not infected
 - Responder vs. non-responder
-- Alive vs. dead
+- CD3- cell vs. not CD3- cell
 
 ::: {.fragment}
 The **Bernoulli** is for *individual outcomes*, the **Binomial** applies to their *totals*
 :::
 
-## The data story
+## Bernoulli and Binomial Models
 
-- Each person's characteristics shift the outcome probabilities
+Once fitted, the small-world Bernoulli and Binomial models can generate data
+with frequencies comparable to the observed data.
 
-- For example: *more social contact → higher probability of infection.*
+<img src="images/bernoulli_circles.png"/>
+
+## Bernoulli and Binomial Models
+
+<img src="images/bernoulli_binomial_comparison.png"/>
+
+## Bernoulli Model
+
+The outcome probabilities can depend on sample covariates.
+
+<img src="images/bernoulli_sizes_covariate.png"/>
+
+## Bernoulli Model
+
+The outcome probabilities can depend on sample covariates.
+
+<img src="images/bernoulli_sizes_curve.png"/>
+
+## Small-world
+
+- The small-world model summarizes the relationship between covariates and response using this curve.
+
+- The data generating process not only samples the correct frequencies but maintains the covariate-response relationship.
+
+<img src="images/bernoulli_sizes_covariate.png"/>
+
+## Example data story
+
+- **Response $y$**: For every person in a school, see whether they got the flu (1) or not (0).
+
+- **Covariates $x$**: Some people have larger social networks than others.
+
+- **Story**: Each interaction carries the risk for infection, so more social contact → higher probability of infection.
 
 ```{r}
 #| label: load-bernoulli-data
@@ -280,10 +317,21 @@ At social contact level `x`, the infection probability `≈ plogis(-2.37 + 3.09x
 summary(fit)
 ```
 
+## Interpreting the fit
+
+- The **intercept** parameter controls the height of the curve at 0.
+- The **slope** parameter controls the rate of its increase as a function of $x$.
+
+<img src="images/intercept_plogis.png"/>
 
 ## Interpreting the fit
 
-At social contact level `x`, the infection probability is `≈ plogis(-2.37 + 3.09x)`
+- The **intercept** parameter controls the height of the curve at 0.
+- The **slope** parameter controls the rate of its increase as a function of $x$.
+
+<img src="images/slope_plogis.png"/>
+
+## Interpreting the fit
 
 - `x = 0` $\implies$ `plogis(-2.37) ≈ 0.085`
 - `x = 0.5` $\implies$ `plogis(-2.37 + 0.5 * 3.09) ≈ 0.24`
@@ -346,8 +394,6 @@ infections_totals |>
 
 For group-level counts, the formula's left-hand side becomes a proportion, and we add `weights` to reflect group totals.
 
-\
-
 ```{r}
 #| label: fit-binomial-glm
 #| echo: true
@@ -356,21 +402,39 @@ fit <- glm(infected / total ~ social_level, family = binomial(),
 summary(fit)
 ```
 
+## Interpreting the fit
+
+<img src="images/binomial_fitted_probabilities.png"/>
+
 ## Poisson Models
 
 These models apply to **count data**.
 
 The Poisson arises whenever we count events spread uniformly across space and time — like raindrops landing on a window during a minute of rain.
 
-[draw a picture]
+<img src="images/poisson_raindrop.png"/>
+
+## Poisson Models
+
+These models apply to **count data**.
+
+The Poisson arises whenever we count events spread uniformly across space and time — like raindrops landing on a window during a minute of rain.
+
+<img src="images/poisson_histogram.png"/>
+
+## Poisson Models
+
+Counts can depend on sample characteristics. The rain may have been falling harder earlier in the night.
+
+<img src="images/poisson_histogram_sequence.png"/>
 
 ## Poisson Models
 
 Many biological counts have this flavor:
 
-- Transcript counts in a cell
-- Mutation count along a segment of the genome
-- Infection count within a county
+- Transcript counts of a gene can depend on drug treatment
+- Mutation count along a segment of the genome can depend on selection pressure
+- Infection count within a county can depend on distance to the epicenter
 
 ## Outbreak counts vs. distance
 
@@ -450,10 +514,15 @@ ggplot(outbreak, aes(epicenter_distance)) +
 
 Linear regression applies when the response is **continuous**. For example:
 
+- Temperature
 - Antibody titre
-- CRP concentration
+- Leaf width
 
-The model assumes random Gaussian error around a mean value that depends on the inputs.
+The model assumes random Gaussian error around a mean value that depends on the covariates.
+
+## Gaussian Assumption
+
+<img src="images/regression_gsn_errors.png"/>
 
 ## Antibody titre vs age
 
@@ -497,6 +566,36 @@ We implicitly assume many small, independent factors other than age that perturb
 
 [picture of gsn errors around regression line]
 
+<img src="images/regression_gsn_clt.png"/>
+
+## Why Gaussian errors?
+
+<iframe src="https://seeing-theory.brown.edu/probability-distributions/index.html#section3" height="800" width="1000" style="border: 1px solid #2e3846;"></iframe>
+
+## Categorical covariates
+
+Linear regression can be used with covariates that are categorical. It is not
+limited to drawing straight lines through scatterplots.
+
+```{r}
+#| label: gsn-categories
+antibody_grouped <- antibody |>
+    mutate(age_group = cut(age, c(0, 30, 60, 100)))
+ggplot(antibody_grouped) +
+    geom_boxplot(aes(age_group, antibody)) +
+    labs(x = "Age Group", y = "Antibody Titre")
+```
+
+## Categorical covariates
+
+The estimates are on the same scale as the response, so we can interpret the
+results without using `plogis` or `exp` like we needed before.
+
+```{r}
+fit <- lm(antibody ~ age_group, data = antibody_grouped)
+summary(fit)
+```
+
 # Variations: Multiple Predictors, Mixed Effects, Interactions
 
 ## Multiple predictors
@@ -517,10 +616,17 @@ summary(fit)
 *Fixing blood pressure, average antibody level increases by 0.058 units per year of age.*
 :::
 
+## Multiple Predictors
+
+<img src="images/two_predictors_3d.png"/>
+
+## Multiple Predictors
+
+<img src="images/two_predictors_2d.png"/>
+
 ## Mixed effects
 
 - Baseline effects often **vary across contexts**.
-
 
 - Infection probability might always increase with social contact, but the baseline rate varies across counties due to unmeasured factors, like population density.
 
@@ -632,6 +738,23 @@ summary(fit)
 
 - They are the key tools we can use when **revising a model's working assumptions** to improve its fit.
 
+## Discussion {.your-turn}
+
+Think through the first two parts three parts of the modeling checklist for a
+dataset that you are interested in from your own work or study.
+
+1. **Biological Question**. What real-world questions do you want  your model to answer?
+
+2. **Plot the Data.** Did you ever plot the data? If so, what patterns did you see? If not, what plots could you make?
+
+3. **Working Assumptions.** Make a small-world story about your data. What model type, response $y$, and covariates $x$ could you use?
+
+::: {style="font-color: grey; opacity: 80%"}
+4. **Model Checks.** Use simulation and diagnostics to check whether the model captures patterns we see in the real data.
+
+5. **Revised Models.** Revise until the model provides a good match. Use this to answer the original question.
+:::
+
 # Part 3: Case Studies
 
 ## Case Study: Longitudinal Cytokines
@@ -672,8 +795,8 @@ below the detection limit.
 ```{r}
 #| label: fit-il1-main-effect
 #| echo: true
-cytokines_il1 <- cytokines |> filter(cytokine == "IL-1a")
-fit <- lm(log(conc) ~ arm, data = cytokines_il1)
+cytokines <- cytokines |> filter(cytokine == "IL-1a")
+fit <- lm(log(conc) ~ arm, data = cytokines)
 summary(fit)
 ```
 
@@ -682,11 +805,18 @@ checking its fidelity.
 
 ## Check by simulation
 
+The `simulate` function lets you simulate new response values. By default each
+simulated output matches the corresponding training sample.
+
 ```{r}
-#| label: prep-cytokine-helper-data
-#| echo: false
-cytokines <- cytokines_il1   # for helper
+#| label: simulate-intro
+simulate(fit)
 ```
+
+## Check by simulation
+
+The `simulate_cytokines` helper function runs `simulate` and reshapes the data
+for plotting.
 
 ```{r}
 #| label: sim-check-main-effect
@@ -720,7 +850,7 @@ We want the **treatment effect itself to depend on the week**, a type of interac
 ```{r}
 #| label: fit-il1-interaction-model
 #| echo: true
-fit <- lm(log(conc) ~ arm + arm : time_point, data = cytokines_il1)
+fit <- lm(log(conc) ~ arm + arm : time_point, data = cytokines)
 summary(fit)
 ```
 
@@ -760,7 +890,7 @@ The model treats each sample as independent, but measurements from the same part
 ```{r}
 #| label: fit-il1-mixed-effects
 #| echo: true
-fit <- lmer(log(conc) ~ arm + arm : time_point + (1 | pid), data = cytokines_il1)
+fit <- lmer(log(conc) ~ arm + arm : time_point + (1 | pid), data = cytokines)
 ```
 
 ## Simulate updated model
