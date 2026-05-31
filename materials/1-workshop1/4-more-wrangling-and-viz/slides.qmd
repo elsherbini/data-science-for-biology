@@ -196,7 +196,9 @@ table_02 |>
   )
 ```
 
-132 → 396 rows. *Row = participant-visit-measurement.* Useful for faceted plots — we'll use this in Exercise 2.
+132 → 396 rows. *Row = participant-visit-measurement.*
+
+**This is the move that unlocks faceting.** `facet_wrap()` draws one panel per value of a column — so when you want a panel per measurement, reshape to long with `pivot_longer` first. We use exactly this in Exercise 2.
 
 ## `pivot_wider` — from long to wide
 
@@ -219,6 +221,8 @@ arm_timepoint |>
 ```
 
 6 → 2 rows. *Row = arm.* Three new columns, one per visit. Useful for table-style display.
+
+{{< include ../_wooclap.qmd >}}
 
 ## Exercise 1 {.your-turn}
 
@@ -364,7 +368,7 @@ table_02 |>
   facet_wrap(~ measurement, scales = "free_y")
 ```
 
-The `pivot_longer` from the wrangling half *enables* this kind of small-multiples plot. Each facet sees one slice of the long table.
+The `pivot_longer` from the wrangling half is what *enables* this kind of small-multiples plot — each facet sees one slice of the long table. Want facets? Reshape to long first.
 
 ## Choosing a distribution geom
 
@@ -374,6 +378,8 @@ The `pivot_longer` from the wrangling half *enables* this kind of small-multiple
 - Shape + observations together → `geom_violin` + `geom_quasirandom`
 
 The choice depends on what you want the reader to see.
+
+{{< include ../_wooclap_2.qmd >}}
 
 ## Exercise 2 {.your-turn}
 

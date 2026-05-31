@@ -239,6 +239,8 @@ If you ran `tbl_summary(by = smoker)` instead of `by = arm`, you would be compar
 
 This is the limit of what Table 1 can sanity-check. Comparing non-randomized groups validly requires causal-inference machinery — DAGs, propensity scores, sensitivity analyses — which is beyond this workshop's scope.
 
+{{< include ../_wooclap.qmd >}}
+
 ## Exercise 1 {.your-turn}
 
 Open `notebooks/06-table-one.qmd` in your Codespace.
@@ -472,6 +474,8 @@ You fit a model once and report it many times. Never refit just to make a table.
 - same person pre vs post → paired test on a line plot
 - adjust for a covariate → `lm` + `tbl_regression`
 - report any fitted model (`lm`, `glm`, `lmer`, ...) → `tbl_regression(fit)`
+
+{{< include ../_wooclap_2.qmd >}}
 
 ## Exercise 2 {.your-turn}
 

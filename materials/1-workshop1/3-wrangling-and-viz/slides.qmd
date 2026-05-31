@@ -210,6 +210,8 @@ table_01 |> count(arm, smoker)
 
 Each row is one arm × smoker combination.
 
+{{< include ../_wooclap.qmd >}}
+
 ## Exercise 1 {.your-turn}
 
 Open `notebooks/03-wrangling.qmd` in your Codespace.
@@ -496,6 +498,8 @@ ggplot(table_02, aes(x = arm, y = ph, fill = arm)) +
 `facet_wrap(~ column)` splits the plot across panels.
 
 Each row in the data still becomes one mark, placed in its `time_point` panel.
+
+{{< include ../_wooclap_2.qmd >}}
 
 ## Exercise 2 {.your-turn}
 
