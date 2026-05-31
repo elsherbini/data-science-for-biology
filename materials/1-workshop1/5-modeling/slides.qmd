@@ -767,17 +767,11 @@ summary(fit)
 Think through the first two parts three parts of the modeling checklist for a
 dataset that you are interested in from your own work or study.
 
-1. **Biological Question**. What real-world questions do you want  your model to answer?
+1. **Biological Question**. What real-world questions do you want to answer?
 
 2. **Plot the Data.** Did you ever plot the data? If so, what patterns did you see? If not, what plots could you make?
 
 3. **Working Assumptions.** Make a small-world story about your data. What model type, response $y$, and covariates $x$ could you use?
-
-::: {style="font-color: grey; opacity: 80%"}
-4. **Model Checks.** Use simulation and diagnostics to check whether the model captures patterns we see in the real data.
-
-5. **Revised Models.** Revise until the model provides a good match. Use this to answer the original question.
-:::
 
 # Part 3: Case Studies
 
