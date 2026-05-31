@@ -10,12 +10,12 @@ format:
 You do not need to install anything on your laptop for the workshop. See the [Get Started](getting-started.qmd) page for how to open the workshop environment in GitHub Codespaces.
 
 ## Textbooks
-![](images/R_for_data_science.png){fig-align="left" width=15%}  
-R for Data Science: Import, Tidy, Transform, Visualize, and Model Data by Garrett Grolemund and Hadley Wickham  
+![](images/R_for_data_science.png){fig-align="left" width=15%}
+R for Data Science: Import, Tidy, Transform, Visualize, and Model Data by Garrett Grolemund and Hadley Wickham
 [Link](https://r4ds.had.co.nz/)
 
 ## Definitions from Glosario
-Further definitions at [Glosario](https://glosario.carpentries.org/)  
+Further definitions at [Glosario](https://glosario.carpentries.org/)
 
 
 **Argument**: one of possibly several expressions that are passed to a function. Oftentimes parameter and arugument are used interchangably, even though techincally parameter refers to the variable and argument refers to the value.
@@ -48,7 +48,7 @@ Further definitions at [Glosario](https://glosario.carpentries.org/)
 
 **Tidyverse**: A collection of R packages for operating on tabular data in consistent ways.
 
-**Variable**: A name in a program that has some data associated with it. A variable’s value can be changed after definition. 
+**Variable**: A name in a program that has some data associated with it. A variable’s value can be changed after definition.
 
 **Vector**: A sequence of values that have all the same type. Vectors are the fundamental data structure in R; a scalar is just a vector with exactly one element.
 
@@ -57,7 +57,7 @@ Further definitions at [Glosario](https://glosario.carpentries.org/)
 
 Reproduced from [Tim Myer's incredible r-learning-resources-for-genomics](https://github.com/timyers/r-learning-resources-for-genomics/)
 
-We've added {{< fa star >}} to some of the best resources for everyone on this list. 
+We've added {{< fa star >}} to some of the best resources for everyone on this list.
 
 <!-- badges: start -->
 
@@ -76,7 +76,7 @@ We've added {{< fa star >}} to some of the best resources for everyone on this l
 <p align="center">
 <img src="images/r_rollercoaster.png" width="75%" height="75%" />
 </p>
-    
+
 
 Illustration by [Allison
 Horst](https://github.com/allisonhorst/stats-illustrations) - CC BY 4.0
@@ -87,7 +87,7 @@ Horst](https://github.com/allisonhorst/stats-illustrations) - CC BY 4.0
 - [RStudio Education](https://education.rstudio.com/learn/) - RStudio provides free and open source tools for `R`, including educational tools.  Choose your `R` learning path: beginner, intermediate, expert.  Resources include cheatsheets, books and tutorials.
 - [How to Get Started with R: A Video](https://www.youtube.com/watch?v=wfshEa_F2FQ) - In this brief YouTube video, you will find all the essentials you need to get started with the `R` Programming Language.  Make sure to download `R` and RStudio to your local machine first.  Brought to you by the Duke Center for Computational Thinking.
 - [{{< fa star >}} R for Data Science (R4DS)](https://adv-r.hadley.nz/index.html) - This book by Hadley Wickham will teach you how to do data science with `R`. You’ll learn how to get your data into `R`, get it into the most useful structure, transform it, visualise it and model it.  It’s designed to take you from knowing nothing about `R` or the tidyverse (see below) to having all the basic tools of data science at your fingertips.  [Find exercise solutions for R4DS here.](https://jrnold.github.io/r4ds-exercise-solutions/)
-- [A Succinct Intro to R](http://r-guide.steveharoz.com/) - This online book by Steve Haroz is a short introduction to the `R` language.  It assumes you are familiar with programing concepts but want to learn `R`. 
+- [A Succinct Intro to R](http://r-guide.steveharoz.com/) - This online book by Steve Haroz is a short introduction to the `R` language.  It assumes you are familiar with programing concepts but want to learn `R`.
 - [Introduction to Data Science](https://rafalab.github.io/dsbook/) - This book by Rafael A. Irizarry which started out as the class notes used in the HarvardX Data Science Series introduces concepts and skills that can help you tackle real-world data analysis challenges.
 - [Data Science in R: A Gentle Introduction](https://bookdown.org/jgscott/DSGI/) - This online book is structured as a series of walk-through lessons in `R` that will have you doing real data science in no time.
 - [An(other) introduction to R](https://bookdown.org/f_lennert/introduction-to-r/) - An(other) gentle introduction to `R` and how you can use it to work with data.
@@ -133,11 +133,11 @@ Horst](https://github.com/allisonhorst/stats-illustrations) - CC BY 4.0
 - [Geocomputation with R](https://geocompr.robinlovelace.net/) - Geocomputation with `R` is for people who want to analyze, visualize and model geographic data.
 - [Data Visualization with R](https://rkabacoff.github.io/datavis/) - This book helps you create the most popular visualizations - from quick and dirty plots to publication-ready graphs.
 - [{{< fa star >}} Data Visualization - A practical introduction](https://socviz.co/index.html#preface) - A treasure trove of R-dataviz help by Kieran Healy.
-- [gghighlight: An R package for improved visualization](https://cran.r-project.org/web/packages/gghighlight/vignettes/gghighlight.html) - Highlight lines and points in a `ggplot2` data visualization object. [An introductory YouTube video is available.](https://www.youtube.com/watch?v=1IHAZcumjkA) 
+- [gghighlight: An R package for improved visualization](https://cran.r-project.org/web/packages/gghighlight/vignettes/gghighlight.html) - Highlight lines and points in a `ggplot2` data visualization object. [An introductory YouTube video is available.](https://www.youtube.com/watch?v=1IHAZcumjkA)
 - [Connecting to databases using R](https://db.rstudio.com/) - A resource from RStudio for connecting to databases.
 - [Awesome R Package Development](https://github.com/IndrajeetPatil/awesome-r-pkgtools) - A curated list of awesome tools to assist R 📦 development.
 - [Apache Arrow](https://arrow.apache.org/docs/index.html) - Apache `Arrow` contains a set of technologies that enable big data systems to process and move data fast. The `arrow` package for `R` can:
-    +  Read and write **Parquet files**, 
+    +  Read and write **Parquet files**,
     + Read and write **Feather files**
     +  Analyze, process, and write multi-file, larger-than-memory datasets.  [Click here for vignette.](https://arrow.apache.org/docs/r/articles/dataset.html)
     +  Much, much more.
@@ -150,11 +150,11 @@ Horst](https://github.com/allisonhorst/stats-illustrations) - CC BY 4.0
 
 - [{{< fa star >}} Getting Help with R](https://www.r-project.org/help.html) - An article from the `R Project` that describes the extensive facilities for accessing documentation and searching for help.
 - [{{< fa star >}} What do you do when R code throws an unexpected error?](https://adv-r.hadley.nz/debugging.html) - This chapter of Hadley Wickham's `Advanced R` (see above) will give a general strategy for finding help with those obscure error messages.
-- [{{< fa star >}} R Error Message Cheat Sheet](http://varianceexplained.org/courses/errors/) - A blog post by David Robinson lists common errors and how to fix them. 
+- [{{< fa star >}} R Error Message Cheat Sheet](http://varianceexplained.org/courses/errors/) - A blog post by David Robinson lists common errors and how to fix them.
 - [Get Help....with reprex](https://www.tidyverse.org/help/#reprex) - If you need help, the first step is to create a `reprex`, or reproducible example....learn how.
 - [{{< fa star >}} RStudio Cheatsheets](https://www.rstudio.com/resources/cheatsheets/) - `RStudio` cheatsheets make it easy to use some of our favorite `R` packages.
 - [Stack Overflow](https://stackoverflow.com/questions/tagged/r) - Find the best answers to your `R` questions and help others with theirs.
-- [{{< fa star >}} ChatGPT](https://chat.openai.com/) - ChatGPT is a really incredible tool for learning coding. You can ask it to help you debug your code, or even write code for you. 
+- [{{< fa star >}} ChatGPT](https://chat.openai.com/) - ChatGPT is a really incredible tool for learning coding. You can ask it to help you debug your code, or even write code for you.
 - [{{< fa star >}} Phind](https://www.phind.com/) - Phind is tuned for programming and adds links to sources. Phind uses the GPT models as well, only 10 free queries a day.
 ***
 
@@ -166,7 +166,7 @@ Horst](https://github.com/allisonhorst/stats-illustrations) - CC BY 4.0
 - [RStudio Books](https://www.rstudio.com/resources/books/) - In addition to software tools, RStudio has also authored many books, some already highlighted in this curated list.  Another tool for your toolbox.
 
 ***
-    
+
 ### Statistics
 - [eastystats](https://github.com/easystats/easystats) - `easystats` is a collection of `R` packages that provides a consistent framework to harness `R` statistics.
 - [statsExpressions: Tidy dataframes and expressions with statistical details](https://indrajeetpatil.github.io/statsExpressions/) - This `R` package provides a consistent syntax to do statistical analysis with tidy data (in pipe-friendly manner) and provides statistical expressions (pre-formatted in-text statistical results) for plotting functions.
@@ -176,13 +176,12 @@ Horst](https://github.com/allisonhorst/stats-illustrations) - CC BY 4.0
 - [Get Started with Bayesian Analysis](https://easystats.github.io/bayestestR/articles/bayestestR.html) - A vignette describing the Bayesian framework for statistics, including examples in `R`.
 - [Bayes Rules! An Introduction to Bayesian Modeling with R](https://www.bayesrulesbook.com/?s=09) - The primary goal of `Bayes Rules!` is to make modern Bayesian thinking, modeling, and computing accessible to a broader audience.
 - [Fastverse](https://github.com/SebKrantz/fastverse) - The fastverse is a suite of complementary high-performance packages for statistical computing and data manipulation in `R`.
-- [Principal Component Analysis (PCA) with tidyverse](https://bjnnowak.netlify.app/2021/09/15/r-pca-with-tidyverse/?s=09) - A blog post by Benjamin Nowak to show how to use `tidyverse` tools and syntax to perform PCA. 
-- [modelsummary](https://github.com/vincentarelbundock/modelsummary) - `modelsummary is an `R` package that creates tables and plots to summarize statistical models and data.
+- [Principal Component Analysis (PCA) with tidyverse](https://bjnnowak.netlify.app/2021/09/15/r-pca-with-tidyverse/?s=09) - A blog post by Benjamin Nowak to show how to use `tidyverse` tools and syntax to perform PCA.
 - [gtsummary](https://github.com/ddsjoberg/gtsummary) - The `gtsummary` package creates publication-ready analytical and summary tables in `R`.
 - [factoextra : Extract and Visualize the Results of Multivariate Data Analyses](https://rpkgs.datanovia.com/factoextra/index.html) - `factoextra` is an R package that makes it easy to extract and visualize the output of exploratory multivariate data analyses, including: PCA, CA, MCA, MFA, HMFA and FAMD.
 
 ***
-    
+
 ### Reproducibility
 - [R for Reproducible Scientific Analysis](http://swcarpentry.github.io/r-novice-gapminder/) - The goal of `R for Reproducible Scientific Analysis` is to teach novice programmers to write modular code and best practices for using `R` for data analysis.
 - [Reproducible Research Data and Project Management in R](https://annakrystalli.me/rrresearchACCE20/) - A workshop that discusses `R` and `Rstudio` tools and conventions that offer a powerful framework for making modern, open, reproducible and collaborative computational workflows more accessible to researchers.
@@ -190,7 +189,7 @@ Horst](https://github.com/allisonhorst/stats-illustrations) - CC BY 4.0
 - [The Turing Way](https://the-turing-way.netlify.app/welcome) - A community and handbook to reproducible, ethical and collaborative data science.  [The Turing Way](https://the-turing-way.netlify.app/welcome) also maintains a *Zero-to-Binder* tutorial for 3 common languages, [`Julia`](http://bit.ly/zero-to-binder-julia), [`Python`](http://bit.ly/zero-to-binder-python), and [`R`](http://bit.ly/zero-to-binder-r).  For more information about `Binder`, see *Getting Started with Binder* below.
 - [rrtools](https://github.com/benmarwick/rrtools) - Tools for Writing Reproducible Research in `R`.  This package documents the key steps and provides convenient functions for quickly creating a new research compendium.
 - [rcompendium](https://frbcesab.github.io/rcompendium/articles/rcompendium.html) - `rcompendium` makes it easy to create of R packages or research compendia with a predefined files/folders structure.
-- [targets: pipeline tool for R](https://docs.ropensci.org/targets/) - The `targets` package is a [Make](https://www.gnu.org/software/make/)-like pipeline toolkit for Statistics and data science in `R`. With `targets`, you can maintain a reproducible workflow that skips costly runtime for tasks that are already performed. The [user manual](https://books.ropensci.org/targets/) includes a [walkthrough chapter](https://books.ropensci.org/targets/walkthrough.html). 
+- [targets: pipeline tool for R](https://docs.ropensci.org/targets/) - The `targets` package is a [Make](https://www.gnu.org/software/make/)-like pipeline toolkit for Statistics and data science in `R`. With `targets`, you can maintain a reproducible workflow that skips costly runtime for tasks that are already performed. The [user manual](https://books.ropensci.org/targets/) includes a [walkthrough chapter](https://books.ropensci.org/targets/walkthrough.html).
 - [Reproducible analysis and Research Transparency](https://reproducible-analysis-workshop.readthedocs.io/en/latest/) - Transparency, open sharing, and reproducibility are core values of science, but not always part of daily practice. This workshop (2017) provided an overview of current status in reproducible analysis in order to provide transparency in research.
 - [orderly](https://www.vaccineimpact.org/orderly/articles/orderly.html) - `orderly` is a package designed to help make analysis more reproducible. Its principal aim is to automate a series of basic steps in the process of writing analyses.
 - [How to name files](https://speakerdeck.com/jennybc/how-to-name-files) - Slide deck from Jenny Bryan about the why's and how's of naming files.
@@ -200,7 +199,7 @@ Horst](https://github.com/allisonhorst/stats-illustrations) - CC BY 4.0
 - [Docker](https://docs.docker.com/) - Get started with `Docker`.
 - [A Docker tutorial for reproducible research.](https://jsta.github.io/r-docker-tutorial/) - This is an introduction to Docker designed for participants with knowledge about R and RStudio.
 - [An Introduction to Docker for R Users](https://colinfay.me/docker-r-reproducibility/) - A quick introduction on using Docker for reproducibility in R, by Colin Fay.
-- [Generating Dockerfiles for Reproducible Research with R](https://o2r.info/containerit/index.html) - The `R` package `containerit` aims to make reproducible and archivable research with containers easy. 
+- [Generating Dockerfiles for Reproducible Research with R](https://o2r.info/containerit/index.html) - The `R` package `containerit` aims to make reproducible and archivable research with containers easy.
 - [Transparent reproducible R environment with Docker + renv](https://eliocamp.github.io/codigo-r/en/2021/08/docker-renv/) - A quick introduction to setting up a transparent reproducible R environment with Docker + renv, by Elio Campitelli.
 - [Conducting reproducible research with Docker (Part 1 of 3)](http://www.derekmpowell.com/posts/2018/02/docker-tutorial-1/) - A blog post by Derek Powell where he describes how to use to produce statistically and computationally reproducible researc using Docker.
 - [Singularity](https://sylabs.io/singularity/) - `Singularity` is an alternative container platform to Docker.  You can build a container on your laptop and then run it on many of the largest HPC clusters in the world, local university or company clusters, a single server, in the cloud, or on a workstation down the hall.  Additional details and help is also available [here](https://singularity.hpcng.org/).
@@ -216,9 +215,9 @@ Horst](https://github.com/allisonhorst/stats-illustrations) - CC BY 4.0
 - [pracpac](https://signaturescience.github.io/pracpac/index.html) - Practical R Packaging with Docker.
 
 ***
-    
+
 ### Markdown & R Markdown
-*Note: We are teaching Quarto which is the new supported way of doing markdown + R, but its is almost enteriely compatible with `R Markdown` so much of this will still apply.  
+*Note: We are teaching Quarto which is the new supported way of doing markdown + R, but its is almost enteriely compatible with `R Markdown` so much of this will still apply.
 - [R Markdown from RStudio](https://rmarkdown.rstudio.com/lesson-1.html) - Getting started with `R Markdown`.
 - [R Markdown Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/) - `R Markdown` is a powerful tool for combining analysis and reporting into the same document.  This book provides practical and short examples to show the interesting and useful usage of R Markdown.
 - [R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/) - An online reference book for `R Markdown`.  And provides a detailed reference on the built-in `R Markdown` output formats of the `rmarkdown` package, as well as several other extension packages.
@@ -228,15 +227,15 @@ Horst](https://github.com/allisonhorst/stats-illustrations) - CC BY 4.0
 - [List of featured books written with **bookdown**](https://bookdown.org/) -  A list of *featured* books published to [bookdown.org](https://bookdown.org/). Click [here](https://bookdown.org/home/archive/?s=09) for a list generated automatically and roughly ordered by date.
 - [RMarkdown Tips and Tricks](https://indrajeetpatil.github.io/RmarkdownTips/) - A collection of tweets by [Indrajeet Patil](https://github.com/IndrajeetPatil) containing tips and tricks related to [R Markdown](https://rmarkdown.rstudio.com/).
 
-***  
-    
+***
+
 ### Shiny
 - [Shiny from RStudio](https://shiny.rstudio.com/) - Get started with `Shiny`, an `R` package to build interactive web apps straight from `R`.
 - [Mastering Shiny](https://mastering-shiny.org/index.html) - The online version of the book by Hadley Wickham to get you writing `Shiny` apps quickly.
 - [Outstanding User Interfaces with Shiny](https://unleash-shiny.rinterface.com/index.html) - A book for experienced `Shiny` users who want to learn more about the underlying web technologies.
 
-***    
-    
+***
+
 ### Git and Version Control
 - [`Git`](https://git-scm.com/) is a useful tool for version control and [`GitHub`](https://github.com/) sits on top of `Git` and supports collaborative and distributed working.
 - [Pro Git](http://git-scm.com/book/en/v2) - What is "version control" and why we should care?  This free online book by Scott Chacon and Ben Straub is explains it all. Dead tree versions are available ![image](https://user-images.githubusercontent.com/48717893/170250444-21fc793c-0ef0-4e8a-ad96-6b049ad5caf2.png).
@@ -265,7 +264,7 @@ Horst](https://github.com/allisonhorst/stats-illustrations) - CC BY 4.0
 - [Deep Exploratory Data Analysis (EDA) in R](https://yuzar-blog.netlify.app/posts/2021-01-09-exploratory-data-analysis-and-beyond-in-r-in-progress/) - Exploratory Data Analysis is an important first step in data science.  In this excellent post by Yury Zablotski, he provide the simplest and most effective ways to explore data in `R`.
 
 ***
-    
+
 ### Miscellaneous
 
 - [HTTP testing in R](https://books.ropensci.org/http-testing/index.html) - This book is meant to be a free, central reference for developers of `R` packages accessing web resources.
@@ -283,6 +282,5 @@ Horst](https://github.com/allisonhorst/stats-illustrations) - CC BY 4.0
 - [GIVE (Genomic Interactive Visualization Engine)](https://github.com/Zhong-Lab-UCSD/Genomic-Interactive-Visualization-Engine) - Not `R` but an HTML5 library for creating portable and versatile genome browsers that can be used on personal websites.
 - [sandbox.bio - Interactive bioinformatics tutorials](https://sandbox.bio/) - Learn how to use bioinformatics tools right from your browser.
 Everything runs in a sandbox, so you can experiment all you want.
-    
-***
 
+***

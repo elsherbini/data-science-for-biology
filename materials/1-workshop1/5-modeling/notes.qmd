@@ -8,6 +8,7 @@ format:
     execute:
       message: false
       warning: false
+    css: styles.css
 ---
 
 ```{r}
@@ -20,7 +21,16 @@ library(patchwork)
 library(survival)
 library(tidyverse)
 source(here("materials/1-workshop1/5-modeling/helpers.R"))
-theme_set(theme_classic(base_size = 18))
+knitr::opts_chunk$set(dev.args = list(bg = "transparent"))
+theme_set(
+    theme_classic(base_size=18) +
+       theme(
+         panel.background = element_rect(fill = "transparent", color = NA),
+         plot.background = element_rect(fill = "transparent", color = NA),
+        legend.background = element_rect(fill='transparent'),
+        legend.box.background = element_rect(fill='transparent')
+       )
+   )
 set.seed(202606)
 ```
 
@@ -124,10 +134,32 @@ bernoulli models individual outcomes while the binomial applies to their totals.
    - Responder vs. non-responder
    - Alive vs. dead
 
-1. The data story is that each person's characteristics shift the relative
-probabilities of the two outcomes. In this case, more social contact, higher
-probability of infection. The bernoulli applies when we observe person-level
-data.
+   A bernoulli model would be able to simulate new data with frequencies of blue
+   and orange circles similar to (but not exactly the same as) those we
+   originally observed.
+
+   ![](images/bernoulli_circles.png){width=40%}
+
+   A bernoulli model expects each sample to be associated with a 0/1 label,
+   while the binomial models counts of each group.
+
+   ![](images/bernoulli_binomial_comparison.png)
+
+1. The data generating mechanism can associate the frequency with sample
+characteristics, e.g., large circles are more likely to be blue.
+
+   ![](images/bernoulli_sizes_covariate.png){width=40%}
+
+   The model can learn the relationship between the size covariates and
+   probability of the blue outcome and summarizes it as a smooth, increasing
+   curve.
+
+   ![](images/bernoulli_sizes_curve.png){width=40%}
+
+1. Imagine modeling a disease outbreak and a school. Each student can be
+infected or not. The probability of infection can depend on the degree of social
+interaction. This data story is analogous ot the large-size and blue circles
+data story.
 
    ```{r}
 #| label: load-bernoulli-data
@@ -155,8 +187,8 @@ ggplot(infections) +
     )
    ```
 
-1. The binomial model applies when we see totals within categories, but
-not person-level outcomes.
+1. The binomial model applies when we see totals within categories, but not
+person-level outcomes.
 
    ```{r}
 #| label: load-binomial-data
@@ -216,7 +248,13 @@ summary(fit)
    are given on the log-odds scale. The model estimation algorithm works on this
    scale because it isn't constrained to $\left[0, 1\right]$, and so
    general-purpose optimization methods can be used.]. The `plogis` function
-   converts them to the probability scale.
+   converts them to the probability scale.  The (Intercept) estimate sets the
+   predicted probability at zero social contact, while the `social_contact`
+   estimate sets how steeply that probability increases with social contact.
+
+   ![](images/intercept_plogis.png)
+
+   ![](images/slope_plogis.png)
 
    ```{r}
 #| label: plogis-eval
@@ -244,12 +282,28 @@ fit <- glm(infected / total  ~ social_level, family = binomial(), weights = tota
 summary(fit)
    ```
 
+    `plogis` converts these estimates to the probability scale. The low category
+    is absorbed into the intercept. For the other two, add their coefficient to
+    the intercept before converting to probabilities for that category.
+
+   ![](images/binomial_fitted_probabilities.png){width=40%}
+
 ### Poisson and Negative Binomial Models
 
 1. Poisson and negative binomial models apply to count data. The poisson arises
 whenever we count events spread uniformly across space and time, for example,
-the number of raindrops landing on a window during a minute of rain.  Many
-biological counts have this flavor.
+the number of raindrops landing on a window during a minute of rain.
+
+   ![](images/poisson_raindrop.png)
+
+   Making a histogram of these counts over time gives us a simple data story. We
+   get a random number of raindrops each minute. Most of the time around five
+   drops land, but a value of zero or ten would not be unusual. Values much
+   larger than that are less likely.
+
+   ![](images/poisson_histogram.png)
+
+   Many biological counts have this flavor.
 
     - Transcripts counts in a cell
     - Mutation count along a segment of the genome
@@ -257,9 +311,15 @@ biological counts have this flavor.
 
    _Exercise: The last example is again about infections, which we saw in the bernoulli and binomial examples. What did we know there we don't know from infection counts alone?_
 
-1. In the data story, the typical count depends on sample characteristics. For
-example, more infections in counties closer to the outbreak epicenter.  This
-mean parameter is called the poisson rate.
+1. In the data story, we can allow the typical count depends on sample
+characteristics. For example, the rain may have been most intense earlier in the
+night. This figure shows how the probabilities of different number of raindrops
+progresses over time.
+
+   ![](images/poisson_histogram_sequence.png)
+
+   For a more realistic example, note that the infections in counties closer to
+   an outbreak's epicenter likely have more cases.
 
    ```{r}
 #| label: load-poisson-data
@@ -371,6 +431,11 @@ ggplot(antibody) +
     labs(x = "Age", y = "Antibody Titre")
    ```
 
+    Underlying these observations is a linear function with random gaussian
+    errors.
+
+   ![](images/regression_gsn_errors.png)
+
 1. The `lm` function fits this model, with the same inputs as `glm`, but no
 `family`. The estimates give predicted values at age $x$ $19.6 + 0.058 x$. For
 example, at age 10, the prediction is $19.6 + 0.58 \approx 20.18$.
@@ -381,11 +446,15 @@ fit <- lm(antibody ~ age, antibody)
 summary(fit)
    ```
 
-1. Linear regression assumes a Gaussian distributed error term.  This
-distribution appears across statistics because of the central limit theorem: the
-average of many small independent effects tends a Gaussian distribution.  In
-this example, we're implicitly assuming many small, independent factors besides
-age that perturb the observed antibody measurement.
+1. What makes Gaussian errors a reasonable assumption? This distribution appears
+across statistics because of the central limit theorem: the average of many
+small independent effects tends a Gaussian distribution. You can find a nice
+animation of this result
+[here](https://seeing-theory.brown.edu/probability-distributions/index.html#section3).
+In this example, we're implicitly assuming many small, independent factors
+besides age that perturb the observed antibody measurement.
+
+   ![](images/regression_gsn_clt.png)
 
 ### Survival Models
 
@@ -422,8 +491,8 @@ head(surv_data)
 
    ```{r}
 #| label: survival-plot
-#| fig-width: 8
-#| fig-height: 5
+#| fig-width: 9
+#| fig-height: 6
 surv_data |>
     mutate(id = row_number()) |>
     ggplot(aes(time, reorder(id, time), color = treatment, shape = factor(status))) +
@@ -451,8 +520,6 @@ summary(fit)
 
    The model output shows how each covariate rescales the hazard.
 
-   [picture of hazard functions]
-
    _Exercise: Can you think of an example where the proportional hazards assumption does not hold? Hint: What if a drug was not effective immediately after treatment start but required several weeks to reach its full effect?_
 
 ### Variations: Multiple Predictors, Mixed Effects, and Interactions
@@ -473,6 +540,12 @@ fit <- lm(antibody ~ age + blood_pressure, data = antibody)
 summary(fit)
    ```
 
+   ![](images/two_predictors_3d.png)
+
+    The surface can be visualized in 2D by associating each slice in 3D with a curve.
+
+   ![](images/two_predictors_2d.png)
+
 1. **Mixed Effects.** One common situation is that baseline effects (overall
 probabilities in bernoulli model, rates in the poisson, intercepts in the linear
 regression, ...) vary across contexts. For example, infection probability might
@@ -492,8 +565,8 @@ head(mixed_effect_data)
 
    ```{r}
 #| label: plot-mixed-effect-data
-#| fig-width: 7
-#| fig-height: 4
+#| fig-width: 9
+#| fig-height: 6
 ggplot(mixed_effect_data) +
     geom_jitter(aes(social_contact, infected, col = factor(infected)), height = 0.05) +
     geom_line(aes(social_contact, prob_infection), linewidth = 1, col = "#232323") +
@@ -511,6 +584,8 @@ source of randomness. Rather than estimate each county's effect separately, we
 estimate the overall variation across counties. Statistically, this is an easier
 task, and it yields higher power.  Because they include both fixed and random
 effects, these models are called mixed effects models.
+
+   ![](images/random_effects_counties.png)
 
 1. To implement this, we replace `glm` with `glmer` and add `(1 | county)` to
 the formula, indicating that county is a random rather than fixed effect.
