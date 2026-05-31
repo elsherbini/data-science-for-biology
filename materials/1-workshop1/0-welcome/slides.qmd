@@ -179,3 +179,10 @@ This is probably more material than one week fits. We'll teach at a pace that ke
 :::
 
 {{< include ../_wooclap.qmd >}}
+
+## Over to Scott {.our-turn}
+
+\
+\
+
+### Module 1: Introduction to Agentic Coding {style="font-size: 2em; text-align: center"}
