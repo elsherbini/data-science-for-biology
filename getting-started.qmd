@@ -93,11 +93,7 @@ codespace — that way the codespace has the key from the moment it boots.
 
 ### Open your Codespaces settings
 
-In the top-right of GitHub, click your profile photo and then **"Settings"**.
-In the left sidebar of the settings page, navigate to **Codespaces** (or go
-directly to <https://github.com/settings/codespaces>).
-
-![](assets/images/getting-started/4-open-settings.png){.img-fluid fig-alt="GitHub profile dropdown with Settings highlighted"}
+Go directly to your [Codespaces settings page](https://github.com/settings/codespaces).
 
 ### Click "New secret"
 

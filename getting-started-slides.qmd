@@ -44,11 +44,7 @@ Give it a name (for example, `workshop-2026`) and click the green **"Create repo
 
 ## Step 6: Open Codespaces settings
 
-Click your profile photo (top right) → **Settings**, then navigate to **Codespaces** in the left sidebar.
-
-Direct link: <https://github.com/settings/codespaces>
-
-![](assets/images/getting-started/4-open-settings.png){width=380 fig-align="center" fig-alt="GitHub profile dropdown with Settings highlighted"}
+Go directly to your [Codespaces settings page](https://github.com/settings/codespaces).
 
 ## Step 7: Click "New secret"
 
