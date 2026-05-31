@@ -17,17 +17,12 @@ library(MASS)
 library(lme4)
 library(lmerTest)
 library(patchwork)
-library(modelsummary)
 library(survival)
 library(tidyverse)
-source("helpers.R")
-theme_set(theme_classic())
+source(here("materials/1-workshop1/5-modeling/helpers.R"))
+theme_set(theme_classic(base_size = 18))
 set.seed(202606)
 ```
-
-## Note on Data Generation
-
-The data used in this document are read directly from online sources. The original data generation code has been externalized to `@helpers.qmd` to keep the main document focused on analysis and interpretation.
 
 ## Learning Outcomes
 
@@ -63,8 +58,8 @@ head(il1)
 
    ```{r}
 #| label: plot-il1
-#| fig-width: 6
-#| fig-height: 4
+#| fig-width: 8
+#| fig-height: 5
 p1 <- ggplot(il1) +
     geom_line(aes(time_point, log(conc), group = pid, col = arm)) +
     scale_y_continuous(expand = c(0, 0)) +
@@ -74,7 +69,8 @@ p2 <- ggplot(il1) +
     geom_histogram(aes(log(conc), fill = arm), bins = 10, position = "identity", alpha = 0.6) +
     facet_wrap(~ time_point)
 
-p1 / p2
+(p1 / p2) +
+    plot_layout(guides = "collect")
    ```
 
 1. Imagine running the study again, keeping the recruitment and experimental
@@ -135,7 +131,8 @@ data.
 
    ```{r}
 #| label: load-bernoulli-data
-infections <- read_csv("https://huggingface.co/datasets/krisrs1128/durban_workshop_data/resolve/main/infections.csv")
+infections <- read_csv("https://huggingface.co/datasets/krisrs1128/durban_workshop_data/resolve/main/infections.csv") |>
+    mutate(infected = ifelse(infected == "infected", 1, 0))
    ```
 
    ```{r}
@@ -148,7 +145,7 @@ infections
 #| fig-width: 5.5
 #| fig-height: 3.5
 ggplot(infections) +
-    geom_jitter(aes(social_contact, as.numeric(infected) - 1, col = infected), height = 0.05) +
+    geom_jitter(aes(social_contact, infected, col = factor(infected)), height = 0.05) +
     geom_line(aes(social_contact, prob_infection), linewidth = 1, col = "#232323") +
     scale_x_continuous(expand = c(0, 0)) +
     labs(
@@ -173,8 +170,8 @@ infections_props
 
    ```{r}
 #| label: plot-binomial
-#| fig-width: 5.5
-#| fig-height: 2.5
+#| fig-width: 7.5
+#| fig-height: 4
 infections_props |>
     select(-total) |>
     pivot_longer(-social_level) |>
@@ -211,7 +208,7 @@ arguments,
    ```{r}
 #| label: bernoulli-glm
 fit <- glm(infected ~ social_contact, family = binomial(), data = infections)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
    ```
 
    The estimate column describes how infection probability changes across levels
@@ -244,7 +241,7 @@ needs to account for group-level counts, not person-level outcomes. Also, the
    ```{r}
 #| label: binomial-glm
 fit <- glm(infected / total  ~ social_level, family = binomial(), weights = total, data = infections_props)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
    ```
 
 ### Poisson and Negative Binomial Models
@@ -291,7 +288,7 @@ ggplot(outbreak, aes(epicenter_distance)) +
 
    ```{r}
 fit <- glm(infected ~ epicenter_distance, family = poisson(), data = outbreak)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
    ```
 
    The model output is reported on a log scale, so it should be interpreted
@@ -339,7 +336,7 @@ package does, with the same syntax as `glm`.
    ```{r}
 #| label: negbin_fit
 fit <- glm.nb(infected ~ epicenter_distance, data = outbreak_nb)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
    ```
 
 ### Linear Regression Models
@@ -381,7 +378,7 @@ example, at age 10, the prediction is $19.6 + 0.58 \approx 20.18$.
    ```{r}
 #| label: lm-simple
 fit <- lm(antibody ~ age, antibody)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
    ```
 
 1. Linear regression assumes a Gaussian distributed error term.  This
@@ -425,7 +422,7 @@ head(surv_data)
 
    ```{r}
 #| label: survival-plot
-#| fig-width: 6
+#| fig-width: 8
 #| fig-height: 5
 surv_data |>
     mutate(id = row_number()) |>
@@ -449,7 +446,7 @@ is called a _proportional_ hazards model.
    ```{r}
 #| label: surv-fit
 fit <- coxph(Surv(time, status) ~ treatment, data = surv_data)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
    ```
 
    The model output shows how each covariate rescales the hazard.
@@ -473,7 +470,7 @@ fixed.
 
    ```{r}
 fit <- lm(antibody ~ age + blood_pressure, data = antibody)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
    ```
 
 1. **Mixed Effects.** One common situation is that baseline effects (overall
@@ -484,7 +481,8 @@ to county, due to unmeasured factors like population density and mobility.
 
    ```{r}
 #| label: load-mixed-effect-data
-mixed_effect_data <- read_csv("https://huggingface.co/datasets/krisrs1128/durban_workshop_data/resolve/main/mixed_effect_data.csv")
+mixed_effect_data <- read_csv("https://huggingface.co/datasets/krisrs1128/durban_workshop_data/resolve/main/mixed_effect_data.csv") |>
+    mutate(infected = ifelse(infected == "infected", 1, 0))
    ```
 
    ```{r}
@@ -494,8 +492,10 @@ head(mixed_effect_data)
 
    ```{r}
 #| label: plot-mixed-effect-data
+#| fig-width: 7
+#| fig-height: 4
 ggplot(mixed_effect_data) +
-    geom_jitter(aes(social_contact, as.numeric(infected) - 1, col = infected), height = 0.05) +
+    geom_jitter(aes(social_contact, infected, col = factor(infected)), height = 0.05) +
     geom_line(aes(social_contact, prob_infection), linewidth = 1, col = "#232323") +
     facet_wrap(~ reorder(county, prob_infection), nrow = 2) +
     scale_y_continuous(expand = c(0, 0)) +
@@ -518,7 +518,7 @@ the formula, indicating that county is a random rather than fixed effect.
    ```{r}
 #| label: random-county-glmer
 fit <- glmer(infected ~ social_contact + (1 | county), family = binomial(), data = mixed_effect_data)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
    ```
 
    To interpret the result, look at `SD`row.  The 0.708 means that estimates
@@ -561,7 +561,7 @@ the level of `x2`.
    ```{r}
 #| label: lm-interaction
 fit <- lm(antibody ~ age + age : group, data = interaction_data)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
    ```
 
    In the healthy group, antibody titre rises by 0.059 units per year of age,
@@ -619,7 +619,7 @@ cytokines <- cytokines |>
     filter(cytokine == "IL-1a")
 
 fit <- lm(log(conc) ~ arm, data = cytokines)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
    ```
 
    To this end, let's simulate from the fitted model (full in `helpers.R`).
@@ -662,7 +662,7 @@ that the expected log-concentrations are,
    ```{r}
 #| label: cytokines-interaction
 fit <- lm(log(conc) ~ arm + arm : time_point, data = cytokines)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
    ```
 
    _Exercise: Does this model allow for a treatment effect at time zero? Based on what you know about the "large world" experiment, decide whether this is appropriate or if the model could be further improved._
@@ -687,7 +687,7 @@ somewhere between the number of study participants (44) and measurements (132).
 
    ```{r}
 fit <- lmer(log(conc) ~ arm + arm : time_point + (1 | pid), data = cytokines)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
    ```
 
 1. Visually, the model doesn't seem much better. Indeed, the participant-level
@@ -729,8 +729,8 @@ that those with lower cell type diversity appear on the left.
 
    ```{r}
 #| label: plot-flow-cytometry
-#| fig-height: 3.5
-#| fig-width: 7.5
+#| fig-height: 5
+#| fig-width: 12
 reshaped_flow <- flow |>
     pivot_longer(matches("cd|neutro"), names_to = "cell_type", values_to = "count") |>
     group_by(sample_id) |>
@@ -796,7 +796,7 @@ flow <- flow |>
     )
 
 fit <- glm(proportion ~ 1, family = binomial(), weights = total, data = flow)
-modelsummary(fit, shape = term ~ statistic, gof_map = NA)
+summary(fit)
    ```
 
    After the inverse logistic transformation, the estimate is just the fraction
@@ -835,8 +835,8 @@ stand out,
 
    ```{r}
 #| label: simulate-flow-counts
-#| fig-height: 3.5
-#| fig-width: 7.5
+#| fig-height: 5
+#| fig-width: 12
 m <- fit_cytof(proportion ~ 1)
 counts <- simulate_counts(m)
 plot_counts(counts)
@@ -866,8 +866,8 @@ coef_df
 
    ```{r}
 #| label: variable-cell-counts
-#| fig-height: 3.5
-#| fig-width: 7.5
+#| fig-height: 5
+#| fig-width: 12
 counts <- simulate_counts(m)
 plot_counts(counts)
    ```
@@ -889,8 +889,8 @@ real data analyses, and underlies the `diffcyt` Bioconductor package @Weber2019.
 
    ```{r}
 #| label: account-random-effects
-#| fig-height: 3.5
-#| fig-width: 7.5
+#| fig-height: 5
+#| fig-width: 12
 fits <- fit_cytof(proportion ~ arm + (1 | sample_id), glmer)
 counts <- simulate_counts(fits)
 plot_counts(counts)
@@ -903,7 +903,7 @@ other cell types.
 
    ```{r}
 #| label: composition-model-summary
-modelsummary(fits[["cd3_negative"]], shape = term ~ statistic, gof_map = NA)
+summary(fits[["cd3_negative"]])
    ```
 
    _Exercise: According to the fitted model, what is the typical proportion of CD3- cells in the control and treatment groups? Hint: Use the `plogis` function applied to the right choice of values under `Estimate`._
