@@ -8,6 +8,7 @@ page listed below. Attribution footers on the slides link back to these pages.
 | `quarto-vscode-render.png` | https://quarto.org/docs/tools/vscode/index.html | https://quarto.org/docs/tools/images/vscode-render.png |
 | `quarto-vscode-code-cell.png` | https://quarto.org/docs/tools/vscode/index.html | https://quarto.org/docs/tools/images/vscode-code-cell.png |
 | `quarto-vscode-outline.png` | https://quarto.org/docs/tools/vscode/index.html | https://quarto.org/docs/tools/images/vscode-outline.png |
+| `vscode-userinterface-hero.png` | https://code.visualstudio.com/docs/getstarted/userinterface | https://code.visualstudio.com/assets/docs/getstarted/userinterface/hero.png |
 | `vscode-integrated-terminal.png` | https://code.visualstudio.com/docs/terminal/basics | https://code.visualstudio.com/assets/docs/terminal/basics/integrated-terminal.png |
 | `vscode-terminal-tabs.png` | https://code.visualstudio.com/docs/terminal/basics | https://code.visualstudio.com/assets/docs/terminal/basics/tabs.png |
 

@@ -90,12 +90,26 @@ R, Quarto, and the editor extensions are already installed. There is nothing to 
 
 ## The window layout {data-menu-title="VS Code layout"}
 
-A VS Code window has a few parts you will use all day:
+:::: columns
 
-- The **Explorer** on the left lists the files in your project. Click a file to open it.
+::: {.column width="48%"}
+::: incremental
 - The **editor** in the middle is where you read and write files. Open files show up as tabs across the top.
-- The **panel** along the bottom holds the terminal and other output. You can show or hide it.
-- The **Activity Bar** on the far left switches the side view between the Explorer, search, source control, and extensions.
+- The **Side Bar** shows the Explorer: the list of files in your project. Click a file to open it.
+- The **Activity Bar** on the far left switches the Side Bar between the Explorer, search, source control, and extensions.
+- The **Status Bar** along the bottom shows the current branch, any errors, and other information about your project.
+:::
+:::
+
+::: {.column width="52%"}
+![](images/vscode-tour/vscode-userinterface-hero.png){fig-alt="A VS Code window labelling the Editor in the center, the Side Bar and Activity Bar on the left, and the Status Bar along the bottom." width="100%"}
+:::
+
+::::
+
+::: footer
+Screenshot from the [VS Code user interface documentation](https://code.visualstudio.com/docs/getstarted/userinterface).
+:::
 
 ## The integrated terminal {data-menu-title="Integrated terminal"}
 
