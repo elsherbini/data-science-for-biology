@@ -93,10 +93,7 @@ protocols as similar as possible. Make two lists,
    Take 5 minutes to prepare your description.
 
 1. A statistical model is a simplified description of how we think the data were
-generated (the "data story"). Its fitted parameter lets us answer substantive
-scientific questions, like how a treatment affects outcomes.
-
-     [picture of the DGP -> experiment]
+generated (the "data story").
 
 1. **Large vs. small worlds**. We should distinguish the "large world" where the
 data were gathered from the "small world" of the statistical model. The small
@@ -105,7 +102,6 @@ quantifies uncertainty. But there will always be a gap between the two worlds,
 and that is itself a source of uncertainty not captured by the model.
 
 1. **Modeling Checklist.** Organize the work of modeling into these steps.
-steps.
 
    - _Biological Question._ A good model should clarify our thinking about a
    real phenomenon and not be made just for the sake of modeling.
@@ -121,31 +117,31 @@ steps.
 
 ## Part 2: A Tour through the Model Zoo
 
-Each type of statistical model is designed for different kind of data or
+Each type of statistical model is designed for a different kind of data or
 biological question.  Knowing all the "species" of model will let you adapt to
 whatever data or questions you encounter.
 
 ### Bernoulli and Binomial Models
 
 1. Bernoulli and binomial models apply when outcomes fall into two groups. The
-bernoulli models individual outcomes while the binomial applies to their totals.
+Bernoulli models individual outcomes while the binomial applies to their totals.
 
    - Infected vs. not infected
    - Responder vs. non-responder
    - Alive vs. dead
 
-   A bernoulli model would be able to simulate new data with frequencies of blue
-   and orange circles similar to (but not exactly the same as) those we
-   originally observed.
+   A Bernoulli model can simulate new data with frequencies of blue and orange
+   circles similar to (but not exactly the same as) those we originally
+   observed.
 
    ![](images/bernoulli_circles.png){width=40%}
 
-   A bernoulli model expects each sample to be associated with a 0/1 label,
+   A Bernoulli model expects each sample to be associated with a 0/1 label,
    while the binomial models counts of each group.
 
    ![](images/bernoulli_binomial_comparison.png)
 
-1. The data generating mechanism can associate the frequency with sample
+1. The data generating mechanism can let the frequency depend on sample
 characteristics, e.g., large circles are more likely to be blue.
 
    ![](images/bernoulli_sizes_covariate.png){width=40%}
@@ -156,24 +152,24 @@ characteristics, e.g., large circles are more likely to be blue.
 
    ![](images/bernoulli_sizes_curve.png){width=40%}
 
-1. Imagine modeling a disease outbreak and a school. Each student can be
+1. Imagine modeling a disease outbreak in a county. Each person can be
 infected or not. The probability of infection can depend on the degree of social
-interaction. This data story is analogous ot the large-size and blue circles
+interaction. This data story is analogous to the large-size and blue circles
 data story.
 
    ```{r}
-#| label: load-bernoulli-data
+#| label: load-Bernoulli-data
 infections <- read_csv("https://huggingface.co/datasets/krisrs1128/durban_workshop_data/resolve/main/infections.csv") |>
     mutate(infected = ifelse(infected == "infected", 1, 0))
    ```
 
    ```{r}
-#| label: show-bernoulli-data
+#| label: show-Bernoulli-data
 infections
    ```
 
    ```{r}
-#| label: plot-bernoulli
+#| label: plot-Bernoulli
 #| fig-width: 5.5
 #| fig-height: 3.5
 ggplot(infections) +
@@ -230,27 +226,28 @@ arguments,
    variables to use in the model. Any terms appearing in the formula must be
    column names in this `data.frame`.
 
-   For example, for a bernoulli model to have probability of infection depend on
+   For example, for a Bernoulli model to have probability of infection depend on
    `social_contact`, we can use the command below. Even though we set
    `family = binomial()`, the fact that `infected` is a 0/1 variable means that internally
-   the command uses a bernoulli model^[The technical reason is that the
-   bernoulli distribution is a special case of the binomial when the total count
+   the command uses a Bernoulli model^[The technical reason is that the
+   Bernoulli distribution is a special case of the binomial when the total count
    parameter is set to 1.].
 
    ```{r}
-#| label: bernoulli-glm
+#| label: Bernoulli-glm
 fit <- glm(infected ~ social_contact, family = binomial(), data = infections)
 summary(fit)
    ```
 
-   The estimate column describes how infection probability changes across levels
-   of social contact. As given, they are not easily interpretable^[Because they
-   are given on the log-odds scale. The model estimation algorithm works on this
-   scale because it isn't constrained to $\left[0, 1\right]$, and so
-   general-purpose optimization methods can be used.]. The `plogis` function
-   converts them to the probability scale.  The (Intercept) estimate sets the
-   predicted probability at zero social contact, while the `social_contact`
-   estimate sets how steeply that probability increases with social contact.
+   The `Estimate` column describes how infection probability changes across
+   levels of social contact. As given, they are not easily
+   interpretable^[Because they are given on the log-odds scale. The model
+   estimation algorithm works on this scale because it isn't constrained to
+   $\left[0, 1\right]$, and so general-purpose optimization methods can be
+   used.]. The `plogis` function converts them to the probability scale.  The
+   (Intercept) estimate sets the predicted probability at zero social contact,
+   while the `social_contact` estimate sets how steeply that probability
+   increases with social contact.
 
    ![](images/intercept_plogis.png)
 
@@ -263,14 +260,32 @@ plogis(-2.37 + 0.5 * 3.09) # when social contact = 0.5
 plogis(-2.37 + 1 * 3.09) # when social contact = 1
    ```
 
-   This bernoulli model is often called _logistic_ regression, after the inverse
+   This Bernoulli model is often called _logistic_ regression, after the inverse
    _logistic_ function (`plogis`) that converts model estimates to the
    probability scale.
 
    The `infection` data were simulated with a true `social_contact` effect of 3.
-   The estimate 2.37 is close, but even with 100 samples, slightly off.
-   Nonetheless, it lies within one standard error (0.79) of the truth -- the
+   The estimate 3.09 is close, but even with 100 samples, slightly off.
+   Nonetheless, it lies within one standard error (0.89) of the truth -- the
    model gives both an estimate of the effect and a measure of its uncertainty.
+
+   ```{r}
+#| label: plot-Bernoulli-overlay
+#| fig-width: 5.5
+#| fig-height: 3.5
+infections$predicted_prob <- plogis(predict(fit))
+ggplot(infections) +
+    geom_jitter(aes(social_contact, infected, col = factor(infected)), height = 0.05) +
+    geom_line(aes(social_contact, prob_infection), linewidth = 1, col = "#bbb6b6") +
+    geom_line(aes(social_contact, predicted_prob), linewidth = 1, col = "#414ca1") +
+    scale_x_continuous(expand = c(0, 0)) +
+    labs(
+        y = "Probability of Infection",
+        x = "Level of Social Contact",
+        col = "Infection Status",
+        title = "Original (gray) vs. fitted (blue) infection probability"
+    )
+   ```
 
 1. The same function fits the binomial model, but the formula's left-hand side
 needs to account for group-level counts, not person-level outcomes. Also, the
@@ -290,7 +305,7 @@ summary(fit)
 
 ### Poisson and Negative Binomial Models
 
-1. Poisson and negative binomial models apply to count data. The poisson arises
+1. Poisson and negative binomial models apply to count data. The Poisson arises
 whenever we count events spread uniformly across space and time, for example,
 the number of raindrops landing on a window during a minute of rain.
 
@@ -309,20 +324,20 @@ the number of raindrops landing on a window during a minute of rain.
     - Mutation count along a segment of the genome
     - Infection count within a county
 
-   _Exercise: The last example is again about infections, which we saw in the bernoulli and binomial examples. What did we know there we don't know from infection counts alone?_
+   _Exercise: The last example is again about infections, which we saw in the Bernoulli and binomial examples. What did we know there we don't know from infection counts alone?_
 
-1. In the data story, we can allow the typical count depends on sample
+1. In the data story, we can allow the typical count to depend on sample
 characteristics. For example, the rain may have been most intense earlier in the
 night. This figure shows how the probabilities of different number of raindrops
-progresses over time.
+progress.
 
    ![](images/poisson_histogram_sequence.png)
 
    For a more realistic example, note that the infections in counties closer to
-   an outbreak's epicenter likely have more cases.
+   the epicenter likely have more infections.
 
    ```{r}
-#| label: load-poisson-data
+#| label: load-Poisson-data
 outbreak <- read_csv("https://huggingface.co/datasets/krisrs1128/durban_workshop_data/resolve/main/outbreak.csv")
    ```
 
@@ -357,15 +372,31 @@ summary(fit)
    into a linear formula and exponentiating. For example, at distance 0.5, the
    mean is `exp(2.5 - .5 * 4.3) = 1.4`.
 
+   ```{r}
+#| label: Poisson-plot-overlay
+#| fig-width: 5.5
+#| fig-height: 3
+outbreak$predicted_mean <- predict(fit, type = "response")
+ggplot(outbreak, aes(epicenter_distance)) +
+    geom_point(aes(y = infected)) +
+    geom_line(aes(y = mean), col = "#bbb6b6", linewidth = 1) +
+    geom_line(aes(y = predicted_mean), col = "#414ca1", linewidth = 1) +
+    labs(
+        x = "Epicenter Distance",
+        y = "Infection Count",
+        title = "Original (gray) vs. fitted (blue) mean count"
+    )
+   ```
+
    _Exercise: What is the level of uncertainty in these estimates? How would you interpret 0.08 in the `S.E.` column? What about 0.29?_
 
 1. Often unmeasured factors influence the rates, making the data more
-heterogeneous than the poisson can handle. For example, infection might depend
-not only distance to the epicenter but unknown, county-specific population
-densities.  The negative binomial distribution addresses this -- it arises as a
-mixture of poissons with similar but slightly different rates. In the data
-simulated below, the counts at a given distance are more spread out even though
-the blue mean line is unchanged.
+heterogeneous than the Poisson can handle. For example, infection might depend
+on not only distance to the epicenter but also unknown, county-specific
+population densities.  The negative binomial distribution addresses this -- it
+arises as a mixture of Poissons with similar but slightly different rates. In
+the data simulated below, the counts at a given distance are more spread out
+even though the blue mean line is unchanged.
 
    ```{r}
 #| label: load-negbin-data
@@ -431,7 +462,7 @@ ggplot(antibody) +
     labs(x = "Age", y = "Antibody Titre")
    ```
 
-    Underlying these observations is a linear function with random gaussian
+    Underlying these observations is a linear function with random Gaussian
     errors.
 
    ![](images/regression_gsn_errors.png)
@@ -448,7 +479,7 @@ summary(fit)
 
 1. What makes Gaussian errors a reasonable assumption? This distribution appears
 across statistics because of the central limit theorem: the average of many
-small independent effects tends a Gaussian distribution. You can find a nice
+small independent effects tends to a Gaussian distribution. You can find a nice
 animation of this result
 [here](https://seeing-theory.brown.edu/probability-distributions/index.html#section3).
 In this example, we're implicitly assuming many small, independent factors
@@ -464,20 +495,20 @@ besides age that perturb the observed antibody measurement.
    - Time until loan default
    - Time until HIV acquisition
 
-   If the event doesn't happen over the duration of the study, the study
+   If the event doesn't occur over the study or if they drop out, the
    participant's response is called "censored."
 
-1. Unlike the other models, where the outcome was a single number, the survival
-analysis outcomes two parts.
+1. Unlike the other models, whose outcome is a single number, the survival
+outcome has two parts.
 
    - The `time` the event was observed. Or, if the event was never observed, the
    time the study ended.
    - Whether the event occurred (`status = 1`) or not (`status = 0`) before the
    study end.
 
-   For example, imagine modeling HIV acquisition as a function of an drug
-   treatment, tracking participants for two years. Some have an event during the
-   study period (`status = 1`, triangles) while the rest are censored.
+   For example, imagine modeling HIV acquisition over drug treatments, tracking
+   participants for two years. Some have an event during the study period
+   (`status = 1`, triangles) while the rest are censored.
 
    ```{r}
 #| label: load-survival-data
@@ -526,7 +557,7 @@ summary(fit)
 
 1. **Multiple Predictors.** The examples above had a single covariate.  We can
 add more covariates with `+ variable` on the right-hand side of the formula.
-Each variables' estimate is the effect of that variable with all others held
+Each variable's estimate is the effect of that variable with all others held
 fixed.
 
    For example, if we wanted to model antibody titre as a function of both age
@@ -547,7 +578,7 @@ summary(fit)
    ![](images/two_predictors_2d.png)
 
 1. **Mixed Effects.** One common situation is that baseline effects (overall
-probabilities in bernoulli model, rates in the poisson, intercepts in the linear
+probabilities in Bernoulli model, rates in the Poisson, intercepts in the linear
 regression, ...) vary across contexts. For example, infection probability might
 always increase with social contact, but the baseline rate may vary from county
 to county, due to unmeasured factors like population density and mobility.
@@ -596,7 +627,7 @@ fit <- glmer(infected ~ social_contact + (1 | county), family = binomial(), data
 summary(fit)
    ```
 
-   To interpret the result, look at `SD`row.  The 0.708 means that estimates
+   To interpret the result, look at the `SD`row.  The 0.708 means that estimates
    vary by roughly this much across counties, at any level of `social_contact`.
    Even at social contact 0, the infection probabilities below would be typical.
 
@@ -607,7 +638,7 @@ plogis(-2.28 + 0.43) # upper range across counties, social contact = 0
    ```
 
 1. **Interactions.** In some data, the effect of a variable on a response might
-depend on other context. For example, the age effect might differ between
+depend on other variables. For example, the age effect might differ between
 healthy and sick people.
 
    ```{r}
@@ -639,11 +670,11 @@ fit <- lm(antibody ~ age + age : group, data = interaction_data)
 summary(fit)
    ```
 
-   In the healthy group, antibody titre rises by 0.059 units per year of age,
-   while in the disease group, it changes by 0.0259 + 0.002 units (adding the
-   two rows).
+   In the disease group, antibody titre rises by 0.061 units per year of age,
+   while in the healthy group, it changes by 0.061 - 0.002 units (adding the two
+   rows).
 
-1. Although we introduced these variations with specific bernoulli and linear
+1. Although we introduced these variations with specific Bernoulli and linear
 regression models, they apply to any model above. They come in handy when
 revising a model's working assumptions to improve its fit.
 
@@ -657,7 +688,7 @@ and if so does the effect persist into the long-run (week 7)?
 
 1. **Plot the Data.**  Roughly, there's a strong treatment effect one week
 post-intervention that weakens by week 7. We'll try capturing this pattern in a
-small world model. We focus on IL1-a, the cytokine with the fewest measurements
+small world model. We focus on IL-1a, the cytokine with the fewest measurements
 below the limit of detection.
 
    ```{r}
@@ -678,7 +709,7 @@ ggplot(cytokines) +
 1. **Working Assumptions.** Luminex gives a continuous readout of each protein's
 concentration, which suggests a linear regression model.
 
-   The Gaussian error assumption suites Luminex well: many small, unrelated
+   The Gaussian error assumption suits Luminex well: many small, unrelated
    factors in the measurement or biology could make the fluorescence slightly
    brighter or dimmer. This also suggests that we model log-concentration
    instead of raw concentration, since errors are likely multiplicative rather
@@ -708,21 +739,21 @@ plot_cytokine(sim_data)
    ```
 
    Reassuringly, the overall concentrations are in the correct range, and the
-   control group has larger concentrations compared to treatment, matching the
+   control group has larger concentrations than the treatment group, matching the
    real data. But there is an issue -- in the real data, most blue curves
-   decrease at week 1, but in our simulation about half the curves increase.
+   decrease at week 1, while in our simulation about half increase.
 
 1. **Revised Models.** We shouldn't be surprised the model missed the week 1
 decrease: we gave it no temporal information.  One potential fix is the formula
 `~ arm + time_point`.
 
    But considering the large world data story, this model isn't quite right.
-   We don't expect IL1-a concentration to change just because the clock reads
+   We don't expect IL-1a concentration to change just because the clock reads
    week 1 or 7. We want the treatment effect itself to depend on the week. This
    is an interaction, `~ arm + arm : timepoint`.
 
-1. The fitted model is printed below. The way to interpret the parameters is
-that the expected log-concentrations are,
+1. The fitted model is printed below. The parameters give
+the expected log-concentrations,
 
    - Placebo at baseline: 4.66
    - Treatment at baseline: 4.66 - 0.29
@@ -754,7 +785,7 @@ plot_cytokine(sim_data)
 
 1. One more revision. The model doesn't account for longitudinality, which could
 inflate our confidence.  It treats each sample as independent, when measurements
-from the same participant are possibly dependent. The effective sample size lies
+from the same participant may be dependent. The effective sample size lies
 somewhere between the number of study participants (44) and measurements (132).
 
    We have the machinery to deal with this: a participant-level random effect,
@@ -781,7 +812,7 @@ plot_cytokine(sim_data)
 
 ### Flow Cytometry Cell Compositions
 
-1. **Biological Question.** Does the inflammation-reducing drug influence immune
+1. **Biological Question.** Does the anti-inflammatory drug influence immune
 cell composition at week 1 post-treatment?
 
 1. Let's read in the data. Since our question focuses on `week_1`, we keep only
@@ -834,10 +865,10 @@ the "large world" data story,
 
    - There are on the order of a trillion immune cells (of various cell types)
    circulating through a typical body at any moment. Some cell types are much
-   rarer than others, and there are more cell types than we would be able to
-   assay with our flow cytometer. Cells are being created and destroyed at all
-   times and they are not evenly spatially distributed, instead having
-   concentrations shifting in response to signalling molecules and random drift.
+   rarer than others, and there are more cell types than we can assay with our
+   flow cytometer. Cells are being created and destroyed at all times and they
+   are not evenly spatially distributed, with concentrations changing in
+   response to signaling molecules and random drift.
    - At a doctor's office, a CVL is collected, catching some of the cells from
    the previous step that just happened to be present at the right place and
    time. A technician takes the collected sample and freezes it, killing all the
@@ -850,7 +881,7 @@ the "large world" data story,
    types. Some don't fall anywhere we recognize and so are dropped from
    subsequent analysis. The data are saved to a CSV file and uploaded to the
    workshop website, living on a server in a data center in Greenland.  Three
-   years later, you download a copy of that data to your computer.
+   years later, you download a copy of the data to your computer.
 
    This is a big world, and our final file is an imperfect view of the
    participants' original immune landscapes. Sampling variation and measurement
@@ -896,8 +927,8 @@ head(y_sim)
    those in the real data, which reflects the randomness of the binomial model.
 
 1. We've written a helper, `fit_cytof`, that loops this model over all cell
-types and simulates counts for each.  Visualizing the simulated data, two issues
-stand out,
+types and simulates counts for each.  When we visualize the simulated data, two
+issues stand out,
 
    - The simulated proportions are very close to the estimated proportions
    across all the samples.  The binomial model has much lower variability than
@@ -927,7 +958,7 @@ m <- fit_cytof(proportion ~ arm)
 
 1. The estimated coefficients with treatment status as a covariate are printed
 below. The row for `cd3_negative` means that placebo samples have about
-`plogis(-3.98) = 0.018` of their compostion from CD3- cells. Under treatment
+`plogis(-3.98) = 0.018` of their composition from CD3- cells. Under treatment
 this decreases to about `plogis(-3.98 - 0.578) = 0.010`.
 
    ```{r}
@@ -948,7 +979,7 @@ plot_counts(counts)
    ```
 
 1. To account for sample-to-sample differences, we add a random effect.
-Since the sample labels are kept the `sample_id` column, we modify the formula to
+Since the sample labels are kept in the `sample_id` column, we modify the formula to
 
    ```
     proportion ~ arm + (1 | sample_id)
@@ -960,7 +991,7 @@ Since the sample labels are kept the `sample_id` column, we modify the formula t
 the smooth variation in composition across samples seen in the real data
 -- this could be introduced through latent factors or modeling
 correlation across cell types. Even so, the current model is often sufficient
-real data analyses, and underlies the `diffcyt` Bioconductor package @Weber2019.
+for real data analyses, and underlies the `diffcyt` Bioconductor package @Weber2019.
 
    ```{r}
 #| label: account-random-effects
@@ -972,7 +1003,7 @@ plot_counts(counts)
    ```
 
 1. The model output shows how the treatment affects each cell type
-(`armtreatment`) and how much varies across sample (`sample_id` `Std. Dev`). For
+(`armtreatment`) and how much it varies across sample (`sample_id` `Std. Dev`). For
 example, under treatment the CD3- composition tends to decrease relative to the
 other cell types.
 

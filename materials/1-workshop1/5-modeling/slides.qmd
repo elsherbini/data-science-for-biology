@@ -2,6 +2,8 @@
 title: "Modeling and Uncertainty"
 subtitle: "<em>Building models for biological data</em>"
 author: Kris Sankaran and Marothi Peter Letsoalo
+bibliography: references.bib
+csl: https://www.zotero.org/styles/vancouver
 format:
     qmdrslides-revealjs:
         fig-align: center
@@ -115,7 +117,7 @@ p1 / p2
 ```
 
 ```{r}
-#| label: discussion-compare
+#| label: discussion-picture
 #| echo: false
 countdown::countdown(5)
 ```
@@ -124,7 +126,7 @@ countdown::countdown(5)
 
 > A statistical model is a simplified description of how the data were generated, the "data story."
 
-- Model parameters let us answer substantive scientific questions, like how a treatment affects outcomes.
+- Model parameters let us answer scientific questions, like how a treatment affects outcomes.
 
 - We observe just one realization of the data generating process -- things could have turned out differently if we ran the study again.
 
@@ -151,7 +153,8 @@ There will always be a gap between the two worlds. That gap is itself a source o
 
 ## Large Worlds
 
-A dataset is like a photograph of a biological system, but the snapshot takes longer to generate and is more error prone.
+A dataset is like a photograph of a biological system, but it develops slowly
+and is more error prone.
 
 ![](images/malaria.jpeg)
 
@@ -169,16 +172,16 @@ A dataset is like a photograph of a biological system, but the snapshot takes lo
 
 ## Small Worlds
 
-- The small-world model summarizes the aspects of the experiment that will continue to be true
+- The small-world model summarizes what would stay true if the experiment were repeated.
 
-- It encodes a _data generating process_ that lets us simulate new data that preserves the key aspects of the original experiment without memorizing every sample's value
+- It encodes a _data generating process_ that lets us simulate new data with the experiment's key features, without memorizing every sample.
 
 ![](images/example_small_worlds.png)
 
 ## Modeling Checklist
 
 ::: {.incremental style="font-size: 0.95em"}
-1. **Biological Question.** What real-world questions do you want  your model to answer?
+1. **Biological Question.** What real-world questions do you want to answer?
 
 2. **Plot the Data.** What does the outcome look like? Do you notice relationships with other variables?
 
@@ -195,7 +198,8 @@ A dataset is like a photograph of a biological system, but the snapshot takes lo
 
 Each type of statistical model is designed for a different kind of data or biological question.
 
-Knowing all the "species" of model will let you adapt to whatever data or questions you encounter.
+Knowing different model "species" lets you adapt to whatever data or questions
+you encounter.
 
 ::: {style="font-size: 0.9em"}
 _Today's tour:_
@@ -221,24 +225,25 @@ The **Bernoulli** is for *individual outcomes*, the **Binomial** applies to thei
 
 ## Bernoulli and Binomial Models
 
-Once fitted, the small-world Bernoulli and Binomial models can generate data
-with frequencies comparable to the observed data.
+The raw data come from two classes, and we want their relative probabilities.
 
 ![](images/bernoulli_circles.png)
 
 ## Bernoulli and Binomial Models
 
+The raw data come from two classes, and we want their relative probabilities.
+
 ![](images/bernoulli_binomial_comparison.png)
 
-## Bernoulli Model
+## Model Covariates
 
-The outcome probabilities can depend on sample covariates.
+The outcome probabilities can depend on sample-level covariates.
 
 ![](images/bernoulli_sizes_covariate.png)
 
-## Bernoulli Model
+## Model Covariates
 
-The outcome probabilities can depend on sample covariates.
+The outcome probabilities can depend on sample-level covariates.
 
 ![](images/bernoulli_sizes_curve.png)
 
@@ -252,7 +257,7 @@ The outcome probabilities can depend on sample covariates.
 
 ## Example data story
 
-- **Response $y$**: Who does (1) or doesn't (2) get infected during an outbreak?
+- **Response $y$**: Who does (1) or doesn't (0) get infected during an outbreak?
 
 - **Covariates $x$**: Some people have larger social networks than others.
 
@@ -298,7 +303,7 @@ The `glm` function has three arguments:
 ::: incremental
 - `formula`: written `y ~ x`, this relates outcome `y` to **covariates** `x`
 - `family`: the type of model (depends on the data type of the outcome)
-- `data`: a `data.frame` containing the columns named in `formula`
+- `data`: a data.frame containing the columns named in `formula`
 :::
 
 ## Bernoulli fit
@@ -319,7 +324,7 @@ We wrote `family = binomial()`, but since `infected` is 0/1, the code knows to r
 
 - `plogis()` converts them to the **probability scale**:
 
-- This is the model often called logistic regression, after the inverse logistic function (`plogis`).
+- This model is often called logistic regression, after the inverse logistic function (`plogis`).
 
 ## Interpreting the fit
 
@@ -352,17 +357,20 @@ summary(fit)
 ## Interpreting the fit
 
 - `x = 0` $\implies$ `plogis(-2.37) ≈ 0.085`
-- `x = 0.5` $\implies$ `plogis(-2.37 + 0.5 * 3.09) ≈ 0.24`
-- `x = 1` $\implies$ `plogis(-2.37 + 1 * 3.09) ≈ 0.50`
+- `x = 0.5` $\implies$ `plogis(-2.37 + 0.5 * 3.09) ≈ 0.30`
+- `x = 1` $\implies$ `plogis(-2.37 + 1 * 3.09) ≈ 0.67`
 
 ```{r}
 #| label: plot-bernoulli-overlay
 #| fig-width: 8
 #| fig-height: 5.5
 #| echo: false
+#|
+infections$predicted_prob <- plogis(predict(fit))
 ggplot(infections) +
     geom_jitter(aes(social_contact, infected, col = factor(infected)), height = 0.05, size = 2) +
-    geom_line(aes(social_contact, prob_infection), linewidth = 1, col = "#232323") +
+    geom_line(aes(social_contact, prob_infection), linewidth = 1, col = "#bbb6b6") +
+    geom_line(aes(social_contact, predicted_prob), linewidth = 1, col = "#414ca1") +
     scale_x_continuous(expand = c(0, 0)) +
     theme(legend.position = "bottom") +
     labs(y = "Infection Probability", x = "Level of Social Contact", col = "Infection Status")
@@ -431,7 +439,10 @@ summary(fit)
 
 These models apply to **count data**.
 
-The Poisson arises whenever we count events spread uniformly across space and time — like raindrops landing on a window during a minute of rain.
+The Poisson arises as the "number of occurrences of an event that happens rarely
+but has many opportunities to happen" [@wiki_poisson_distribution]. The number
+of raindrops landing on a small window during a heavy storm would be Poisson
+distributed.
 
 ![](images/poisson_raindrop.png)
 
@@ -439,7 +450,10 @@ The Poisson arises whenever we count events spread uniformly across space and ti
 
 These models apply to **count data**.
 
-The Poisson arises whenever we count events spread uniformly across space and time — like raindrops landing on a window during a minute of rain.
+The Poisson arises as the "number of occurrences of an event that happens rarely
+but has many opportunities to happen" [@wiki_poisson_distribution]. The number
+of raindrops landing on a small window during a heavy storm would be Poisson
+distributed.
 
 ![](images/poisson_histogram.png)
 
@@ -453,15 +467,19 @@ Counts can depend on sample characteristics. The rain may have been falling hard
 
 Many biological counts have this flavor:
 
-- Transcript counts of a gene can depend on drug treatment
-- Mutation count along a segment of the genome can depend on selection pressure
-- Infection count within a county can depend on distance to the epicenter
+- Transcript counts
+    - Each transcript has a small chance of binding to cDNA, but there are many transcripts
+    - The number of transcripts of a gene might depend on drug treatment
+- Mutation count along a genome segment
+    - Each base pair has a small chance of being mutated, but there are many base pairs overall
+    - The number of mutations depends on selection pressure
+- Infection count within a county
+    - Each person has a small chance of being infected, but the population is large
+    - The infection rates decrease further from the epicenter
 
 ## Outbreak counts vs. distance
 
-Counts can depend on sample characteristics, like more infections in counties closer to the outbreak epicenter.
-
-The mean parameter is called the **Poisson rate**.
+Let's fit a model for the infection count example.
 
 ```{r}
 #| label: load-outbreak-data
@@ -483,8 +501,6 @@ ggplot(outbreak, aes(epicenter_distance)) +
 ## Outbreak counts vs. distance
 
 Counts can depend on sample characteristics, like more infections in counties closer to the outbreak epicenter.
-
-The mean parameter is called the **Poisson rate**.
 
 ```{r}
 #| label: tbl-outbreak-sample
@@ -525,9 +541,11 @@ At distance `x`, the average count is `≈ exp(2.4 - 0.5x)`
 
 ```{r}
 #| label: plot-outbreak-overlay
+outbreak$predicted_mean <- predict(fit, type = "response")
 ggplot(outbreak, aes(epicenter_distance)) +
-    geom_line(aes(y = mean), col = "#414ca1", linewidth = 1) +
     geom_point(aes(y = infected), size = 2) +
+    geom_line(aes(y = mean), col = "#bbb6b6", linewidth = 1) +
+    geom_line(aes(y = predicted_mean), col = "#414ca1", linewidth = 1) +
     labs(x = "Epicenter Distance", y = "Infection Count")
 ```
 
@@ -575,6 +593,16 @@ fit <- lm(antibody ~ age, data = antibody)
 summary(fit)
 ```
 
+## Interpreting the fit
+
+The estimates are on the same scale as the response, so we can interpret the
+results directly.
+
+```{r}
+#| label: lm-interpret
+summary(fit)
+```
+
 Predicted titre at age `x` is `19.6 + 0.058x`
 
 E.g. at age 10 the prediction is `≈ 19.6 + 0.58 = 20.18`
@@ -585,41 +613,25 @@ The **Central Limit Theorem**: the average of many small, independent effects te
 
 We implicitly assume many small, independent factors other than age that perturb the observed antibody measurement.
 
-[picture of gsn errors around regression line]
-
 ![](images/regression_gsn_clt.png)
 
-## Why Gaussian errors?
+## Discussion {.your-turn}
 
-<iframe src="https://seeing-theory.brown.edu/probability-distributions/index.html#section3" height="800" width="2000" style="border: 1px solid #2e3846;"></iframe>
+_Recommend a model for each of the following questions. What plot would you use to validate your choice? What would be the response and covariate variables?_
 
-## Categorical covariates
-
-Linear regression can be used with covariates that are categorical. It is not
-limited to drawing straight lines through scatterplots.
-
-```{r}
-#| label: gsn-categories
-antibody_grouped <- antibody |>
-    mutate(age_group = cut(age, c(0, 30, 60, 100)))
-ggplot(antibody_grouped) +
-    geom_boxplot(aes(age_group, antibody)) +
-    labs(x = "Age Group", y = "Antibody Titre")
-```
-
-## Categorical covariates
-
-The estimates are on the same scale as the response, so we can interpret the
-results without using `plogis` or `exp` like we needed before.
+- Does the proportion of Lactobacillus in a 16S sequencing dataset change between treatment and control groups in an RCT?
+- We have counts of gene transcripts over time from a bulk RNA-sequencing experiment. Is its expression systematically changing?
+- Study participants have been grouped into low and high inflammation groups. We want to see whether abundance of a given microbe-produced metabolite is associated with inflammation group.
 
 ```{r}
-fit <- lm(antibody ~ age_group, data = antibody_grouped)
-summary(fit)
+#| label: discussion-compare
+#| echo: false
+countdown::countdown(5)
 ```
 
 # Variations: Multiple Predictors, Mixed Effects, Interactions
 
-## Multiple predictors
+## Multiple Predictors
 
 Formulas can have multiple covariates: `y ~ x1 + x2`
 
@@ -645,11 +657,37 @@ summary(fit)
 
 ![](images/two_predictors_2d.png)
 
+## Categorical covariates
+
+All models can be used with covariates that are categorical. They are not
+limited to drawing smooth curves or straight lines.
+
+```{r}
+#| label: gsn-categories
+antibody_grouped <- antibody |>
+    mutate(age_group = cut(age, c(0, 30, 60, 100)))
+ggplot(antibody_grouped) +
+    geom_boxplot(aes(age_group, antibody)) +
+    labs(x = "Age Group", y = "Antibody Titre")
+```
+
+## Categorical covariates
+
+This is a linear regression model fitted to the previous slide's data, where
+antibody levels are grouped.
+
+```{r}
+fit <- lm(antibody ~ age_group, data = antibody_grouped)
+summary(fit)
+```
+
 ## Mixed effects
 
 - Baseline effects often **vary across contexts**.
 
-- In the Bernoulli example, the way infection probability increases with social contact may vary from county due to unmeasured factors, like population density.
+- In the Bernoulli example, the way infection probability increases with social
+contact may vary across counties due to unmeasured factors, like population
+density.
 
 ## County-varying baselines
 
@@ -679,7 +717,7 @@ ggplot(mixed_effect_data) +
 
 - We could add county as an ordinary covariate — but with many counties, this becomes unwieldy.
 - A better approach is to use a **random effect**
-- County effects are imagined as drawn from a larger source of randomness.
+- We imagine county effects as draws from a shared distribution.
 
 ![](images/random_effects_counties.png)
 
@@ -687,7 +725,7 @@ ggplot(mixed_effect_data) +
 ## Random effects
 
 - We estimate the **overall variation across counties**, not each one separately.
-- This is statistically easier, so yields higher power.
+- This is statistically easier, so it yields higher power.
 - Because they include both fixed and random effects, these are called **mixed effects** models.
 
 ![](images/random_effects_counties.png)
@@ -706,8 +744,8 @@ summary(fit)
 
 ## Interpreting the random effect
 
-The `SD` says estimates vary by roughly 0.71 across counties, at any level of
-social contact. Therefore, even at social contact = 0, the infection
+The `SD` says the intercept varies by roughly 0.71 across counties, at any level
+of social contact. Therefore, even at social contact = 0, the infection
 probabilities below would both be typical:
 
 ```{r}
@@ -764,7 +802,7 @@ summary(fit)
 
 ## Discussion {.your-turn}
 
-Think through the first two parts three parts of the modeling checklist for a
+Think through the first three parts of the modeling checklist for a
 dataset that you are interested in from your own work or study.
 
 1. **Biological Question**. What real-world questions do you want to answer?
@@ -773,13 +811,19 @@ dataset that you are interested in from your own work or study.
 
 3. **Working Assumptions.** Make a small-world story about your data. What model type, response $y$, and covariates $x$ could you use?
 
+```{r}
+#| label: discussion-variations
+#| echo: false
+countdown::countdown(5)
+```
+
 # Part 3: Case Studies
 
 ## Case Study: Longitudinal Cytokines
 
 **Biological Question**
 
-> Does treatment with the anti-inflammatory drug change cytokine concentrations post-treatment (week 1), and if so does the effect persist into the long-run (week 7)?
+> Does treatment with the anti-inflammatory drug change cytokine concentrations post-treatment (week 1), and if so does the effect persist into the long run (week 7)?
 
 ## Plot the data
 
@@ -796,7 +840,7 @@ ggplot(cytokines) +
     facet_wrap(~ reorder(cytokine, -conc), nrow = 2)
 ```
 
-Roughly, there seems to be a strong treatment effect at one week that weakens by
+There seems to be a strong treatment effect at one week that weakens by
 week 7. We'll focus on **IL-1a**, the cytokine with the fewest measurements
 below the detection limit.
 
@@ -818,7 +862,7 @@ fit <- lm(log(conc) ~ arm, data = cytokines)
 summary(fit)
 ```
 
-The treatment effect is significant, but we should only interpret a model after
+The treatment effect is significant, but we should interpret a model only after
 checking its fidelity.
 
 ## Check by simulation
@@ -949,13 +993,16 @@ summary(fit)
 5. **Case study** illustrating the checklist
 :::
 
-## Questions?
+## Exercise 2 {.your-turn}
 
-\
-\
+Open `notebooks/05-modeling.qmd` in your Codespace.
+
+<br>
+
+The modes flip: whoever was agentic in Exercise 1 is manual now, and vice versa.
+
+<br>
 
 ```{r}
-#| label: discussion-timer
-#| echo: false
-countdown::countdown(5)
+countdown::countdown(30)
 ```
