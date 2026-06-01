@@ -134,23 +134,23 @@ Bernoulli models individual outcomes while the binomial applies to their totals.
    circles similar to (but not exactly the same as) those we originally
    observed.
 
-   ![](images/Bernoulli_circles.png){width=40%}
+   ![](images/bernoulli_circles.png){width=40%}
 
    A Bernoulli model expects each sample to be associated with a 0/1 label,
    while the binomial models counts of each group.
 
-   ![](images/Bernoulli_binomial_comparison.png)
+   ![](images/bernoulli_binomial_comparison.png)
 
 1. The data generating mechanism can let the frequency depend on sample
 characteristics, e.g., large circles are more likely to be blue.
 
-   ![](images/Bernoulli_sizes_covariate.png){width=40%}
+   ![](images/bernoulli_sizes_covariate.png){width=40%}
 
    The model can learn the relationship between the size covariates and
    probability of the blue outcome and summarizes it as a smooth, increasing
    curve.
 
-   ![](images/Bernoulli_sizes_curve.png){width=40%}
+   ![](images/bernoulli_sizes_curve.png){width=40%}
 
 1. Imagine modeling a disease outbreak in a county. Each person can be
 infected or not. The probability of infection can depend on the degree of social
@@ -309,14 +309,14 @@ summary(fit)
 whenever we count events spread uniformly across space and time, for example,
 the number of raindrops landing on a window during a minute of rain.
 
-   ![](images/Poisson_raindrop.png)
+   ![](images/poisson_raindrop.png)
 
    Making a histogram of these counts over time gives us a simple data story. We
    get a random number of raindrops each minute. Most of the time around five
    drops land, but a value of zero or ten would not be unusual. Values much
    larger than that are less likely.
 
-   ![](images/Poisson_histogram.png)
+   ![](images/poisson_histogram.png)
 
    Many biological counts have this flavor.
 
@@ -331,7 +331,7 @@ characteristics. For example, the rain may have been most intense earlier in the
 night. This figure shows how the probabilities of different number of raindrops
 progress.
 
-   ![](images/Poisson_histogram_sequence.png)
+   ![](images/poisson_histogram_sequence.png)
 
    For a more realistic example, note that the infections in counties closer to
    the epicenter likely have more infections.
