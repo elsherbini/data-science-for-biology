@@ -376,6 +376,26 @@ ggplot(table_02, aes(arm, ph, fill = arm)) +
 
 :::
 
+## Common types of mappings
+
+![Figure from [Claus O. Wilke, *Fundamentals of Data Visualization*](https://clauswilke.com/dataviz) (O'Reilly, 2019).](images/common-aesthetics-1.png)
+
+Each aesthetic is a channel you can map a column to: x position, y position, color, fill, shape, size. The next activity asks you to pick which channel fits which column.
+
+## Exploring data for patterns {.your-turn}
+
+In pairs or trios, open the data on the module page and sketch a visualization that reveals which TB strains are drug-resistant.
+
+<br>
+
+Sketch at [excalidraw.com](https://excalidraw.com). Name your marks, your mappings, and your geom, then post the image and your answers to **#module-3-sketches** on Discord.
+
+<br>
+
+```{r}
+countdown::countdown(20)
+```
+
 ## Your first ggplot
 
 ```{r}
