@@ -117,7 +117,7 @@ p1 / p2
 ```
 
 ```{r}
-#| label: discussion-compare
+#| label: discussion-picture
 #| echo: false
 countdown::countdown(5)
 ```
@@ -468,13 +468,13 @@ Counts can depend on sample characteristics. The rain may have been falling hard
 Many biological counts have this flavor:
 
 - Transcript counts
-    - Any one transcript has a small chance of binding to cDNA, but there are many transcripts
+    - Each transcript has a small chance of binding to cDNA, but there are many transcripts
     - The number of transcripts of a gene might depend on drug treatment
 - Mutation count along a genome segment
-    - Any one base pair has a small chance of being mutated, but there are many base pairs overall
+    - Each base pair has a small chance of being mutated, but there are many base pairs overall
     - The number of mutations depends on selection pressure
 - Infection count within a county
-    - Any one person has a small chance of being infected, but the population is large
+    - Each person has a small chance of being infected, but the population is large
     - The infection rates decrease further from the epicenter
 
 ## Outbreak counts vs. distance
@@ -593,6 +593,16 @@ fit <- lm(antibody ~ age, data = antibody)
 summary(fit)
 ```
 
+## Interpreting the fit
+
+The estimates are on the same scale as the response, so we can interpret the
+results directly.
+
+```{r}
+#| label: lm-interpret
+summary(fit)
+```
+
 Predicted titre at age `x` is `19.6 + 0.058x`
 
 E.g. at age 10 the prediction is `≈ 19.6 + 0.58 = 20.18`
@@ -603,37 +613,7 @@ The **Central Limit Theorem**: the average of many small, independent effects te
 
 We implicitly assume many small, independent factors other than age that perturb the observed antibody measurement.
 
-[picture of gsn errors around regression line]
-
 ![](images/regression_gsn_clt.png)
-
-## Why Gaussian errors?
-
-<iframe src="https://seeing-theory.brown.edu/probability-distributions/index.html#section3" height="800" width="2000" style="border: 1px solid #2e3846;"></iframe>
-
-## Categorical covariates
-
-Linear regression can be used with covariates that are categorical. It is not
-limited to drawing straight lines through scatterplots.
-
-```{r}
-#| label: gsn-categories
-antibody_grouped <- antibody |>
-    mutate(age_group = cut(age, c(0, 30, 60, 100)))
-ggplot(antibody_grouped) +
-    geom_boxplot(aes(age_group, antibody)) +
-    labs(x = "Age Group", y = "Antibody Titre")
-```
-
-## Categorical covariates
-
-The estimates are on the same scale as the response, so we can interpret the
-results without using `plogis` or `exp` like we needed before.
-
-```{r}
-fit <- lm(antibody ~ age_group, data = antibody_grouped)
-summary(fit)
-```
 
 ## Discussion {.your-turn}
 
@@ -651,7 +631,7 @@ countdown::countdown(5)
 
 # Variations: Multiple Predictors, Mixed Effects, Interactions
 
-## Multiple predictors
+## Multiple Predictors
 
 Formulas can have multiple covariates: `y ~ x1 + x2`
 
@@ -676,6 +656,30 @@ summary(fit)
 ## Multiple Predictors
 
 ![](images/two_predictors_2d.png)
+
+## Categorical covariates
+
+All models can be used with covariates that are categorical. They are not
+limited to drawing smooth curves or straight lines.
+
+```{r}
+#| label: gsn-categories
+antibody_grouped <- antibody |>
+    mutate(age_group = cut(age, c(0, 30, 60, 100)))
+ggplot(antibody_grouped) +
+    geom_boxplot(aes(age_group, antibody)) +
+    labs(x = "Age Group", y = "Antibody Titre")
+```
+
+## Categorical covariates
+
+This is a linear regression model fitted to the previous slide's data, where
+antibody levels are grouped.
+
+```{r}
+fit <- lm(antibody ~ age_group, data = antibody_grouped)
+summary(fit)
+```
 
 ## Mixed effects
 
@@ -808,7 +812,7 @@ dataset that you are interested in from your own work or study.
 3. **Working Assumptions.** Make a small-world story about your data. What model type, response $y$, and covariates $x$ could you use?
 
 ```{r}
-#| label: discussion-compare
+#| label: discussion-variations
 #| echo: false
 countdown::countdown(5)
 ```
