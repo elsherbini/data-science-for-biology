@@ -2,4 +2,13 @@
 title: "Module 1: Introduction to Agentic Coding"
 ---
 
-Lesson content is coming soon.
+More lesson content is coming soon. For now, here are the slides from Scott
+Handley's talk.
+
+## Slides: Scott Handley
+
+[Open the slides full screen](handley_llm_presentation_05312026.pdf)
+
+```{=html}
+<iframe class="slide-deck" src="handley_llm_presentation_05312026.pdf" height="420" width="747" style="border: 1px solid #2e3846;"></iframe>
+```
