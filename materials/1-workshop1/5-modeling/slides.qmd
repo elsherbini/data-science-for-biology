@@ -635,6 +635,20 @@ fit <- lm(antibody ~ age_group, data = antibody_grouped)
 summary(fit)
 ```
 
+## Discussion {.your-turn}
+
+Recommend a model for each of the following problems. What plot would you use to validate your choice?
+
+- Does the proportion of Lactobacillus in a 16S sequencing dataset change between treatment and control groups in an RCT?
+- We have counts of gene transcripts over time from a bulk RNA-sequencing experiment. Is its expression systematically changing?
+- Study participants have been grouped into low and high inflammation groups. We want to see whether abundance of a given microbe-produced metabolite is associated with inflammation group.
+
+```{r}
+#| label: discussion-compare
+#| echo: false
+countdown::countdown(5)
+```
+
 # Variations: Multiple Predictors, Mixed Effects, Interactions
 
 ## Multiple predictors
@@ -792,6 +806,12 @@ dataset that you are interested in from your own work or study.
 2. **Plot the Data.** Did you ever plot the data? If so, what patterns did you see? If not, what plots could you make?
 
 3. **Working Assumptions.** Make a small-world story about your data. What model type, response $y$, and covariates $x$ could you use?
+
+```{r}
+#| label: discussion-compare
+#| echo: false
+countdown::countdown(5)
+```
 
 # Part 3: Case Studies
 
@@ -969,13 +989,16 @@ summary(fit)
 5. **Case study** illustrating the checklist
 :::
 
-## Questions?
+## Exercise 2 {.your-turn}
 
-\
-\
+Open `notebooks/05-modeling.qmd` in your Codespace.
+
+<br>
+
+The modes flip: whoever was agentic in Exercise 1 is manual now, and vice versa.
+
+<br>
 
 ```{r}
-#| label: discussion-timer
-#| echo: false
-countdown::countdown(5)
+countdown::countdown(30)
 ```
