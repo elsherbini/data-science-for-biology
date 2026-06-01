@@ -71,7 +71,8 @@ Network: KTB Free Wifi (no password needed)
 
 Network AHRI Password: `@hR1W1F1!17`
 
-Network AHRI-Internet Only Password: `AHRI twenty three!`
+Network AHRI-Internet Only Password:\
+`AHRI twenty three!` (note the spaces!)
 
 Network CAPRISA-Corp Password: `corp@caprisa17`
 
