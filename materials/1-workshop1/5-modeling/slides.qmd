@@ -637,7 +637,7 @@ summary(fit)
 
 ## Discussion {.your-turn}
 
-Recommend a model for each of the following problems. What plot would you use to validate your choice?
+_Recommend a model for each of the following questions. What plot would you use to validate your choice? What would be the response and covariate variables?_
 
 - Does the proportion of Lactobacillus in a 16S sequencing dataset change between treatment and control groups in an RCT?
 - We have counts of gene transcripts over time from a bulk RNA-sequencing experiment. Is its expression systematically changing?
