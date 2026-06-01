@@ -20,48 +20,54 @@ Then ask a TA or instructor (in Discord or in person) to give you the **Particip
 
 In any channel, type `/claim` and press Enter. The bot replies in the channel, but the message is visible only to you.
 
-The reply contains your OpenRouter API key and your daily budget. **Copy the key now** — you'll paste it into GitHub in step 8.
+The reply contains your OpenRouter API key and your daily budget. **Copy the key now** — you'll paste it into GitHub in step 9.
 
 Useful later: `/key` shows your key again, `/usage` shows today's spend.
 
-## Step 3: Open the template
+## Step 3: Sign in to GitHub
+
+Before you touch any buttons on GitHub, make sure you are **signed in**. Go to [github.com/login](https://github.com/login) and sign in, or [create a free account](https://github.com/signup) if you don't have one.
+
+GitHub hides the **"Use this template"** and **"Code"** buttons from signed-out visitors — if you're not logged in, the next steps won't show them.
+
+## Step 4: Open the template
 
 Open the [participant environment repo](https://github.com/elsherbini/data-science-for-biology-june2026-codespace) and click the green **"Use this template"** button.
 
 ![](assets/images/getting-started/1-use-this-template.png){width=900 fig-align="center" fig-alt="GitHub repo page with the 'Use this template' button highlighted"}
 
-## Step 4: Create a new repository
+## Step 5: Create a new repository
 
 In the dropdown, choose **"Create a new repository"**.
 
 ![](assets/images/getting-started/2-create-new-repository.png){width=400 fig-align="center" fig-alt="Use this template dropdown with 'Create a new repository' highlighted"}
 
-## Step 5: Name your repository
+## Step 6: Name your repository
 
 Give it a name (for example, `workshop-2026`) and click the green **"Create repository"** button.
 
 ![](assets/images/getting-started/3-give-repo-name.png){width=900 fig-align="center" fig-alt="New repository form with the Repository name field highlighted"}
 
-## Step 6: Open Codespaces settings
+## Step 7: Open Codespaces settings
 
 Go directly to your [Codespaces settings page](https://github.com/settings/codespaces).
 
-## Step 7: Click "New secret"
+## Step 8: Click "New secret"
 
 Scroll to **"Codespace user secrets"** and click **"New secret"**.
 
 ![](assets/images/getting-started/5-add-new-secret.png){width=1200 fig-align="center" fig-alt="Codespace user secrets section with the New secret button highlighted"}
 
-## Step 8: Fill in and save the secret
+## Step 9: Fill in and save the secret
 
 - **Name**: `OPENROUTER_API_KEY` (exact spelling)
 - **Value**: paste the key the Discord bot gave you in step 2
-- **Repository access**: select the repo you created in step 5
+- **Repository access**: select the repo you created in step 6
 - Click **"Add secret"**
 
 ![](assets/images/getting-started/6-name-key-and-add-to-repo.png){width=750 fig-align="center" fig-alt="New secret form with Name, Repository access, and Add secret highlighted"}
 
-## Step 9: Launch a codespace
+## Step 10: Launch a codespace
 
 Go back to your new repo. Click **"Code"** → **"Codespaces"** tab → **"Create codespace on main"**.
 
@@ -69,14 +75,14 @@ First build takes **~10 minutes or more** (installing R, Quarto, packages, Pi).
 
 ![](assets/images/getting-started/7-launch-codespace.png){width=800 fig-align="center" fig-alt="Repository page with the Code button and Create codespace on main button highlighted in the Codespaces tab"}
 
-## Step 10: Open a notebook
+## Step 11: Open a notebook
 
 Once the codespace finishes building:
 
 - Use the file explorer (left side) to find a `.qmd` notebook
 - Open it to start working — edit text and code right in the browser
 
-## Step 11: Meet Pi
+## Step 12: Meet Pi
 
 Open the integrated terminal (**Terminal → New Terminal**), then run `pi`.
 
