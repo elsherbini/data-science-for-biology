@@ -1,0 +1,307 @@
+---
+title: "Exercise 1 Solutions: Choose a Model Before Coding"
+format:
+  html:
+    toc: true
+---
+
+This is an instructor-facing draft solution key for Exercise 1. It is stored in
+the `exercises/` folder so it is not rendered into the public participant site
+by the project-level render settings.
+
+The goal is not for every group to give exactly these answers. A good answer
+should identify the response type, choose a compatible model family or model
+extension, explain one coefficient on the correct scale, and describe at least
+one reasonable model check or revision.
+
+## Quick answer key
+
+| Data story | Response type | Model family / extension | Example formula | Natural transform |
+|---|---|---|---|---|
+| Infection status and social contact | Binary | Bernoulli / logistic regression | `infected ~ social_contact` | `plogis()` or `exp()` |
+| Infection counts and epicenter distance | Count | Poisson regression | `infected ~ epicenter_distance` | `exp()` |
+| Antibody titre, age, and blood pressure | Continuous | Linear regression | `antibody ~ age + blood_pressure` | None |
+| Age-antibody relationship differs by group | Continuous | Linear regression with interaction | `antibody ~ age + age:group` | None |
+
+## Scenario 1: Infection status depends on social contact
+
+### Part 1: Pick a data story
+
+1. Biological question: Are people with higher social contact more likely to be
+   infected?
+2. Response variable: `infected`, a binary outcome coded as infected or not
+   infected.
+3. First covariate: `social_contact`.
+4. Model family: Bernoulli / logistic regression, fit with
+   `glm(..., family = binomial())`.
+
+### Part 2: Make the small-world model
+
+Possible formula:
+
+```r
+infected ~ social_contact
+```
+
+One coefficient interpretation:
+
+- The `social_contact` coefficient is the expected change in log-odds of
+  infection for a one-unit increase in social contact.
+- This is not directly a probability difference.
+- Use `plogis()` to turn fitted log-odds into probabilities.
+- Use `exp()` to turn the coefficient into an odds ratio.
+
+Working assumptions:
+
+- Each person's infection outcome is conditionally independent after accounting
+  for social contact.
+- The log-odds of infection changes linearly with social contact.
+- There are no omitted covariates that strongly distort the social contact
+  relationship.
+
+Expected simulation pattern:
+
+- Simulated data should show more infected people at higher social contact.
+- Individual points should still vary because the outcome is binary and random.
+
+### Part 3: Revise the model
+
+Possible missing pattern:
+
+- Infection probability may differ by county, household, intervention group, or
+  age group.
+
+Possible revisions:
+
+```r
+infected ~ social_contact + age
+infected ~ social_contact + intervention
+infected ~ social_contact * intervention
+infected ~ social_contact + (1 | county)
+```
+
+Reasonable explanation:
+
+- Add a covariate if another measured variable explains differences in risk.
+- Add an interaction if the social contact effect differs across groups.
+- Add a random effect if observations are clustered within counties or sites.
+
+## Scenario 2: Infection counts depend on distance from an outbreak epicenter
+
+### Part 1: Pick a data story
+
+1. Biological question: Do infection counts decrease as distance from the
+   outbreak epicenter increases?
+2. Response variable: `infected`, a nonnegative count.
+3. First covariate: `epicenter_distance`.
+4. Model family: Poisson regression, fit with
+   `glm(..., family = poisson())`.
+
+### Part 2: Make the small-world model
+
+Possible formula:
+
+```r
+infected ~ epicenter_distance
+```
+
+One coefficient interpretation:
+
+- The `epicenter_distance` coefficient is the expected change in log-rate of
+  infections for a one-unit increase in distance.
+- Use `exp()` to turn this coefficient into a rate ratio.
+- A rate ratio below 1 means expected counts decrease as distance increases.
+
+Working assumptions:
+
+- Counts are conditionally independent after accounting for distance.
+- The log-rate changes linearly with distance.
+- The mean and variance are similar enough for the Poisson model to be useful.
+
+Expected simulation pattern:
+
+- Simulated counts should be higher near the epicenter and lower farther away.
+- The spread of simulated counts should look similar to the observed spread at
+  similar distances.
+
+### Part 3: Revise the model
+
+Possible missing pattern:
+
+- Counties with the same distance may have very different population sizes or
+  reporting intensity.
+- The distance-count relationship may be weaker or stronger in different
+  regions.
+
+Possible revisions:
+
+```r
+infected ~ epicenter_distance + population_size
+infected ~ epicenter_distance + offset(log(population_size))
+infected ~ epicenter_distance + region
+infected ~ epicenter_distance * region
+```
+
+Reasonable explanation:
+
+- Add an offset if population size changes the exposure.
+- Add a region effect if baseline reporting or exposure differs by place.
+- Add an interaction if the distance effect changes by region.
+
+## Scenario 3: Antibody titre depends on age and blood pressure
+
+### Part 1: Pick a data story
+
+1. Biological question: Is antibody titre associated with age after accounting
+   for blood pressure?
+2. Response variable: `antibody`, a continuous outcome.
+3. First covariates: `age` and `blood_pressure`.
+4. Model family: Linear regression, fit with `lm()`.
+
+### Part 2: Make the small-world model
+
+Possible formula:
+
+```r
+antibody ~ age + blood_pressure
+```
+
+One coefficient interpretation:
+
+- The `age` coefficient is the expected difference in antibody titre for a
+  one-year increase in age, holding blood pressure fixed.
+- The estimate is already on the antibody titre scale.
+- No `plogis()` or `exp()` transform is needed for the usual interpretation.
+
+Working assumptions:
+
+- The expected antibody titre changes linearly with age and blood pressure.
+- Residual variation is approximately symmetric around the fitted mean.
+- Observations are independent.
+- The additive model is adequate unless there is evidence that the age effect
+  depends on blood pressure or another group.
+
+Expected simulation pattern:
+
+- Simulated titres should follow the same average trend with age and blood
+  pressure as the real data.
+- The simulated spread around the fitted trend should be similar to the observed
+  spread.
+
+### Part 3: Revise the model
+
+Possible missing pattern:
+
+- The age trend may differ by disease group, genotype, sex, or treatment group.
+- The relationship may be curved rather than linear.
+- The variability may increase at higher antibody titres.
+
+Possible revisions:
+
+```r
+antibody ~ age + blood_pressure + group
+antibody ~ age * group + blood_pressure
+antibody ~ age + I(age^2) + blood_pressure
+log(antibody) ~ age + blood_pressure
+```
+
+Reasonable explanation:
+
+- Add a group covariate if baseline antibody titre differs across groups.
+- Add an interaction if the age effect differs across groups.
+- Transform the outcome or add curvature if the linear-Gaussian story does not
+  reproduce the observed pattern.
+
+## Scenario 4: The age-antibody relationship differs by group
+
+### Part 1: Pick a data story
+
+1. Biological question: Does the relationship between age and antibody titre
+   differ between healthy and disease groups?
+2. Response variable: `antibody`, a continuous outcome.
+3. First covariates: `age`, `group`, and their interaction.
+4. Model family: Linear regression with an interaction, fit with `lm()`.
+
+### Part 2: Make the small-world model
+
+Possible formula:
+
+```r
+antibody ~ age + age:group
+```
+
+One coefficient interpretation:
+
+- The `age` coefficient is the age slope for the reference group.
+- The `age:group` coefficient is the difference between the age slope in the
+  comparison group and the age slope in the reference group.
+- The estimates are already on the antibody titre scale, so no `plogis()` or
+  `exp()` transform is needed for the usual interpretation.
+
+Working assumptions:
+
+- The relationship between age and antibody titre is approximately linear within
+  each group.
+- Residual variation is approximately symmetric around each fitted line.
+- Observations are independent.
+- The main scientific difference between groups is captured by different age
+  slopes.
+
+Expected simulation pattern:
+
+- Simulated antibody titres should show different fitted age trends across
+  groups.
+- The simulated spread around each line should resemble the observed spread.
+
+### Part 3: Revise the model
+
+Possible missing pattern:
+
+- The groups may have different intercepts as well as different slopes.
+- Blood pressure may explain some of the antibody variation.
+- The age pattern may be curved rather than linear.
+
+Possible revisions:
+
+```r
+antibody ~ age * group
+antibody ~ age * group + blood_pressure
+antibody ~ age + I(age^2) + group
+```
+
+Reasonable explanation:
+
+- Use `age * group` when both group-specific intercepts and group-specific age
+  slopes are plausible.
+- Add blood pressure if it is a meaningful additional covariate.
+- Add curvature if a straight-line trend cannot reproduce the observed pattern.
+
+## Discussion guide
+
+Manual workflow:
+
+- Often better for slowing down and stating assumptions explicitly.
+- Can reveal whether participants understand model families without relying on
+  generated code.
+- May be harder when participants are unsure about coefficient scales.
+
+Agentic workflow:
+
+- Can help you compare candidate model families quickly.
+- Can produce useful reminders about transformations like `plogis()` and
+  `exp()`.
+- Needs checking because it may choose an overly complex model or explain a
+  coefficient on the wrong scale.
+
+Common teaching points:
+
+- Model choice starts with the response type.
+- Model extensions, like multiple predictors, interactions, and random effects,
+  are added after choosing a compatible model family.
+- Coefficient interpretation depends on the model's scale.
+- Transformations help communicate results, but they do not change model
+  assumptions.
+- A model that gives a clean table can still be a bad model if simulated data
+  do not resemble the observed pattern.
+- Revision should be driven by a missing pattern, not by adding complexity for
+  its own sake.

@@ -23,4 +23,6 @@ library(tidyverse)
 
 More detailed notes accompanying this lecture can be found [here](notes.html).
 
+{{< include exercise_1.qmd >}}
+
 {{< include exercise_2.qmd >}}
