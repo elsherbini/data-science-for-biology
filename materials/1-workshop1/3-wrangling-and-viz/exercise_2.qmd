@@ -12,7 +12,7 @@ The notebook shows two pre-built plots: a scatter (`ph` vs `nugent_score`, color
 2. What property of the mark comes from what column?
 3. How many rows of data made each mark?
 
-Then sketch (paper or markdown) a plot that would answer "does pH differ between treatment arms?" Name the mark, the mappings, and how many rows make each mark.
+Then sketch (excalidraw or paper) a plot that would answer "does pH differ between treatment arms?" Name the mark, the mappings, and how many rows make each mark.
 
 ### Part 2 — Build the plot
 
@@ -29,11 +29,3 @@ Build one ggplot that grows step by step, on the raw `table_02`. Whatever your a
 ### Part 3 — Reach (optional)
 
 Produce a polished final figure for the question. Facet by visit, color by arm, axes labeled, `time_point` panels in chronological order (`baseline`, `week_1`, `week_7`), and a clean theme.
-
-### Discussion
-
-Once the room is back together:
-
-- What was easy in your mode for the plotting work? What was hard?
-- Of the two exercises you've now done, one each way — which mode felt better for which kind of task?
-- Where did the assistant misread what you wanted? How did you catch it?

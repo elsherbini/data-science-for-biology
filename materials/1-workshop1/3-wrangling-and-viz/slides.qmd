@@ -13,6 +13,7 @@ execute:
 library(tidyverse)
 library(countdown)
 library(here)
+library(cowplot)
 
 table_01 <- read_csv(here("datasets/instructional_dataset/01_participant_metadata_UKZN_workshop_2023.csv"))
 table_02 <- read_csv(here("datasets/instructional_dataset/02_visit_clinical_measurements_UKZN_workshop_2023.csv"))
@@ -292,87 +293,105 @@ table_01 |>
 
 Pick the plot to fit the question.
 
-## Every plot has three pieces
+## Every plot has three pieces {auto-animate=true}
 
 - *geom* — the kind of mark and the rule for drawing it (`geom_point` draws round dots; `geom_boxplot` draws a five-number summary box)
 - *mark* — what you see on the plot. Marks are produced by the geom.
 - *mapping* — the link from a data column to a property of the mark, written in `aes()`
 
+## Every plot has three pieces {auto-animate=true}
+
+::: {.columns}
+
+::: {.column width="40%"}
+Marks: the coloured dots.
+
+Mappings: `ph → x`, `nugent_score → y`, `arm → color`.
+
+Geom: `geom_jitter`.
+:::
+
+::: {.column width="60%"}
 ```{r}
 #| echo: false
-#| fig-width: 6
-#| fig-height: 2.4
+#| fig-width: 5
+#| fig-height: 4.6
 ggplot(table_02, aes(ph, nugent_score, color = arm)) +
-  geom_jitter(size = 2) +
-  theme_minimal(base_size = 13)
+  geom_jitter(size = 2.5) +
+  theme_minimal(base_size = 15)
 ```
+:::
 
-Geom: `geom_jitter`. Marks: the coloured dots. Mappings: `ph → x`, `nugent_score → y`, `arm → color`.
+:::
 
 ## What "aesthetic" means in ggplot
 
+::: {style="font-size: 1.5em;"}
 In ggplot, an *aesthetic* is a visual property of a mark — x position, y position, color, fill, shape, size.
 
-It is not a style choice. `aes()` is short for *aesthetic mapping* and connects a data column to one of these properties.
+`aes()` is short for *aesthetic mapping* and connects a data column to one of these properties.
+:::
 
 ## Aesthetic mappings with `aes()`
 
+::: {.columns}
+
+::: {.column width="42%"}
 `aes(x = ph, y = nugent_score)` says: each mark's x position comes from the row's `ph`; its y position comes from the row's `nugent_score`.
 
 The same column can be shown on different aesthetics — `aes(y = ph)` or `aes(color = ph)`.
+:::
 
-::: {layout-ncol=2}
-
+::: {.column width="58%"}
 ```{r}
 #| echo: false
-#| fig-width: 4
-#| fig-height: 2.8
-ggplot(table_02, aes(arm, ph)) +
+#| fig-width: 4.2
+#| fig-height: 5
+p_y <- ggplot(table_02, aes(arm, ph)) +
   geom_jitter(width = 0.2, color = "navyblue") +
   labs(title = "ph mapped to y") +
-  theme_minimal(base_size = 12)
-```
+  theme_minimal(base_size = 13)
 
-```{r}
-#| echo: false
-#| fig-width: 4
-#| fig-height: 2.8
-ggplot(table_02, aes(arm, nugent_score, color = ph)) +
+p_color <- ggplot(table_02, aes(arm, nugent_score, color = ph)) +
   geom_jitter(width = 0.2) +
   labs(title = "ph mapped to color") +
-  theme_minimal(base_size = 12)
+  theme_minimal(base_size = 13)
+
+cowplot::plot_grid(p_y, p_color, ncol = 1)
 ```
+:::
 
 :::
 
 ## Variable type matches aesthetic
 
+::: {.columns}
+
+::: {.column width="42%"}
 Continuous variables (`ph`, `crp_blood`) suit continuous aesthetics: y position, color gradient.
 
 Categorical variables (`arm`, `smoker`) suit categorical aesthetics: grouping x, fill, shape.
+:::
 
-::: {layout-ncol=2}
-
+::: {.column width="58%"}
 ```{r}
 #| echo: false
-#| fig-width: 4
-#| fig-height: 2.8
-ggplot(table_02, aes(ph, crp_blood)) +
+#| fig-width: 4.2
+#| fig-height: 5
+p_cont <- ggplot(table_02, aes(ph, crp_blood)) +
   geom_point(color = "navyblue") +
   labs(title = "continuous → y and x") +
-  theme_minimal(base_size = 12)
-```
+  theme_minimal(base_size = 13)
 
-```{r}
-#| echo: false
-#| fig-width: 4
-#| fig-height: 2.8
-ggplot(table_02, aes(arm, ph, fill = arm)) +
+p_cat <- ggplot(table_02, aes(arm, ph, fill = arm)) +
   geom_boxplot() +
   labs(title = "categorical → x and fill") +
-  theme_minimal(base_size = 12) +
+  theme_minimal(base_size = 13) +
   theme(legend.position = "none")
+
+cowplot::plot_grid(p_cont, p_cat, ncol = 1)
 ```
+:::
 
 :::
 

@@ -35,10 +35,3 @@ Classify Nugent score into clinical categories with `case_when()`:
 - 7–10 → `"BV"`
 
 Add the category column to `early_visit`, then run `count(arm, nugent_category)` to see the distribution by treatment arm.
-
-### Discussion
-
-Once the room is back together:
-
-- What was easy in your mode? What was hard?
-- Which step would have taken longest if you'd done it the other way?
