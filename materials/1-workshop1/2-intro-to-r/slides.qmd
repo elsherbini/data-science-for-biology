@@ -241,7 +241,7 @@ Programming is giving the computer instructions using text. The tricky part is l
 ```{r error=TRUE}
 #| echo: fenced
 
-max(c(1,2,3,4))
+max(c(1, 2, 3 4))
 ```
 :::
 :::{#column3 .fragment}
@@ -363,10 +363,6 @@ Render input file to various document formats.
 
 
 # Code Chunks
-
-
-## Let's explore the survey data {.our-turn}
-
 
 
 ## Quarto's Code Chunk {.your-turn}

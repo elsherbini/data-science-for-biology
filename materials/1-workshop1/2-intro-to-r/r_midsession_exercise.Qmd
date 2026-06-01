@@ -2,6 +2,9 @@
 
 ##  Worksheet: Introduction to R and Quarto
 
+Open `notebooks/02-intro-to-r.qmd` in your Codespace to follow along -- it has
+an empty code chunk under each exercise heading for your answers.
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, eval=TRUE}
 library(tidyverse)
 ```
@@ -19,7 +22,6 @@ In order to get familiar with the R language, we shall start by using simple ope
 /                division
 ^ or **          power
 
-x %*% y          matrix multiplication c(5, 3) %*% c(2, 4) == 22
 x %% y           modulo (x mod y) 5 %% 2 == 1
 x %/% y          whole number division: 5 %/% 2 == 2
 ```
@@ -120,7 +122,7 @@ quantile(x, probs)      quantile of x.  probs: vector of probabilities
 
 sum(x)                  sum
 min(x)                  minimal value of x (x_min)
-max(x)                  xaximal value of x (x_max)
+max(x)                  maximal value of x (x_max)
 range(x)                x_min und x_max
 
 # if center  = TRUE: subtract mean
@@ -195,21 +197,29 @@ Write R commands to calculate the following:
 
 Write R commands to evaluate the following:
 
-1. You have 83 chocolates in a bag. You would like to divide them into smaller bags of 8.\
-  1.1 How many small bags will you need? \
-  1.2 After the bags are filled, how many extra chocolates will you have remaining?
+1. You have 83 chocolates in a bag. You would like to divide them into smaller
+   bags of 8.
+   i. How many small bags will you need?
+   ii. After the bags are filled, how many extra chocolates will you have remaining?
 2. You are planning a research study with the following eligibility criteria:
- - Study participant should be between 18-25 years old (variable: age)\
- - Hemoglobin should be over 10 (variable: hgb) \
- - Study participant should not weigh over 50 (variable: wgt) \
- - Study location should be X or Y (variable: loc)
- 3. I have the following observations from a clinical parameter –
-x <- c(23.1924, 21.4545, 24.6778)
-However, I would prefer to limit the values to 1 decimal point. How would you do that?
-4. Look up the rnorm() function in the Help Viewer. What arguments does this function take? Any default values?
-5. Try to nest a function within another
+   - Study participant should be between 18-25 years old (variable: `age`)
+   - Hemoglobin should be over 10 (variable: `hgb`)
+   - Study participant should not weigh over 50 (variable: `wgt`)
+   - Study location should be X or Y (variable: `loc`)
 
-Assuming you get all the information in forms of the above variables, write an R command to determine eligibility.
+   Assuming you get all of this as the variables above, write an R command that
+   determines eligibility.
+3. I have the following observations from a clinical parameter:
+
+   ```r
+   x <- c(23.1924, 21.4545, 24.6778)
+   ```
+
+   However, I would prefer to limit the values to 1 decimal point. How would you
+   do that?
+4. Look up the `rnorm()` function in the Help Viewer. What arguments does this
+   function take? Any default values?
+5. Try to nest one function inside another.
 
 
 ### 2. Objects and Vectors in R
@@ -337,8 +347,6 @@ Exercise time!
 
 ### 3. Dataframes in R
 
-<!-- TODO: reconcile light tidyverse-verb use here against Module 3 during content iteration -->
-
 For data analysis and statistics, data frames are important objects of data representation. A data frame is a two dimensional structure with rows and columns, like a table. You can think of it as a collection of vectors. Let us try making one.
 
 ```{r}
@@ -383,26 +391,26 @@ colnames(df)
 nrow(df)
 ncol(df)
 
-# Data frame subsetting (I want only a few columns of my interest)
-select(df, name)
-select(df, year_of_birth)
+# Data frame subsetting with square brackets: df[rows, columns]
 
-#extract row 2 only
-slice(df, 2)
+# extract one column (by name) -- returns a vector
+df$name
 
-#extract rows 1, and 3
-slice(df, c(1,3))
+# extract row 2 only (leave the column slot empty to keep all columns)
+df[2, ]
 
-#extract column 3 only
-select(df, 3)
+# extract rows 1 and 3
+df[c(1, 3), ]
 
-#extract rows based on one condition
-filter(df, year_of_birth > 1995)
+# extract column 3 only (leave the row slot empty to keep all rows)
+df[, 3]
 
+# extract rows based on one condition
+df[df$year_of_birth > 1995, ]
 
-#extract rows based on multiple conditions
-filter(df, year_of_birth > 1995 & favourite_colour=="red")
-filter(df, year_of_birth > 1995 | favourite_colour=="red")
+# extract rows based on multiple conditions
+df[df$year_of_birth > 1995 & df$favourite_colour == "red", ]
+df[df$year_of_birth > 1995 | df$favourite_colour == "red", ]
 
 #Note the difference in output upon use of different logical operators AND and OR
 
