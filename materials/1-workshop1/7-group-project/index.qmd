@@ -25,54 +25,53 @@ short presentation by Friday.
 
 ## Session 1 — Wednesday: Build a data dossier
 
-The first session isn't "look around for a bit." Your group is going to
-**build a data dossier**: a Quarto report that explains your dataset
-table-by-table, shows what the numbers look like, and ends with a shortlist
-of biological questions worth chasing on Thursday.
+Your group is going to **build a data dossier**: a Quarto report that
+explains your dataset table-by-table, shows what the numbers look like, and
+ends with a shortlist of biological questions worth chasing on Thursday.
 
-This is the real work. You can't ask a good question of data you don't
-understand, and you can't build a Table 1 for participants you can't
+This is the real work of the week. You can't ask a good question of data you
+don't understand, and you can't build a Table 1 for participants you can't
 describe. Everything you do Thursday and Friday rests on how well you know
 your dataset by 5pm today.
 
-The tone for the afternoon: **use Pi to move fast, then slow down and make
-the understanding yours.** Pi will hand you a working draft in seconds —
-that's the easy part. The learning happens when you read its code, run it,
-and check that it's actually true.
+Use Pi to move fast, then slow down and make the understanding yours. Pi will
+hand you a working draft in seconds; that's the easy part. The learning
+happens when you read its code, run it, and check that it's actually true.
 
 ### Work in parallel, then compare
 
 There is no single scribe. **Everyone explores on their own machine**, at
 the same time, asking Pi their own questions.
 
-Then compare — constantly. When someone in your group got more out of the
-dataset than you did, the most valuable question you can ask is:
+Then compare, and compare often. When someone in your group got more out of
+the dataset than you did, the most useful question you can ask is:
 
 > *"What did you ask Pi for?"*
 
 Learning to prompt well is half of what this week is about, and the fastest
-way to learn it is to see how differently the person next to you got there.
-Every twenty minutes or so, pool what you've each found into the **one
-shared report** your group will hand in.
+way to pick it up is to watch how differently the person next to you got
+there. Every twenty minutes or so, pool what you've each found into the
+**one shared report** your group will hand in.
 
 ### The Pi loop
 
-Run this loop together, over and over, for everything you explore:
+Run this loop, over and over, for everything you explore:
 
-1. **Ask** — give Pi a concrete task. ("Read every CSV in
+1. **Ask.** Give Pi a concrete task. ("Read every CSV in
    `data/group_a_yogurt/` and tell me what each table contains.")
-2. **Read** — actually read the code it wrote. What does each line do? If a
+2. **Read.** Actually read the code it wrote. What does each line do? If a
    line is mysterious, ask Pi to explain *that line*.
-3. **Run** — put the code in your `.qmd`, run it, and look at the output.
-4. **Verify** — don't just trust it; make the answer yours. Verify two
-   ways: **by doing** (run a little of your own code — count the rows,
-   `count()` a column's values, check a join lines up) and **by asking**
-   (ask Pi *how it would verify* that claim, then run what it suggests).
-5. **Iterate** — refine, then write one sentence in your report saying what
+3. **Run.** Put the code in your `.qmd`, run it, and look at the output.
+4. **Verify.** Don't just trust it; make the answer yours. Check it two
+   ways: by doing (run a little of your own code to count the rows,
+   `count()` a column's values, or confirm a join lines up) and by asking
+   (have Pi tell you *how it would verify* the claim, then run what it
+   suggests).
+5. **Iterate.** Refine, then write one sentence in your report saying what
    you now know.
 
-Pi might be completely right — that's fine. You verify anyway, because the
-goal is for *you* to understand the dataset, not for Pi to.
+Pi might be completely right, and that's fine. You verify anyway, because
+the goal is for *you* to understand the dataset.
 
 Two prompts to break the blank page:
 
@@ -80,8 +79,8 @@ Two prompts to break the blank page:
 > the CSV files and give me, for each one, what a single row represents and
 > what every column means."*
 
-> *"Show me how the tables link together — which columns I'd use to join
-> them — and write the code to count how many participants and how many
+> *"Show me how the tables link together, including which columns I'd use to
+> join them, and write the code to count how many participants and how many
 > samples are in the study."*
 
 ### Your report
@@ -131,7 +130,7 @@ anyone.
 
 - A rendered data dossier that explains every table and shows a few plots
 - A shortlist of **2–4 candidate questions** for Thursday
-- A feel for which of you asks Pi the sharpest questions — and why
+- A sense of which of you asks Pi the sharpest questions, and why
 
 Full prompts live in `group_project/README_session1.md` in your codespace.
 
