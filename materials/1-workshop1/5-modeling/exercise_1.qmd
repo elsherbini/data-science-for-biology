@@ -1,4 +1,4 @@
-## Exercise 1: Choose a Model Before Coding
+## Exercise 1: Quick Model Checks Before Coding
 
 > *Mode assignment.* Work in pairs. One person should work **manually** and one
 > should work **agentically**. Manual means you may use the notes, slides, and
@@ -6,52 +6,47 @@
 > revise your answer. Agentic means you may ask Pi to help reason through the
 > problem, but you should still decide what answer you trust.
 
-### Part 1 - Pick a data story
+Answer these questions briefly. A phrase, formula, or one-sentence explanation is
+enough.
 
-Choose one example from the model zoo or the model variations:
+### Part 1 - Match the model
+
+For each data story, write the response type, model family, and a possible
+formula.
 
 1. Infection status depends on social contact.
 2. Infection counts depend on distance from an outbreak epicenter.
 3. Antibody titre depends on age and blood pressure.
 4. The age-antibody relationship differs between healthy and disease groups.
 
-For your chosen example, answer:
+### Part 2 - Interpret the coefficient scale
 
-1. What is the biological question?
-2. What is the response variable? Is it binary, a count, or continuous?
-3. What covariate or covariates would you include first?
-4. Which model family fits this response type? If needed, what model extension
-   would you add, such as multiple predictors, a random effect, or an
-   interaction?
+1. In `glm(infected ~ social_contact, family = binomial())`, what scale is the
+   `social_contact` estimate on? Which function converts fitted values to
+   probabilities?
+2. In `glm(infected ~ epicenter_distance, family = poisson())`, what scale is
+   the `epicenter_distance` estimate on? Which function converts it to a rate
+   ratio?
+3. In `lm(antibody ~ age + blood_pressure)`, how would you interpret the `age`
+   estimate?
+4. In `lm(antibody ~ age + age:group)`, what does the `age:group` term tell us?
 
-### Part 2 - Make the small-world model
+### Part 3 - Choose a revision
 
-Write one possible model formula. For example, use the form `y ~ x`, `y ~ x1 + x2`,
-or `y ~ x1 + x1:x2`.
+For each diagnostic clue, write one reasonable model revision.
 
-Then answer:
-
-1. What does one coefficient in your model mean?
-2. Is the coefficient already on the scale you want to explain, or would you
-   transform it using something like `plogis()` or `exp()`?
-3. What working assumption is the model making about the data?
-4. What pattern would you expect to see if you simulated new data from this
-   model?
-
-### Part 3 - Revise the model
-
-Imagine the first model does not reproduce an important pattern in the data.
-
-1. What pattern might be missing?
-2. Would you add another covariate, an interaction, a random effect, or a
-   different model family?
-3. How would the formula or model choice change?
+1. Infection probability differs strongly by county, even at the same level of
+   social contact.
+2. Infection counts still differ by region after accounting for distance from
+   the epicenter.
+3. Antibody titre varies with blood pressure as well as age.
+4. The age-antibody trend is not parallel across healthy and disease groups.
 
 ### Discussion
 
 After completing the exercise:
 
-- What did the manual workflow make easier or harder?
-- What did the agentic workflow make easier or harder?
-- Did both workflows lead to the same model choice?
-- What would you check before trusting the model?
+- Which questions were easiest to answer manually?
+- Which questions were easier with agentic help?
+- Where did you need to check the assistant's reasoning most carefully?
+- What would you check before trusting a fitted model?
