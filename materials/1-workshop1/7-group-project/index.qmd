@@ -40,33 +40,48 @@ the dataset than you did, ask:
 
 ### The Pi loop
 
-Run this loop, over and over, for everything you explore:
+Start by copying this prompt into the terminal:
 
-1. **Ask.** Give Pi a concrete task. ("Read every CSV in
-   `data/group_a_yogurt/` and tell me what each table contains.")
-2. **Read.** Actually read the code it wrote. What does each line do? If a
+```{text}
+I'm exploring a new dataset in `data/`. Ask me which group I'm in, then read all
+the CSV files and give me, for each one, what a single row represents and
+what every column means. Always make files in the "group_project" folder.
+
+I want the output in the form of a qmd document using R and tidyverse code for each code chunk. I want 
+format:
+  html:
+    toc: true
+    code-fold: true
+    embed-resources: true 
+Launch the preview as a detached background process so it survives your shell
+exiting and keeps watching for changes:
+    PORT=4321
+    setsid quarto preview <qmd_file_name> --no-browser --port $PORT \
+      > /tmp/quarto-preview.log 2>&1 < /dev/null &
+We're in a GitHub Codespace, so localhost won't work from my browser. Build the
+forwarded URL from the Codespace env vars and print it as a clickable terminal
+hyperlink (short visible text, so it won't wrap and break the link):
+    URL="https://${CODESPACE_NAME}-${PORT}.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}/"
+    printf '\n\e]8;;%s\a▶ Open Quarto preview\e]8;;\a\n' "$URL"
+    echo "log: /tmp/quarto-preview.log"
+```
+
+
+This might take 2-5+ minutes for the model to accomplish. Then start these steps below:
+
+1. **Ask.** Give Pi a concrete task. (for instance "Tell me what the second code chunk does, line by line")
+2. **Read.** Actually read the code and the response it wrote. What does each line do? If a
    line is mysterious, ask Pi to explain *that line*.
-3. **Run.** Put the code in your `.qmd`, run it, and look at the output.
-4. **Verify.** Don't just trust it; it's still your job to produce trustworthy analysis. Check it two
+3. **Verify.** Don't just trust it; it's still your job to produce trustworthy analysis. Check it two
    ways: by doing (run a little of your own code to count the rows,
    `count()` a column's values, or confirm a join lines up) and by asking
    (have Pi tell you *how it would verify* the claim, then run what it
    suggests).
-5. **Iterate.** Refine, then write one sentence in your report saying what
+4. **Iterate.** Refine, then write one sentence in your report saying what
    you now know.
 
 Pi might be completely right, and that's fine. You verify anyway, because
 the goal is for *you* to understand the dataset.
-
-Two prompts to get started trying:
-
-> *"I'm exploring a new dataset in `data/group_b_menstruation/`. Read all
-> the CSV files and give me, for each one, what a single row represents and
-> what every column means."*
-
-> *"Show me how the tables link together, including which columns I'd use to
-> join them, and write the code to count how many participants and how many
-> samples are in the study."*
 
 ### Your report
 
