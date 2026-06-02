@@ -211,6 +211,23 @@ Each row is one arm × smoker combination.
 
 {{< include ../_wooclap.qmd >}}
 
+## Keep the table in mind when you prompt
+
+The AI writes better code when it knows the shape of your data: how many rows,
+and what one row stands for (a participant, a participant-visit, a
+smoker-category).
+
+Not sure what a row means? Ask the AI what *it* thinks each row represents,
+then check that answer against the table.
+
+Most requests come down to the verbs from this module:
+
+- keep some rows (`filter`)
+- compute a new column (`mutate`)
+- count rows by group (`count`)
+- pick and rename columns (`select`, `rename`)
+- reorder rows (`arrange`)
+
 ## Exercise 1 {.your-turn}
 
 Open `notebooks/03-wrangling.qmd` in your Codespace.
