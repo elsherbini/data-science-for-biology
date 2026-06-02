@@ -47,8 +47,6 @@ Join the Discord server: [https://discord.gg/zSBTQ9ctt](https://discord.gg/zSBTQ
 
 R 4.1 added `|>` to base R. We use it everywhere in this module.
 
-One quirk: the right-hand side needs parentheses. Write `head()`, not `head`.
-
 ## The pipe in action {auto-animate=true}
 
 ```{r}
@@ -219,7 +217,15 @@ Open `notebooks/03-wrangling.qmd` in your Codespace.
 
 <br>
 
-Group A: agentic. Group B: manual.
+**Back of the room — agentic.** Work the exercise by chatting: ask for what
+you want and let the assistant write and run the code for you.
+
+**Front of the room — manual.** Type the code yourself. Reach for the
+assistant only when you're stuck.
+
+<br>
+
+"Chatting" means DMing the **Workshop Assistant** bot on Discord.
 
 <br>
 
@@ -546,7 +552,7 @@ Open `notebooks/03-visualization.qmd` in your Codespace.
 
 <br>
 
-The modes flip: whoever was agentic in Exercise 1 is manual now, and vice versa.
+The modes flip: the back of the room goes manual, the front goes agentic.
 
 <br>
 
