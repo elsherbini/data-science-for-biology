@@ -23,17 +23,115 @@ participant codespace under `data/`:
 Pick a biological question that interests your group and build toward a
 short presentation by Friday.
 
-## Session 1 — Wednesday: Get to know your dataset
+## Session 1 — Wednesday: Build a data dossier
 
-The first session is exploratory. You're not analyzing yet — you're
-building a mental map of the dataset so you can decide what's worth asking.
+The first session isn't "look around for a bit." Your group is going to
+**build a data dossier**: a Quarto report that explains your dataset
+table-by-table, shows what the numbers look like, and ends with a shortlist
+of biological questions worth chasing on Thursday.
 
-Read the CSVs into R, look at the tables, and discuss as a group:
+This is the real work. You can't ask a good question of data you don't
+understand, and you can't build a Table 1 for participants you can't
+describe. Everything you do Thursday and Friday rests on how well you know
+your dataset by 5pm today.
 
-- What does each table contain, and what does one row mean?
-- How are the tables linked together?
-- Which variables look interesting? What looks suspicious or missing?
-- What biological question might your group want to explore by Thursday?
+The tone for the afternoon: **use Pi to move fast, then slow down and make
+the understanding yours.** Pi will hand you a working draft in seconds —
+that's the easy part. The learning happens when you read its code, run it,
+and check that it's actually true.
+
+### Work in parallel, then compare
+
+There is no single scribe. **Everyone explores on their own machine**, at
+the same time, asking Pi their own questions.
+
+Then compare — constantly. When someone in your group got more out of the
+dataset than you did, the most valuable question you can ask is:
+
+> *"What did you ask Pi for?"*
+
+Learning to prompt well is half of what this week is about, and the fastest
+way to learn it is to see how differently the person next to you got there.
+Every twenty minutes or so, pool what you've each found into the **one
+shared report** your group will hand in.
+
+### The Pi loop
+
+Run this loop together, over and over, for everything you explore:
+
+1. **Ask** — give Pi a concrete task. ("Read every CSV in
+   `data/group_a_yogurt/` and tell me what each table contains.")
+2. **Read** — actually read the code it wrote. What does each line do? If a
+   line is mysterious, ask Pi to explain *that line*.
+3. **Run** — put the code in your `.qmd`, run it, and look at the output.
+4. **Verify** — don't just trust it; make the answer yours. Verify two
+   ways: **by doing** (run a little of your own code — count the rows,
+   `count()` a column's values, check a join lines up) and **by asking**
+   (ask Pi *how it would verify* that claim, then run what it suggests).
+5. **Iterate** — refine, then write one sentence in your report saying what
+   you now know.
+
+Pi might be completely right — that's fine. You verify anyway, because the
+goal is for *you* to understand the dataset, not for Pi to.
+
+Two prompts to break the blank page:
+
+> *"I'm exploring a new dataset in `data/group_b_menstruation/`. Read all
+> the CSV files and give me, for each one, what a single row represents and
+> what every column means."*
+
+> *"Show me how the tables link together — which columns I'd use to join
+> them — and write the code to count how many participants and how many
+> samples are in the study."*
+
+### Your report
+
+One rendered HTML report per group. Start your `.qmd` with a header that
+turns on a table of contents, folds code by default, and bundles everything
+into a single self-contained file:
+
+````{.yaml}
+---
+title: "Group A — Data Dossier"
+format:
+  html:
+    toc: true
+    code-fold: true
+    embed-resources: true
+---
+````
+
+`code-fold` keeps the report readable as prose while leaving every chunk one
+click away; `embed-resources` makes the HTML a single file you can hand to
+anyone.
+
+### The afternoon (1:30–5:00)
+
+- **1:30–1:45 · Kick off & set up.** Each person creates their report
+  `.qmd` with the header above, loads `tidyverse` and `here`, and confirms
+  the data path works. Goal: a Quarto doc that renders before you explore
+  anything.
+- **1:45–2:45 · Map the dataset, fast.** Lean on Pi for speed. For every
+  table, answer: what is one row, and what does each column mean? Get a
+  rough draft of the whole map written as prose in your report.
+- **2:45–3:00 · First verification.** Slow down. Each person picks two
+  claims from their map and confirms them — by running your own code *and*
+  by asking Pi how it would check. Not hunting for mistakes; building
+  confidence that you really know what's in the tables.
+- **3:00–3:30 · Break.**
+- **3:30–4:30 · Explore & plot.** Go deep on the numbers: distributions,
+  skew, suspicious values, missing data. Make your first plots *inside the
+  report* and iterate on them — remaking one plot three times teaches more
+  than making three different plots once.
+- **4:30–5:00 · Distill & render.** Pool everyone's findings into the group
+  report. Turn what you found into a shortlist of biological questions for
+  Thursday. Render to HTML.
+
+### Walk away with
+
+- A rendered data dossier that explains every table and shows a few plots
+- A shortlist of **2–4 candidate questions** for Thursday
+- A feel for which of you asks Pi the sharpest questions — and why
 
 Full prompts live in `group_project/README_session1.md` in your codespace.
 
