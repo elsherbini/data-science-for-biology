@@ -119,7 +119,7 @@ p1 / p2
 ```{r}
 #| label: discussion-picture
 #| echo: false
-countdown::countdown(5)
+countdown::countdown(3)
 ```
 
 ## A statistical model
@@ -192,19 +192,21 @@ A dataset is like a photograph of a biological system, but the snapshot takes lo
 5. **Revised Models.** Revise until the model provides a good match. Use this to answer the original question.
 :::
 
-# Part 2: A Tour through the Model Zoo
+# Part 2: Basic Ingredients
 
-## Why a zoo?
+## Recipes
 
-Each type of statistical model is designed for a different kind of data or biological question.
+Each type of statistical model is designed for a different kind of data or
+biological question.
 
-Knowing different model "species" lets you adapt to whatever data or questions
-you encounter.
+Like having a well-stocked pantry is needed to cook many recipes, knowing the
+basic statistical ingredients will allow you to adapt to whatever data or
+questions you encounter.
 
 ::: {style="font-size: 0.9em"}
 _Today's tour:_
 
-- **Bernoulli / Binomial** — binary outcomes
+- **Bernoulli** — binary outcomes
 - **Poisson** — count outcomes
 - **Linear regression** — continuous outcomes
 - **Variations** — multiple predictors, mixed effects, interactions
@@ -247,21 +249,7 @@ The outcome probabilities can depend on sample-level covariates.
 
 ![](images/bernoulli_sizes_curve.png)
 
-## Small-world
-
-- The small-world model summarizes the relationship between covariates and response using this curve.
-
-- The data generating process not only samples the correct frequencies but maintains the covariate-response relationship.
-
-![](images/bernoulli_sizes_curve.png)
-
-## Example data story
-
-- **Response $y$**: Who does (1) or doesn't (0) get infected during an outbreak?
-
-- **Covariates $x$**: Some people have larger social networks than others.
-
-- **Story**: More social contact → higher probability of infection.
+## Infection data
 
 ```{r}
 #| label: load-bernoulli-data
@@ -269,22 +257,6 @@ The outcome probabilities can depend on sample-level covariates.
 infections <- read_csv("https://huggingface.co/datasets/krisrs1128/durban_workshop_data/resolve/main/infections.csv") |>
     mutate(infected = ifelse(infected == "infected", 1, 0))
 ```
-
-```{r}
-#| label: plot-bernoulli
-#| echo: false
-#| fig-width: 8
-#| fig-height: 5.5
-#| out-width: 120%
-ggplot(infections) +
-    geom_jitter(aes(social_contact, infected, col = factor(infected)), height = 0.05, size = 2) +
-    geom_line(aes(social_contact, prob_infection), linewidth = 1, col = "#232323") +
-    scale_x_continuous(expand = c(0, 0)) +
-    theme(legend.position = "bottom") +
-    labs(y = "Infection Probability", x = "Level of Social Contact", col = "Infection Status")
-```
-
-## Infection data
 
 - Each row corresponds to a person
 - The outcome takes one of two values
@@ -294,6 +266,30 @@ ggplot(infections) +
 #| echo: true
 infections |>
     select(sample_id, social_contact, infected)
+```
+
+
+## Small World Model
+
+**Data Story**: More social contact → higher probability of infection.
+
+  - _Response $y$_: Who does (1) or doesn't (0) get infected during an outbreak?
+
+  - _Covariates $x$_: Some people have larger social networks than others.
+
+
+```{r}
+#| label: plot-bernoulli
+#| echo: false
+#| fig-width: 8
+#| fig-height: 5.5
+#| out-width: 120%
+ggplot(infections) +
+    geom_jitter(aes(social_contact, infected, col = factor(infected)), height = 0.05, size = 2) +
+    geom_line(aes(social_contact, prob_infection), linewidth = 1, col = "#4ab05b") +
+    scale_x_continuous(expand = c(0, 0)) +
+    theme(legend.position = "bottom") +
+    labs(y = "Infection Probability", x = "Level of Social Contact", col = "Infection Status")
 ```
 
 ## Fitting with `glm`
@@ -331,8 +327,8 @@ We wrote `family = binomial()`, but since `infected` is 0/1, the code knows to r
 At social contact level `x`, the infection probability `≈ plogis(-2.37 + 3.09x)`
 
 - `x = 0` $\implies$ `plogis(-2.37) ≈ 0.085`
-- `x = 0.5` $\implies$ `plogis(-2.37 + 0.5 × 3.09) ≈ 0.24`
-- `x = 1` $\implies$ `plogis(-2.37 + 1 × 3.09) ≈ 0.50`
+- `x = 0.5` $\implies$ `plogis(-2.37 + 0.5 * 3.09) ≈ 0.24`
+- `x = 1` $\implies$ `plogis(-2.37 + 1 * 3.09) ≈ 0.50`
 
 ```{r}
 #| label: summary-bernoulli-fit
@@ -369,71 +365,12 @@ summary(fit)
 infections$predicted_prob <- plogis(predict(fit))
 ggplot(infections) +
     geom_jitter(aes(social_contact, infected, col = factor(infected)), height = 0.05, size = 2) +
-    geom_line(aes(social_contact, prob_infection), linewidth = 1, col = "#bbb6b6") +
-    geom_line(aes(social_contact, predicted_prob), linewidth = 1, col = "#414ca1") +
+    geom_line(aes(social_contact, prob_infection), linewidth = 1, col = "#4ab05b") +
+    geom_line(aes(social_contact, predicted_prob), linewidth = 1, col = "#e3a444") +
     scale_x_continuous(expand = c(0, 0)) +
     theme(legend.position = "bottom") +
     labs(y = "Infection Probability", x = "Level of Social Contact", col = "Infection Status")
 ```
-
-## Aggregated (Binomial) data
-
-If we only see **totals within categories**, then we can use a Binomial model.
-
-\
-
-```{r}
-#| label: load-infection-totals
-#| echo: false
-infections_totals <- read_csv("https://huggingface.co/datasets/krisrs1128/durban_workshop_data/resolve/main/infections_props.csv") |>
-    mutate(
-        social_level = recode(
-            social_level,
-            "(0.0129,0.337]" = "low",
-            "(0.337,0.661]" = "medium",
-            "(0.661,0.985]" = "high"
-        ),
-        social_level = factor(social_level, levels = c("low", "medium", "high"))
-    )
-```
-
-```{r}
-#| label: tbl-infection-totals
-#| echo: true
-infections_totals
-```
-
-## Aggregated (Binomial) data
-
-```{r}
-#| label: plot-infection-totals
-#| echo: false
-#| fig-width: 8
-#| fig-height: 5.5
-infections_totals |>
-    select(-total) |>
-    pivot_longer(-social_level) |>
-    ggplot() +
-    geom_col(aes(social_level, value, fill = name), position = "dodge") +
-    scale_y_continuous(expand = c(0, 0, 0.1, 0)) +
-    labs(x = "Level of Social Contact", y = "Count", fill = "Infection Status")
-```
-
-## Fitting the Binomial
-
-For group-level counts, the formula's left-hand side becomes a proportion, and we add `weights` to reflect group totals.
-
-```{r}
-#| label: fit-binomial-glm
-#| echo: true
-fit <- glm(infected / total ~ social_level, family = binomial(),
-           weights = total, data = infections_totals)
-summary(fit)
-```
-
-## Interpreting the fit
-
-![](images/binomial_fitted_probabilities.png)
 
 ## Poisson Models
 
@@ -468,13 +405,13 @@ Counts can depend on sample characteristics. The rain may have been falling hard
 Many biological counts have this flavor:
 
 - Transcript counts
-    - Each transcript has a small chance of binding to cDNA, but there are many transcripts
+    - Many transcripts, each with small chance of binding to cDNA
     - The number of transcripts of a gene might depend on drug treatment
 - Mutation count along a genome segment
-    - Each base pair has a small chance of being mutated, but there are many base pairs overall
+    - Many base pairs with small chance of being mutated
     - The number of mutations depends on selection pressure
 - Infection count within a county
-    - Each person has a small chance of being infected, but the population is large
+    - Many people with small probability of being infected
     - The infection rates decrease further from the epicenter
 
 ## Outbreak counts vs. distance
@@ -493,7 +430,7 @@ outbreak <- read_csv("https://huggingface.co/datasets/krisrs1128/durban_workshop
 #| fig-width: 8
 #| fig-height: 4
 ggplot(outbreak, aes(epicenter_distance)) +
-    geom_line(aes(y = mean), col = "#414ca1", linewidth = 1) +
+    geom_line(aes(y = mean), col = "#4ab05b", linewidth = 1) +
     geom_point(aes(y = infected), size = 2) +
     labs(x = "Epicenter Distance", y = "Infection Count")
 ```
@@ -544,8 +481,8 @@ At distance `x`, the average count is `≈ exp(2.4 - 0.5x)`
 outbreak$predicted_mean <- predict(fit, type = "response")
 ggplot(outbreak, aes(epicenter_distance)) +
     geom_point(aes(y = infected), size = 2) +
-    geom_line(aes(y = mean), col = "#bbb6b6", linewidth = 1) +
-    geom_line(aes(y = predicted_mean), col = "#414ca1", linewidth = 1) +
+    geom_line(aes(y = mean), col = "#4ab05b", linewidth = 1) +
+    geom_line(aes(y = predicted_mean), col = "#e3a444", linewidth = 1) +
     labs(x = "Epicenter Distance", y = "Infection Count")
 ```
 
@@ -619,14 +556,14 @@ We implicitly assume many small, independent factors other than age that perturb
 
 _Recommend a model for each of the following questions. What plot would you use to validate your choice? What would be the response and covariate variables?_
 
-- Does the proportion of Lactobacillus in a 16S sequencing dataset change between treatment and control groups in an RCT?
 - We have counts of gene transcripts over time from a bulk RNA-sequencing experiment. Is its expression systematically changing?
 - Study participants have been grouped into low and high inflammation groups. We want to see whether abundance of a given microbe-produced metabolite is associated with inflammation group.
+- Study participants have been grouped into HIV-free and HIV-positive groups. We want to see whether HIV status is related to proportion of Lactobacillus in the vaginal microbiome.
 
 ```{r}
 #| label: discussion-compare
 #| echo: false
-countdown::countdown(5)
+countdown::countdown(3)
 ```
 
 # Variations: Multiple Predictors, Mixed Effects, Interactions
@@ -751,8 +688,8 @@ probabilities below would both be typical:
 ```{r}
 #| label: calc-random-effect-prob-range
 #| echo: true
-plogis(-2.28 - 2 * 0.71)
-plogis(-2.28 + 2 * 0.71)
+plogis(-2.47 - 2 * 0.71)
+plogis(-2.47 + 2 * 0.71)
 ```
 
 ## Interactions
@@ -873,7 +810,7 @@ simulated output matches the corresponding training sample.
 ```{r}
 #| label: simulate-intro
 #| echo: true
-simulate(fit)
+simulate(fit)$sim_1
 ```
 
 ## Check by simulation
@@ -892,12 +829,10 @@ plot_cytokine(sim_data)
 
 ## What went wrong?
 
-::: incremental
 - ✅ Overall concentrations are in the correct range
 - ✅ Control group has larger concentrations than treatment
 - ❌ In the real data, **most blue curves decrease at week 1**
 - ❌ In the simulation, about **half the curves increase**
-:::
 
 ## Revising the model
 
@@ -988,10 +923,25 @@ summary(fit)
 ::: {.incremental style="font-size: 0.95em"}
 1. Models as **data stories** — small world vs. large world.
 2. A **modeling checklist** to guide our work: question → plot → assumptions → checks → revise.
-3. A tour through the **model zoo**: Bernoulli, Binomial, Poisson, Linear.
+3. A review of **modeling ingredients**: Bernoulli, Poisson, Linear.
 4. **Variations** for complex data: multiple predictors, mixed effects, interactions.
 5. **Case study** illustrating the checklist
 :::
+
+## Exercise 1 {.your-turn}
+
+Open `notebooks/05-modeling.qmd` in your Codespace.
+
+<br>
+
+The modes flip: whoever was agentic in Exercise 1 is manual now, and vice versa.
+
+<br>
+
+```{r}
+countdown::countdown(30)
+```
+
 
 ## Exercise 2 {.your-turn}
 
@@ -1006,3 +956,5 @@ The modes flip: whoever was agentic in Exercise 1 is manual now, and vice versa.
 ```{r}
 countdown::countdown(30)
 ```
+
+---
