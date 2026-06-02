@@ -27,31 +27,16 @@ short presentation by Friday.
 
 Your group is going to **build a data dossier**: a Quarto report that
 explains your dataset table-by-table, shows what the numbers look like, and
-ends with a shortlist of biological questions worth chasing on Thursday.
+ends with a shortlist of biological questions you plan to explore more on Thursday.
 
-This is the real work of the week. You can't ask a good question of data you
-don't understand, and you can't build a Table 1 for participants you can't
-describe. Everything you do Thursday and Friday rests on how well you know
-your dataset by 5pm today.
-
-Use Pi to move fast, then slow down and make the understanding yours. Pi will
-hand you a working draft in seconds; that's the easy part. The learning
-happens when you read its code, run it, and check that it's actually true.
+Use Pi to move fast, then slow down and interrogate/iterate on what Pi produced. Pi will hand you a working draft in seconds. The learning happens when you read its code, ask it for clarification, run it, and check that it's actually true.
 
 ### Work in parallel, then compare
 
-There is no single scribe. **Everyone explores on their own machine**, at
-the same time, asking Pi their own questions.
-
-Then compare, and compare often. When someone in your group got more out of
-the dataset than you did, the most useful question you can ask is:
+Everyone should try prompting Pi on their codespace. Compare often. When someone in your group got more out of
+the dataset than you did, ask:
 
 > *"What did you ask Pi for?"*
-
-Learning to prompt well is half of what this week is about, and the fastest
-way to pick it up is to watch how differently the person next to you got
-there. Every twenty minutes or so, pool what you've each found into the
-**one shared report** your group will hand in.
 
 ### The Pi loop
 
@@ -62,7 +47,7 @@ Run this loop, over and over, for everything you explore:
 2. **Read.** Actually read the code it wrote. What does each line do? If a
    line is mysterious, ask Pi to explain *that line*.
 3. **Run.** Put the code in your `.qmd`, run it, and look at the output.
-4. **Verify.** Don't just trust it; make the answer yours. Check it two
+4. **Verify.** Don't just trust it; it's still your job to produce trustworthy analysis. Check it two
    ways: by doing (run a little of your own code to count the rows,
    `count()` a column's values, or confirm a join lines up) and by asking
    (have Pi tell you *how it would verify* the claim, then run what it
@@ -73,7 +58,7 @@ Run this loop, over and over, for everything you explore:
 Pi might be completely right, and that's fine. You verify anyway, because
 the goal is for *you* to understand the dataset.
 
-Two prompts to break the blank page:
+Two prompts to get started trying:
 
 > *"I'm exploring a new dataset in `data/group_b_menstruation/`. Read all
 > the CSV files and give me, for each one, what a single row represents and
@@ -132,7 +117,6 @@ anyone.
 - A shortlist of **2–4 candidate questions** for Thursday
 - A sense of which of you asks Pi the sharpest questions, and why
 
-Full prompts live in `group_project/README_session1.md` in your codespace.
 
 ## Session 2 — Thursday: Table 1 and group comparisons
 
