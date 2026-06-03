@@ -33,7 +33,7 @@ table_03 <- read_csv(here("datasets/instructional_dataset/03_elisa_cytokines_UKZ
 
 ## From models to reports
 
-Module 5 built models. Module 6 reports what they found.
+Yesterday we learned to model our data and interpret the outputs. Today we turn to the other half of the job: presenting those outputs so they are ready for publication.
 
 A paper expects:
 
@@ -49,19 +49,26 @@ By the end of this module you can:
 - read an analysis plan and pick the gtsummary or ggpubr call for each row
 - produce a Table 1 with `tbl_summary() |> add_p()` and override the default summary statistic and test per column
 - produce a Table 2 (outcome by arm) and the matching boxplot with `stat_compare_means()`
-- screen many outcomes at once with `facet_wrap()` and one `stat_compare_means()` per panel
 - recognise when a paired test is the right test
 - report an adjusted analysis with `lm() |> tbl_regression()`
 
 ## The analysis plan comes first
 
-Every paper has an analysis plan. Each row is one question.
+An analysis plan is the list of questions you want to ask your data, written down before you touch R. Each row is one question.
 
-- Who is in the study? → `tbl_summary()`
-- Did randomization balance the arms? → `tbl_summary() |> add_p()` (sanity check)
-- Does the outcome differ between arms? → same machinery, or a boxplot + `stat_compare_means()`
-- Did the outcome change pre vs post in the same person? → paired test
-- Does the effect hold after adjusting for a covariate? → `lm() |> tbl_regression()`
+What would you want to know about a randomized trial like this one?
+
+:::{.incremental}
+- Who is in the study?
+- Did randomization balance the two arms?
+- Does the outcome differ between arms?
+- Did the outcome change within a person, baseline vs week 7?
+- Does the effect hold after adjusting for age or smoking?
+:::
+
+. . .
+
+Each of these is one row in the plan, and each maps to a single gtsummary or ggpubr call. The rest of the module walks them in order.
 
 ## Refine your plan with an LLM
 
@@ -82,11 +89,9 @@ table_01 |>
   tbl_summary(by = arm)
 ```
 
-Defaults: continuous columns get *median (IQR)*, categorical columns get *counts (%)*. No p-values yet.
-
 ## Mean (SD) and median (IQR), side by side
 
-The Table 1 above used median (IQR) by default. Here is what each summary looks like on two of the columns we will work with.
+The Table 1 above used median (IQR) by default. Here is each summary drawn on two of the columns we will work with.
 
 ```{r}
 #| echo: false
@@ -121,6 +126,10 @@ p_skew <- summary_overlay(table_02, "crp_blood", "crp_blood — right-skewed")
 p_sym + p_skew
 ```
 
+What do you notice about median (IQR) versus mean (SD) for these two columns?
+
+. . .
+
 For symmetric columns the two intervals agree. For skewed columns, the mean is pulled toward the tail; the IQR stays where most of the data sits.
 
 ## Look at the columns before you trust the summary
@@ -137,12 +146,12 @@ p1 <- ggplot(table_01, aes(age, fill = arm)) +
   theme_minimal(base_size = 11)
 
 p2 <- ggplot(table_01, aes(smoker, fill = arm)) +
-  geom_bar(position = position_dodge(0.8)) +
+  geom_bar(position = position_dodge2(preserve = "single")) +
   scale_fill_brewer(palette = "Set1") +
   theme_minimal(base_size = 11)
 
 p3 <- ggplot(table_01, aes(education, fill = arm)) +
-  geom_bar(position = position_dodge(0.8)) +
+  geom_bar(position = position_dodge2(preserve = "single")) +
   scale_fill_brewer(palette = "Set1") +
   theme_minimal(base_size = 11) +
   theme(axis.text.x = element_text(angle = 30, hjust = 1, size = 8))
@@ -182,39 +191,6 @@ table_01 |>
 
 To do this for every continuous column at once: `all_continuous() ~ "{mean} ({sd})"`.
 
-## A read_csv gotcha worth knowing
-
-```{r}
-#| eval: false
-# Without col_types — sex parses as logical FALSE
-table_01_broken <- read_csv(
-  here("data/instructional_dataset/01_participant_metadata_UKZN_workshop_2023.csv")
-)
-
-table_01_broken |> count(sex)
-#> # A tibble: 1 × 2
-#>   sex       n
-#>   <lgl> <int>
-#> 1 FALSE    44
-```
-
-```{r}
-#| eval: false
-# With col_types — sex parses as character "F"
-table_01 <- read_csv(
-  here("data/instructional_dataset/01_participant_metadata_UKZN_workshop_2023.csv"),
-  col_types = cols(sex = col_character())
-)
-
-table_01 |> count(sex)
-#> # A tibble: 1 × 2
-#>   sex       n
-#>   <chr> <int>
-#> 1 F        44
-```
-
-`read_csv()` sees single-character "F" values and infers boolean. Always look at column types after reading; specify them when in doubt.
-
 ## Polish for publication
 
 ```{r}
@@ -228,16 +204,6 @@ table_01 |>
 ```
 
 `add_overall()` adds a column for the full sample. `bold_labels()` makes row labels bold. `modify_header()` renames columns.
-
-## Randomization protects the arm comparison
-
-Randomization is what justifies the unadjusted `add_p()` between placebo and treatment.
-
-It does not protect any other comparison.
-
-If you ran `tbl_summary(by = smoker)` instead of `by = arm`, you would be comparing two non-randomized groups. Smokers and non-smokers differ in many ways the table does not show — age, socioeconomic status, the environments they live in, the things they were exposed to before the study.
-
-This is the limit of what Table 1 can sanity-check. Comparing non-randomized groups validly requires causal-inference machinery — DAGs, propensity scores, sensitivity analyses — which is beyond this workshop's scope.
 
 {{< include ../_wooclap.qmd >}}
 
@@ -257,13 +223,17 @@ countdown::countdown(30)
 
 # Outcomes & Table 2 questions {.center}
 
-## From describe to compare
+## From description to comparison
 
-Half A asked who is in the study.
+So far the questions have been descriptive: who is in the study, and what each arm looks like on its own.
 
-Half B asks whether the outcome differs between arms, within participants over time, or after adjusting for a covariate.
+The next questions are comparative. Each one sets two numbers next to each other and asks whether the difference is more than noise:
 
-Same dataset, new family of questions.
+:::{.incremental}
+- between arms — does the outcome differ by treatment?
+- within a person — did it change from baseline to week 7?
+- after adjustment — does the difference survive controlling for age or smoking?
+:::
 
 ## Table 2: outcome by arm
 
@@ -338,6 +308,22 @@ Six panels means six p-values. Each is a separate hypothesis test.
 At α = 0.05, expecting one false positive out of six by chance alone is normal.
 
 Two standard corrections follow.
+
+## Wait, what is a p-value? {.your-turn}
+
+We have been collecting p-values for a few slides now. Before we correct them, turn to your neighbour: what does a p-value actually tell you?
+
+A few claims to argue about:
+
+- the probability that the null hypothesis is true
+- the probability the result happened by chance
+- the probability of seeing data this extreme *if the null hypothesis were true*
+- the probability that the treatment works
+
+```{r}
+#| echo: false
+countdown::countdown(minutes = 2)
+```
 
 ## Two ways to correct
 
@@ -423,7 +409,7 @@ In a randomized trial, adjustment is mostly cosmetic: the unadjusted t-test is t
 
 # Reporting a model {.center}
 
-## Kris's IL-1a model, refit
+## Kris and Marothi's IL-1a model
 
 Module 5 ended with this fit:
 

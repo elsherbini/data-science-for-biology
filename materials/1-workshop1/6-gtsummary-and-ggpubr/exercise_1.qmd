@@ -9,11 +9,7 @@ Open `notebooks/06-table-one.qmd` in your Codespace. The wrapper question across
 For each non-pid column of `table_01` (`arm`, `smoker`, `age`, `education`, `sex`), predict — in plain words, before running anything:
 
 1. How will `tbl_summary(by = arm)` summarise it? Mean (SD)? Median (IQR)? Counts (%)?
-2. What test will `add_p()` pick? t-test? Wilcoxon? Chi-squared? Fisher exact?
-
-The `sex` row should make you pause. The `education` row has a small cell count — does that affect the test choice?
-
-We will compare answers across the room before moving to code.
+2. Is the column skewed or symmetric, sparse or dense? That same judgment is what decides which test `add_p()` reaches for.
 
 ### Part 2 — Build
 

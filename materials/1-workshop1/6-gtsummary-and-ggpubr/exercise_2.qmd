@@ -31,8 +31,4 @@ Or, repeat the full analysis arc on `nugent_score` or `crp_blood` instead of `ph
 
 ### Discussion
 
-Once the room is back together:
-
-- What was easy in your mode for the plotting work? What was hard?
-- Of the two exercises you've now done, one each way — which mode felt better for which task?
-- Where did the assistant misread what you wanted? How did you catch it?
+Once the room is back together: pick one result from the five analyses you built that you would be willing to put in a paper. What is the test behind it, and how would you defend that choice to a skeptical reviewer?
