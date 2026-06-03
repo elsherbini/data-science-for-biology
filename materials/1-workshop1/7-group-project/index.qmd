@@ -42,7 +42,7 @@ the dataset than you did, ask:
 
 Start by copying this prompt into the terminal:
 
-```{text}
+```text
 I'm exploring a new dataset in `data/`. Ask me which group I'm in, then read all
 the CSV files and give me, for each one, what a single row represents and
 what every column means. Always make files in the "group_project" folder.
