@@ -47,6 +47,20 @@ cytokines <- cytokines_all |> filter(cytokine == "IL-1a")
 flow_all <- read_csv(here("datasets/instructional_dataset/04_flow_cytometry_UKZN_workshop_2023.csv"))
 ```
 
+## Practicalities
+:::{.r-fit-text}
+
+WiFi:
+
+Network: Southernsunconference
+
+Network Password: S0uthernsun1
+
+Access Code: ahri2025
+
+
+:::
+
 ## {data-menu-title="Website Link" style="text-align: center"}
 
 \
