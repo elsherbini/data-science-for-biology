@@ -1,0 +1,174 @@
+---
+title: "After the Workshop"
+toc: true
+---
+
+The workshop is over, but your codespace, your repo, and your API key all keep
+working for a while. This page covers the three things people ask most: whether
+your codespace will disappear, how to save your work so it doesn't, and how to
+keep coding on your own with the same setup you used here.
+
+## Do these now
+
+Before you close the laptop on the last day:
+
+1. [Push your work to GitHub](#sec-save) so nothing is lost
+2. [Save your API key](#sec-key) somewhere you'll still have it in a few months
+3. Skim the rest of this page so you know how to come back
+
+## Will my codespace disappear? {#sec-disappear}
+
+Eventually, yes. A codespace you stop using is **deleted automatically after 30
+days of inactivity**. Stopping a codespace is not the same as losing it: when
+you stop one, everything you saved is still there the next time you open it. It
+is *deletion* that loses things, and the only work that survives deletion is
+work you have pushed to GitHub.
+
+There are also usage limits on a free GitHub account: **120 core-hours and 15
+GB of storage per month**, included at no cost. A core-hour is one hour on a
+one-core machine, so the default two-core codespace uses two core-hours for
+every hour it is running. That is roughly 60 hours of active use a month before
+you would need to pay. Stopping your codespace when you are done for the day
+keeps you well under the limit.
+
+The practical takeaway: don't rely on a codespace as the only place your work
+lives. Push it to GitHub, and the codespace becomes disposable.
+
+## How do I save my work? {#sec-save}
+
+Saving a file in the editor keeps it inside the codespace. To save it somewhere
+permanent, you **commit** the change and **push** it to GitHub. Once it is on
+GitHub, you can delete the codespace and recreate it later with all your work
+intact.
+
+### Push with the Source Control panel
+
+1. Click the Source Control icon in the left bar of the editor (the branching
+   icon, or press `Ctrl/Cmd` + `Shift` + `G`). It lists every file you have
+   changed.
+2. Type a short message in the box at the top describing what you did, for
+   example `finish exercise 2`.
+3. Click **Commit**. If it offers to stage all your changes first, say yes.
+4. Click **Sync Changes** (sometimes labelled **Push**). This sends your commit
+   up to GitHub.
+
+If you would rather not click through that, ask Pi in the terminal: *"commit my
+work and push it to GitHub."* It will run the same steps for you.
+
+### Confirm it actually worked
+
+Pushing silently is a common worry, so check it:
+
+- In the editor, the Source Control panel should show no pending changes, and
+  the branch name in the bottom status bar should no longer have a number next
+  to it waiting to be sent.
+- In your browser, open your repo on github.com and refresh. Your changed files
+  should show your commit message and a timestamp like "1 minute ago" at the top
+  of the file list.
+
+When the timestamp on github.com matches what you just did, your work is safe
+even if the codespace is later deleted.
+
+## Save your API key {#sec-key}
+
+Your OpenRouter key keeps working after the workshop, so hold onto it. If you
+have lost track of it, run `/key` in the workshop Discord and the bot will show
+it to you again.
+
+Put a copy somewhere you will still have access to in a few months:
+
+- email it to yourself with a subject line you will search for later, or
+- save it in a password manager.
+
+How long it lasts: each key has a **$1.50 per day** spending limit, and we keep
+the keys funded as long as the budget holds out. They will be **switched off
+when the next workshop begins**, which is expected to be around six months from
+now. We can't promise the budget lasts that whole time, so treat the key as a
+nice bonus rather than something permanent, and don't build anything on it that
+you can't afford to lose access to.
+
+## Keep coding on your own {#sec-keep-going}
+
+You already have your own copy of the workshop environment: the repo you created
+from the template during [Get Started](getting-started.qmd). That copy is yours
+to keep using.
+
+### Pick up where you left off
+
+To continue the workshop exercises or anything else in that repo, reopen it as a
+codespace. Go to [github.com/codespaces](https://github.com/codespaces) and
+start your existing codespace if it is still there, or open your repo on
+github.com, click the green **Code** button, and create a fresh codespace on it.
+Your API key is already stored as a secret on that repo, so a new codespace will
+have it from the start.
+
+### Start a new project
+
+For something separate from the workshop, make another repo from the template
+the same way you did the first time: open the
+<!-- NOTE: template repo is workshop-specific (june2026). Update this URL each
+     workshop, and keep it in sync with getting-started.qmd. -->
+[participant environment template](https://github.com/elsherbini/data-science-for-biology-june2026-codespace),
+click **Use this template**, and create a new repository. Then add your API key
+as a Codespaces secret on the new repo (the
+[Get Started guide](getting-started.qmd) walks through both steps with
+screenshots) and launch a codespace. You will have the same R, Quarto, and Pi
+setup you used all week, pointed at a clean project.
+
+## Use VSCode on your own computer
+
+The browser editor and the desktop version of VSCode are the same program. If
+you would rather work in a window on your own machine, you have a few options.
+They differ in how much runs in the cloud versus on your laptop, and in how much
+you have to install yourself.
+
+### Local editor, still on a codespace
+
+This is the smallest change. Install [VSCode](https://code.visualstudio.com/) on
+your computer and add the **GitHub Codespaces** extension. Sign in with your
+GitHub account and you can open your existing codespace straight from the desktop
+app. The editor runs locally, but your code, the installed packages, and your API
+key all still live in the cloud codespace, so there is nothing to install on the
+dependency side and this still uses your monthly codespace hours.
+
+### Run everything locally with Docker
+
+To stop using codespaces but keep the same setup, run the workshop container on
+your own machine. Install [VSCode](https://code.visualstudio.com/), its **Dev
+Containers** extension, and [Docker
+Desktop](https://www.docker.com/products/docker-desktop/). Clone your repo, open
+it in VSCode, and choose **Reopen in Container**. VSCode reads the
+`.devcontainer` folder in your repo and builds the same image you used all week,
+with R, the tidyverse, Quarto, and the Pi and Claude Code tools already
+installed. This uses no codespace hours and works offline once it is built,
+though the image is large and the first build is slow, so give it a good
+connection and some free disk space. You supply your API key yourself this time
+rather than through a Codespaces secret: set it as an `OPENROUTER_API_KEY`
+environment variable, and ask Pi or a TA if you get stuck wiring it in.
+
+### Install everything by hand
+
+The most control and the most upkeep. Instead of a container you install each
+piece directly: [R](https://cran.r-project.org/),
+[Quarto](https://quarto.org/docs/get-started/),
+[VSCode](https://code.visualstudio.com/) with its R and Quarto extensions, and
+Node.js if you want the Pi and Claude Code agents (both install with `npm`).
+Then you manage the R packages yourself. The workshop uses the tidyverse plus a
+handful of others; install them in R with:
+
+```r
+install.packages(c("tidyverse", "here", "janitor", "gt", "palmerpenguins",
+                   "ggbeeswarm", "gtsummary", "ggpubr", "patchwork",
+                   "broom.helpers"))
+```
+
+Going this way means keeping R, Quarto, and those packages up to date yourself as
+versions change. It pays off if you work offline often or want a permanent local
+setup, but the Docker route gets you the same environment with far less
+maintenance.
+
+## Where to get help
+
+The workshop Discord stays open. Post questions there, and have a look at the
+[Resources](resources.qmd) page for references on R, the tidyverse, and working
+with coding assistants.
