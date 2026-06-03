@@ -133,16 +133,99 @@ anyone.
 - A sense of which of you asks Pi the sharpest questions, and why
 
 
-## Session 2 — Thursday: Table 1 and group comparisons
+## Session 2 — Thursday: Table 1, comparisons, and models
 
-Pick a question. Pick the groups you want to compare. Then build a Table 1
-with **gtsummary** to describe your participants, and use **ggpubr** to
-show comparisons with p-values.
+Wednesday's dossier told you what is in the dataset. Thursday you take one of
+your candidate questions and answer it three ways: describe the participants,
+compare the groups, and fit a model. The output this time is the analysis a
+paper would actually show.
 
-By the end of Thursday you should have:
+You keep working with Pi in the same loop as Wednesday — ask, read, verify,
+iterate — adding to the report you already have.
+
+### The three pieces
+
+Build these for the question your group picked. You don't have to use all
+three; pick the ones your question needs, and be ready Friday to say why.
+
+1. **A Table 1 with gtsummary.** `tbl_summary(by = <group>)` describes your
+   participants and `add_p()` tests each row. Go variable by variable and
+   decide whether the default summary (median (IQR), counts (%)) and the
+   default test are the ones you want, then override the ones that aren't.
+2. **A comparison figure with ggpubr.** `ggboxplot(...) +
+   stat_compare_means()` shows one outcome across your groups with the
+   p-value drawn on the plot. Reach for `facet_wrap()` when you want to
+   screen several outcomes at once.
+3. **A model with `tbl_regression()`.** Fit `lm()`, `glm()`, or `lmer()` for
+   the effect you care about — adjusting for a covariate, or accounting for
+   repeated samples on the same participant — then turn the fit into a
+   coefficient table. Fit the model once and report it; never refit just to
+   make a table.
+
+### Add to the report you already have
+
+Your dossier `.qmd` from Wednesday is the right place for all of this. Your
+preview may still be running; if not, relaunch it the same way you did in
+Session 1. When Pi edits the file and saves, the preview reloads on its own,
+so keep it visible next to the terminal and watch each change land.
+
+Ask Pi to **add to** the file, and point it at the section you mean:
+
+```text
+In group_project/<your_report>.qmd, add a new section called "Table 1".
+Use gtsummary to build a tbl_summary of the participant metadata split by
+<group>, then pipe to add_p() to test each row. Append it to the file —
+don't rewrite what's already there. I'll watch the preview reload.
+```
+
+Then iterate one change at a time, reading the preview after each:
+
+```text
+Age should be mean (SD) with a t-test, not median (IQR). Override just that
+one row and leave the rest of the table alone.
+```
+
+```text
+Now add a ggpubr boxplot of <outcome> by <group> with a Wilcoxon p-value on
+it, right below the table.
+```
+
+The first version is rarely the one you want: the wrong test, the wrong
+grouping, ugly labels. That is normal. Fix one thing, watch the preview, read
+what changed, and decide whether it is better. That loop is the work.
+
+### Verify, same as Wednesday
+
+A model fit and a p-value look authoritative whether or not they are right.
+Before a result goes in your Friday talk, check it. Does the test match the
+data (skewed data wants Wilcoxon, symmetric wants a t-test)? Does the figure's
+p-value agree with the table's? Ask Pi how it would confirm the result, then
+run that check yourself.
+
+### The afternoon (1:30–5:00)
+
+- **1:30–1:45 · Pick the question.** As a group, settle on one question from
+  Wednesday's shortlist and the groups you will compare. Write it at the top
+  of the section you're about to build.
+- **1:45–2:45 · Table 1.** Build `tbl_summary() |> add_p()`, then go column
+  by column deciding which defaults to keep and which to override. Land on
+  one Table 1 the group agrees on.
+- **2:45–3:00 · Sanity check.** Confirm the test choices match the
+  distributions you saw on Wednesday.
+- **3:00–3:30 · Break.**
+- **3:30–4:30 · Compare and model.** Add the ggpubr figure(s) for your
+  headline comparison, then fit the model that answers your question and
+  report it with `tbl_regression()`. Iterate on the plot — remaking one
+  figure three times beats making three different ones once.
+- **4:30–5:00 · Distill & render.** Decide which table and which figure tell
+  your story, write the sentence or two that goes with each, and render to
+  HTML.
+
+### Walk away with
 
 - A Table 1 you would feel OK putting in a paper
 - One or two ggpubr figures of the comparisons you care about
+- At least one model reported with `tbl_regression()`
 - A clear sense of what your group will say on Friday
 
 Full prompts live in `group_project/README_session2.md` in your codespace.
