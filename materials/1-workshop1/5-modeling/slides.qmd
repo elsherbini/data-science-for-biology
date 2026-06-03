@@ -54,12 +54,11 @@ WiFi:
 
 Network: Southernsunconference
 
-Network Password: S0uthernsun1
-
-Access Code: ahri2025
-
+Network Password: ahri2026
 
 :::
+
+[Previous password (only if `ahri2026` doesn't work): `S0uthernsun1`]{style="font-size: 0.4em; opacity: 0.45"}
 
 ## {data-menu-title="Website Link" style="text-align: center"}
 
