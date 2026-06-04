@@ -1,0 +1,100 @@
+---
+title: "Workshop R Package Inventory"
+format:
+  html:
+    toc: true
+---
+
+This document lists the R packages explicitly referenced in the Workshop 1
+source materials. It is intended as a planning aid for checking installation
+requirements across all modules, not only Module 5.
+
+## Scope
+
+Source scanned:
+
+- `materials/1-workshop1/**/*.qmd`
+- `materials/1-workshop1/**/*.Qmd`
+- `materials/1-workshop1/**/*.R`
+
+Reference point:
+
+- Upstream branch: `origin/main`
+- Upstream commit scanned: `d0e1724`
+
+Detection rules:
+
+- Included direct `library()` and `require()` calls.
+- Included explicit namespace calls such as `pkg::function()`.
+- Included explicit `install.packages("pkg")` calls.
+- Included tidyverse member packages when their functions appear in course
+  materials, even if the file loads them through `library(tidyverse)`.
+- Excluded transitive dependencies that only appear in `renv.lock`.
+- Excluded Quarto, Pandoc, and browser-side JavaScript/CSS dependencies.
+
+## Packages By Module
+
+| Course area | Packages used or loaded |
+|---|---|
+| Module 0 - Welcome | `countdown` |
+| Module 1 - Agentic coding | - |
+| Module 2 - Intro to R, Quarto, and VS Code | `countdown`, `dplyr`, `ggplot2`, `here`, `knitr`, `readr`, `stringr`, `tibble`, `tidyverse` |
+| Module 3 - Wrangling and visualization | `countdown`, `cowplot`, `dplyr`, `forcats`, `ggplot2`, `here`, `readr`, `tidyverse` |
+| Module 4 - More wrangling and visualization | `countdown`, `dplyr`, `ggbeeswarm`, `ggplot2`, `here`, `readr`, `tibble`, `tidyr`, `tidyverse` |
+| Module 5 - Modelling and Uncertainty | `countdown`, `dplyr`, `ggplot2`, `here`, `knitr`, `lme4`, `lmerTest`, `MASS`, `patchwork`, `purrr`, `readr`, `survival`, `tidyr`, `tidyverse` |
+| Module 6 - gtsummary and ggpubr | `broom.mixed`, `countdown`, `dplyr`, `forcats`, `ggplot2`, `ggpubr`, `gtsummary`, `here`, `lme4`, `lmerTest`, `patchwork`, `readr`, `tibble`, `tidyverse` |
+| Group project | - |
+| Mini modules | - |
+
+## Packages By Package
+
+| Package | Detected in | Main use in the course |
+|---|---|---|
+| `broom.mixed` | Module 6 | Tidying mixed-model output for reporting with `gtsummary`. |
+| `countdown` | Modules 0, 2, 3, 4, 5, and 6 | Timers in slide decks and workshop activities. |
+| `cowplot` | Module 3 | Combining or arranging ggplot figures in the visualization material. |
+| `dplyr` | Modules 2, 3, 4, 5, and 6 | Table manipulation verbs used through `tidyverse`; Module 5 helper code also uses namespaced calls such as `dplyr::select()`. |
+| `forcats` | Modules 3 and 6 | Factor ordering helpers such as `fct_relevel()`, loaded through `tidyverse`. |
+| `ggbeeswarm` | Module 4 | Beeswarm-style visualizations for grouped data. |
+| `ggplot2` | Modules 2, 3, 4, 5, and 6 | Plotting grammar used through `ggplot()`, `aes()`, geoms, facets, labels, and themes. |
+| `ggpubr` | Module 6 | Publication-oriented plots and hypothesis-test visual helpers. |
+| `gtsummary` | Module 6 | Summary tables, model tables, and hypothesis-testing outputs. |
+| `here` | Modules 2, 3, 4, 5, and 6 | Project-root-aware file paths. |
+| `knitr` | Modules 2 and 5 | Rendering helpers such as `knitr::kable()` and chunk options. |
+| `lme4` | Modules 5 and 6 | Mixed-effects models. |
+| `lmerTest` | Modules 5 and 6 | Mixed-effects model inference. |
+| `MASS` | Module 5 | Modeling utilities used in Module 5 notes and slides. |
+| `patchwork` | Modules 5 and 6 | Combining ggplot figures. |
+| `purrr` | Module 5 helper code | Helper-code iteration with `map()` and `set_names()`; not a main participant-facing topic. |
+| `readr` | Modules 2, 3, 4, 5, and 6 | CSV import with `read_csv()`, loaded through `tidyverse`. |
+| `stringr` | Module 2 | Introductory text helper practice with `str_length()`, loaded through `tidyverse`. |
+| `survival` | Module 5 notes | Survival-model examples are still present in `notes.qmd`; they are not part of the current Exercise 1 questions. |
+| `tibble` | Modules 2, 4, and 6 | Small example tables with `tibble()`; imported `read_csv()` data are also tibbles. |
+| `tidyr` | Modules 4 and 5 | Reshaping with `pivot_longer()` and `pivot_wider()`, loaded through `tidyverse`. |
+| `tidyverse` | Modules 2, 3, 4, 5, and 6 | Core data import, wrangling, visualization, and piping workflow. |
+
+## Tidyverse Note
+
+`tidyverse` is a meta-package. Loading it also loads the core packages commonly
+used throughout the course, including `ggplot2`, `dplyr`, `tidyr`, `readr`,
+`purrr`, `tibble`, `stringr`, and `forcats`.
+
+Because the course often uses `library(tidyverse)`, individual tidyverse member
+packages may be used without appearing separately as `library(ggplot2)` or
+`library(dplyr)` in every file.
+
+The interactive cheatsheet surfaces the member packages that learners actually
+meet through function names, so `ggplot2`, `readr`, `tidyr`, `forcats`,
+`tibble`, and `stringr` are not hidden under the `tidyverse` umbrella.
+
+## Items To Review
+
+- `survival` is still detected in Module 5 `notes.qmd`, even though the updated
+  Exercise 1 no longer asks about survival models.
+- `purrr` appears in Module 5 helper code. It is listed for transparency, but
+  can remain outside the main participant learning path unless iteration is
+  added as a teaching topic.
+- `MASS`, `lme4`, `lmerTest`, and `broom.mixed` are modeling-specific packages
+  that may need extra attention during setup checks.
+- `countdown` is used broadly in slides, so slide rendering can fail even when
+  the analysis packages are installed correctly.
