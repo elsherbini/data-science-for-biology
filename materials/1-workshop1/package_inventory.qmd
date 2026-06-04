@@ -42,7 +42,7 @@ Detection rules:
 | Module 3 - Wrangling and visualization | `countdown`, `cowplot`, `dplyr`, `forcats`, `ggplot2`, `here`, `readr`, `tidyverse` |
 | Module 4 - More wrangling and visualization | `countdown`, `dplyr`, `ggbeeswarm`, `ggplot2`, `here`, `readr`, `tibble`, `tidyr`, `tidyverse` |
 | Module 5 - Modelling and Uncertainty | `countdown`, `dplyr`, `ggplot2`, `here`, `knitr`, `lme4`, `lmerTest`, `MASS`, `patchwork`, `purrr`, `readr`, `survival`, `tidyr`, `tidyverse` |
-| Module 6 - gtsummary and ggpubr | `broom.mixed`, `countdown`, `dplyr`, `forcats`, `ggplot2`, `ggpubr`, `gtsummary`, `here`, `lme4`, `lmerTest`, `patchwork`, `readr`, `tibble`, `tidyverse` |
+| Module 6 - gtsummary and ggpubr | `countdown`, `dplyr`, `forcats`, `ggplot2`, `ggpubr`, `gtsummary`, `here`, `lme4`, `lmerTest`, `patchwork`, `readr`, `tibble`, `tidyverse` |
 | Group project | - |
 | Mini modules | - |
 
@@ -50,7 +50,6 @@ Detection rules:
 
 | Package | Detected in | Main use in the course |
 |---|---|---|
-| `broom.mixed` | Module 6 | Tidying mixed-model output for reporting with `gtsummary`. |
 | `countdown` | Modules 0, 2, 3, 4, 5, and 6 | Timers in slide decks and workshop activities. |
 | `cowplot` | Module 3 | Combining or arranging ggplot figures in the visualization material. |
 | `dplyr` | Modules 2, 3, 4, 5, and 6 | Table manipulation verbs used through `tidyverse`; Module 5 helper code also uses namespaced calls such as `dplyr::select()`. |
@@ -94,7 +93,7 @@ meet through function names, so `ggplot2`, `readr`, `tidyr`, `forcats`,
 - `purrr` appears in Module 5 helper code. It is listed for transparency, but
   can remain outside the main participant learning path unless iteration is
   added as a teaching topic.
-- `MASS`, `lme4`, `lmerTest`, and `broom.mixed` are modeling-specific packages
+- `MASS`, `lme4`, and `lmerTest` are modeling-specific packages
   that may need extra attention during setup checks.
 - `countdown` is used broadly in slides, so slide rendering can fail even when
   the analysis packages are installed correctly.

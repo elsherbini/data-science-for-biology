@@ -20,7 +20,6 @@ Logo files currently used in the cheatsheet:
 | lme4 | `lme4_unofficial_substitute.svg` | unofficial substitute bundle; original teaching graphic based on CRAN package description |
 | lmerTest | `lmerTest_unofficial_substitute.svg` | unofficial substitute bundle; original teaching graphic based on CRAN package description |
 | ggpubr | `ggpubr_unofficial_substitute.svg` | unofficial substitute bundle; original teaching graphic based on CRAN package description |
-| broom.mixed | `broom_mixed_unofficial_substitute.svg` | unofficial substitute bundle; original teaching graphic based on CRAN package description |
 
 Text badges are intentionally used for `ggplot2`, `readr`, `tidyr`, `forcats`,
 `tibble`, `stringr`, and `purrr` because no verified official sticker for these

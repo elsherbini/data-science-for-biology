@@ -99,43 +99,6 @@ execute:
     margin-top: 5px;
   }
 
-  .logo-disclaimer {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    max-width: 760px;
-    margin: 14px 0 0;
-    padding: 10px 12px;
-    border: 1px solid #f2d6a7;
-    border-radius: 8px;
-    color: #5f4630;
-    background: #fff8ed;
-    line-height: 1.35;
-    font-size: 0.82rem;
-    box-shadow: 0 8px 18px rgba(180, 83, 9, 0.08);
-  }
-
-  .logo-disclaimer-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 28px;
-    width: 28px;
-    height: 28px;
-    color: #ffffff;
-    background: var(--amber);
-    border-radius: 999px;
-  }
-
-  .logo-disclaimer-icon svg {
-    width: 17px;
-    height: 17px;
-  }
-
-  .logo-disclaimer strong {
-    color: #3f2d1d;
-  }
-
   .control-row {
     display: grid;
     grid-template-columns: minmax(260px, 1fr) auto;
@@ -832,7 +795,6 @@ execute:
   <img id="logo-lme4" src="assets/package-logos/lme4_unofficial_substitute.svg" alt="">
   <img id="logo-lmerTest" src="assets/package-logos/lmerTest_unofficial_substitute.svg" alt="">
   <img id="logo-ggpubr" src="assets/package-logos/ggpubr_unofficial_substitute.svg" alt="">
-  <img id="logo-broom-mixed" src="assets/package-logos/broom_mixed_unofficial_substitute.svg" alt="">
 </div>
 
 <main class="package-sheet">
@@ -843,7 +805,7 @@ execute:
         <p>Workshop 1 package map for the R tools used across the course, the modules where they appear, and the functions learners meet along the way.</p>
         <div class="hero-stats" aria-label="Course package summary">
           <div class="hero-stat" style="--stat-color: #0f766e;">
-            <strong>19</strong>
+            <strong>18</strong>
             <span>learning packages</span>
           </div>
           <div class="hero-stat" style="--stat-color: #2563eb;">
@@ -854,14 +816,6 @@ execute:
             <strong>7</strong>
             <span>tidyverse members</span>
           </div>
-        </div>
-        <div class="logo-disclaimer" role="note" aria-label="Unofficial logo note">
-          <span class="logo-disclaimer-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M12 8v5m0 4h.01M10.3 4.2 2.8 17.1A2 2 0 0 0 4.5 20h15a2 2 0 0 0 1.7-2.9L13.7 4.2a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          <span><strong>Logo note:</strong> Some badges use unofficial substitute stickers where no verified official hex sticker was found. These are teaching visuals only and are not endorsed by the package authors.</span>
         </div>
       </div>
     </section>
@@ -1389,22 +1343,6 @@ execute:
       ],
       example: "ggboxplot(data, x = \"arm\", y = \"ph\", fill = \"arm\") + stat_compare_means(method = \"wilcox.test\")",
       watch: "A plotted p-value still needs a sensible study design and comparison. Module 6 highlights this with randomized versus non-randomized group comparisons."
-    },
-    {
-      id: "broom.mixed",
-      name: "broom.mixed",
-      mark: "BM",
-      color: "#64748b",
-      category: "Model tables",
-      modules: ["Module 6"],
-      role: "Provides tidiers for mixed-model objects so table tools can understand them.",
-      use: "Use it indirectly when `gtsummary` needs to turn `lmer()` output into a table.",
-      functions: [
-        ["tidy methods", "Used indirectly for mixed-model table output."],
-        ["glance methods", "Used indirectly for model summaries when needed."]
-      ],
-      example: "fit |> tbl_regression()",
-      watch: "The course loads `broom.mixed` but usually does not call its functions directly."
     }
   ];
 
@@ -1529,15 +1467,6 @@ execute:
       learningGroup: "Modeling extensions",
       audience: "learning"
     },
-    "broom.mixed": {
-      priority: 18,
-      logoId: "logo-broom-mixed",
-      logoSource: "Unofficial substitute sticker bundle: original teaching graphic based on the CRAN package description.",
-      logoStatus: "unofficial",
-      task: "Tidy model output",
-      learningGroup: "Tables and reporting",
-      audience: "learning"
-    },
     knitr: {
       priority: 19,
       task: "Render simple output",
@@ -1594,7 +1523,7 @@ execute:
     ["Module 3", ["cowplot", "dplyr", "forcats", "ggplot2", "here", "readr", "tidyverse"]],
     ["Module 4", ["dplyr", "ggbeeswarm", "ggplot2", "here", "readr", "tibble", "tidyr", "tidyverse"]],
     ["Module 5", ["dplyr", "ggplot2", "here", "knitr", "lme4", "lmerTest", "MASS", "patchwork", "readr", "tidyr", "tidyverse"]],
-    ["Module 6", ["broom.mixed", "dplyr", "forcats", "ggplot2", "ggpubr", "gtsummary", "here", "lme4", "lmerTest", "patchwork", "readr", "tibble", "tidyverse"]]
+    ["Module 6", ["dplyr", "forcats", "ggplot2", "ggpubr", "gtsummary", "here", "lme4", "lmerTest", "patchwork", "readr", "tibble", "tidyverse"]]
   ];
 
   const state = {
