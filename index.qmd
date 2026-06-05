@@ -39,6 +39,18 @@ assistant to learn as you go.
 
 ::: {.grid}
 
+::: {.g-col-12 .text-center}
+
+Attended the workshop? [Take the survey <i class="bi bi-box-arrow-up-right"></i>](https://docs.google.com/forms/d/e/1FAIpQLSfSZLQYrnIvVjDNNeKpa1sDjvF8ZMiuSgB2m2XO39AP-VgE1Q/viewform){.btn .btn-primary .btn-lg target="_blank"}
+
+It takes about 10 minutes and helps us improve the next one.
+
+:::
+
+:::
+
+::: {.grid}
+
 ::: {.g-col-12 .g-col-md-6}
 ![](assets/images/workshop-teaching-1.jpg){.img-fluid fig-alt="Instructor working with participants at laptops"}
 :::

@@ -62,6 +62,10 @@ website:
             href: materials/1-workshop1/package_cheatsheet.qmd
           - text: "<b>After the Workshop</b>"
             href: after-the-workshop.qmd
+      - text: "Take the Survey"
+        href: "https://docs.google.com/forms/d/e/1FAIpQLSfSZLQYrnIvVjDNNeKpa1sDjvF8ZMiuSgB2m2XO39AP-VgE1Q/viewform"
+        icon: box-arrow-up-right
+        target: _blank
 
 format:
   html:
