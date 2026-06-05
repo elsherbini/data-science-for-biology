@@ -1,0 +1,370 @@
+---
+title: "The vaginal immune environment across the menstrual cycle"
+subtitle: "An example group-project presentation · Group B"
+format: qmdrslides-revealjs
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+library(tidyverse)
+library(here)
+library(gtsummary)
+library(ggpubr)
+library(lme4)
+library(lmerTest)
+library(broom.mixed)
+
+theme_set(theme_minimal(base_size = 18))
+pal <- "Set1"
+cycle <- c("week_prior", "onset", "end_bleeding", "week_post")
+
+dd <- here("datasets", "group_b_menstruation")
+ids  <- read_csv(file.path(dd, "00_sample_ids_period.csv"))
+meta <- read_csv(file.path(dd, "01_participant_metadata_period.csv"))
+lum  <- read_csv(file.path(dd, "02_luminex_period.csv"))
+flow <- read_csv(file.path(dd, "03_flow_cytometry_period.csv"))
+
+ids <- ids |>
+  mutate(
+    time_point = factor(time_point, levels = cycle),
+    arm        = fct_relevel(arm, "no_birth_control", "birth_control")
+  )
+
+cyt  <- lum  |> left_join(ids, by = "sample_id")
+flow <- flow |> left_join(ids, by = "sample_id") |>
+  mutate(prop_neut = neutrophils / cd45_positive)
+```
+
+# Part 1 · The dataset {background-color="#3b1b4b"}
+
+## The study
+
+An **observational** study of 27 women, 15 using hormonal birth control and 12
+not. Each woman was sampled at **four points across one menstrual cycle**:
+
+::: {style="font-size: 0.9em"}
+the week before bleeding → onset → end of bleeding → the week after
+:::
+
+From each sample we have:
+
+- **Luminex** — 8 cytokines (inflammation markers)
+- **flow cytometry** — counts of immune cell types (neutrophils, T cells, …)
+- participant metadata — age, PCOS status, period product
+
+Two questions: **how does the vaginal immune environment shift across the
+cycle, and does birth control change it?**
+
+## Who is in the study?
+
+```{r}
+#| label: table-one
+meta |>
+  select(arm, age, pcos_status, period_product) |>
+  tbl_summary(
+    by = arm,
+    label = list(
+      age ~ "Age (years)",
+      pcos_status ~ "PCOS status",
+      period_product ~ "Period product"
+    )
+  ) |>
+  add_p() |>
+  add_overall() |>
+  bold_labels() |>
+  modify_header(label ~ "**Characteristic**")
+```
+
+::: {style="font-size: 0.7em"}
+This is a small cohort, so categorical rows use Fisher's exact test.
+:::
+
+## How the study is laid out
+
+```{r}
+#| label: design-plot
+#| fig-width: 12
+#| fig-height: 6
+ids |>
+  ggplot(aes(time_point, fct_rev(pid), colour = arm)) +
+  geom_line(aes(group = pid), colour = "grey75") +
+  geom_point(size = 3) +
+  facet_wrap(~ arm, scales = "free_y") +
+  scale_colour_brewer(palette = pal) +
+  labs(x = NULL, y = "Participant",
+       title = "Four samples per woman, spanning one cycle") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 20, hjust = 1),
+        axis.text.y = element_blank())
+```
+
+## Which cytokines can we use?
+
+```{r}
+#| label: cytokine-detection
+#| fig-width: 11
+#| fig-height: 5
+cyt |>
+  group_by(cytokine) |>
+  summarise(detected = mean(limits == "not_censored"), .groups = "drop") |>
+  ggplot(aes(detected, fct_reorder(cytokine, detected))) +
+  geom_col(fill = "#984ea3") +
+  geom_vline(xintercept = 0.75, linetype = "dashed", colour = "grey40") +
+  scale_x_continuous(labels = scales::label_percent(), limits = c(0, 1)) +
+  labs(x = "Measurements above the detection limit", y = NULL,
+       title = "IL-1a is detected almost everywhere (dashed line = 75%)")
+```
+
+## What the immune cells look like
+
+```{r}
+#| label: flow-overview
+#| fig-width: 12
+#| fig-height: 5.5
+flow |>
+  transmute(time_point, sample_id,
+    Neutrophils  = neutrophils,
+    `T cells (CD3+)` = cd3_positive,
+    `CD3- cells`     = cd3_negative,
+    Other            = pmax(cd45_positive - neutrophils - cd3_positive - cd3_negative, 0)
+  ) |>
+  pivot_longer(-c(time_point, sample_id), names_to = "cell_type", values_to = "count") |>
+  group_by(time_point, cell_type) |>
+  summarise(count = sum(count), .groups = "drop_last") |>
+  mutate(prop = count / sum(count)) |>
+  ggplot(aes(time_point, prop, fill = cell_type)) +
+  geom_col(width = 0.8) +
+  scale_fill_brewer(palette = "Set2") +
+  scale_y_continuous(labels = scales::label_percent(), expand = c(0, 0)) +
+  labs(x = NULL, y = "Share of CD45+ immune cells", fill = NULL,
+       title = "Neutrophils dominate, and their share shifts during bleeding") +
+  theme(axis.text.x = element_text(angle = 20, hjust = 1))
+```
+
+# Part 2 · Three short analyses {background-color="#3b1b4b"}
+
+## Three questions
+
+1. Does **inflammation** (IL-1a) rise during menstruation?
+2. Does the **neutrophil share** of immune cells change across the cycle?
+3. Does **birth control** shift the cytokine milieu?
+
+# Story 1 · Inflammation across the cycle {background-color="#3a2a4d"}
+
+## The question
+
+Bleeding is a tissue-remodelling event, so we expect inflammation to track it.
+
+**Does IL-1a rise during menstruation and settle afterwards?** Each woman is
+measured four times, so we fit a model with a **per-participant random effect**
+and let the week-before-bleeding be the reference point.
+
+```{r}
+#| label: story1-motivation
+#| fig-width: 10
+#| fig-height: 3.4
+cyt |>
+  filter(cytokine == "IL-1a") |>
+  ggplot(aes(time_point, conc, group = pid)) +
+  geom_line(alpha = 0.3, colour = "#e41a1c") +
+  scale_y_log10() +
+  labs(x = NULL, y = "IL-1a (log)") +
+  theme(axis.text.x = element_text(angle = 20, hjust = 1))
+```
+
+## The code
+
+```r
+il1 <- cyt |> filter(cytokine == "IL-1a")
+
+fit <- lmer(log(conc) ~ time_point + (1 | pid), data = il1)
+
+tbl_regression(fit, intercept = TRUE)
+```
+
+`time_point` is a factor ordered from the week before bleeding, so every
+coefficient reads as a change *relative to that baseline week*. `(1 | pid)`
+accounts for the four correlated samples per woman.
+
+## The table
+
+```{r}
+#| label: story1-table
+il1 <- cyt |> filter(cytokine == "IL-1a")
+
+fit <- lmer(log(conc) ~ time_point + (1 | pid), data = il1)
+
+tbl_regression(fit, intercept = TRUE) |>
+  bold_labels() |>
+  modify_header(label ~ "**Term**")
+```
+
+## What it means
+
+On the log scale, relative to the week before bleeding:
+
+- **Onset: +2.3** — roughly a tenfold jump in IL-1a (p < 0.001).
+- **End of bleeding: +2.0** — still strongly elevated.
+- **Week after: +0.3** — back to baseline (p = 0.4).
+
+Inflammation rises sharply with bleeding and resolves within a week. The
+cytokine milieu is a moving target that depends entirely on *when* in the cycle
+you sample — a key lesson for designing studies like this one.
+
+# Story 2 · Neutrophils across the cycle {background-color="#3a2a4d"}
+
+## The question
+
+The Part 1 overview hinted that neutrophils' share of immune cells changes
+during bleeding. Let's test it properly.
+
+The outcome is a **proportion of counted cells**, so the natural model is
+binomial — exactly the flow-cytometry recipe from the modeling lecture. Because
+the cell counts are huge, a plain binomial is wildly overconfident, so we add a
+**per-sample random effect** to capture the real sample-to-sample spread.
+
+## The code
+
+```r
+flow <- flow |> mutate(other = cd45_positive - neutrophils)
+
+fit <- glmer(
+  cbind(neutrophils, other) ~ time_point + (1 | pid) + (1 | sample_id),
+  family = binomial(), data = flow
+)
+
+# the figure: observed neutrophil share across the cycle
+ggboxplot(flow, x = "time_point", y = "prop_neut",
+          fill = "time_point", palette = "Set1") +
+  stat_compare_means(method = "wilcox.test", ref.group = "week_prior",
+                     label = "p.signif")
+```
+
+## The figure
+
+```{r}
+#| label: story2-figure
+#| fig-width: 11
+#| fig-height: 5.6
+ggboxplot(flow, x = "time_point", y = "prop_neut",
+          fill = "time_point", palette = pal, add = "jitter") +
+  stat_compare_means(method = "wilcox.test", ref.group = "week_prior",
+                     label = "p.signif",
+                     label.y = 1.02, size = 6) +
+  scale_y_continuous(labels = scales::label_percent(),
+                     expand = expansion(mult = c(0.05, 0.18))) +
+  labs(x = NULL, y = "Neutrophils as % of CD45+ cells") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 20, hjust = 1))
+```
+
+::: {style="font-size: 0.7em"}
+Stars compare each timepoint to the week before bleeding (ns = not significant).
+:::
+
+## What it means
+
+```{r}
+#| label: story2-model
+flow <- flow |> mutate(other = cd45_positive - neutrophils)
+fit <- glmer(cbind(neutrophils, other) ~ time_point + (1 | pid) + (1 | sample_id),
+             family = binomial(), data = flow,
+             control = glmerControl(optimizer = "bobyqa"))
+fit |>
+  tbl_regression(exponentiate = FALSE, intercept = FALSE) |>
+  bold_labels() |>
+  modify_header(label ~ "**Term**")
+```
+
+- The neutrophil share **dips at onset and end of bleeding** and is highest
+  again the week after (model p ≈ 0.004 and 0.01).
+- The per-sample random effect was essential: without it the model treats
+  hundreds of thousands of cells as independent coin flips and reports
+  impossibly tiny p-values.
+- Participant-to-participant variation was near zero — the cycle stage, not the
+  individual, drives the neutrophil share.
+
+# Story 3 · Does birth control matter? {background-color="#3a2a4d"}
+
+## The question
+
+Hormonal contraception changes the cervicovaginal environment, so we might
+expect it to leave a cytokine signature.
+
+**Does any cytokine differ between the birth-control and no-birth-control
+arms?** We screen the well-detected cytokines and correct for multiple testing.
+
+## The code
+
+```r
+keep <- c("IL-1a", "IP-10", "MIP-3a", "MIG")   # detected in >75% of samples
+
+panel <- cyt |> filter(limits == "not_censored", cytokine %in% keep)
+
+ggboxplot(panel, x = "arm", y = "conc", fill = "arm",
+          palette = "Set1", facet.by = "cytokine") +
+  scale_y_log10(expand = expansion(mult = c(0.05, 0.2))) +
+  stat_compare_means(method = "wilcox.test", label = "p.format")
+```
+
+## The figure
+
+```{r}
+#| label: story3-figure
+#| fig-width: 12
+#| fig-height: 6
+keep <- c("IL-1a", "IP-10", "MIP-3a", "MIG")
+panel <- cyt |> filter(limits == "not_censored", cytokine %in% keep)
+
+ggboxplot(panel, x = "arm", y = "conc", fill = "arm",
+          palette = pal, facet.by = "cytokine", outlier.shape = NA) +
+  scale_y_log10(expand = expansion(mult = c(0.05, 0.2))) +
+  stat_compare_means(method = "wilcox.test", label = "p.format",
+                     label.x = 1.2, size = 4.5) +
+  labs(x = NULL, y = "Concentration (log scale)") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 15, hjust = 1))
+```
+
+## What it means
+
+```{r}
+#| label: story3-table
+cyt |>
+  filter(limits == "not_censored", cytokine %in% keep) |>
+  group_by(cytokine) |>
+  summarise(n = n(),
+            p = wilcox.test(conc ~ arm)$p.value,
+            .groups = "drop") |>
+  mutate(p_BH = p.adjust(p, "BH")) |>
+  arrange(p) |>
+  mutate(across(c(p, p_BH), ~ scales::label_pvalue()(.x))) |>
+  knitr::kable(col.names = c("Cytokine", "n", "p", "p (BH)"))
+```
+
+No cytokine survives correction — not even before it. In this cohort, **the
+menstrual cycle is a far stronger driver of the immune environment than birth
+control is.** A null result, honestly reported, is still a finding.
+
+# Wrap-up {background-color="#3b1b4b"}
+
+## What we found
+
+- **Inflammation rises and falls with bleeding** — IL-1a jumps ~10x at onset
+  and resets within a week.
+- **Neutrophils' share of immune cells dips during bleeding**, then rebounds.
+- **Birth control left no detectable cytokine signature** against that much
+  larger cyclic signal.
+
+## The takeaway
+
+Timing dominates. Any study of the vaginal immune environment has to account
+for cycle stage before it can ask about anything else.
+
+Every table and figure here came from the workshop's own toolkit —
+`tidyverse`, `gtsummary`, `ggpubr`, and `lme4` — built with an LLM assistant,
+with the scientific judgement kept firmly in human hands.

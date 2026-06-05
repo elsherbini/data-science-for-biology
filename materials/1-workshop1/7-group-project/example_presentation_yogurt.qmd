@@ -1,0 +1,392 @@
+---
+title: "Yogurt & the vaginal microbiome"
+subtitle: "An example group-project presentation · Group A"
+format: qmdrslides-revealjs
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+library(tidyverse)
+library(here)
+library(gtsummary)
+library(ggpubr)
+library(lme4)
+library(lmerTest)
+library(broom.mixed)
+
+theme_set(theme_minimal(base_size = 18))
+pal <- "Set1"
+
+dd <- here("datasets", "group_a_yogurt")
+ids  <- read_csv(file.path(dd, "00_sample_ids_yogurt.csv"))
+meta <- read_csv(file.path(dd, "01_participant_metadata_yogurt.csv"))
+qpcr <- read_csv(file.path(dd, "02_qpcr_results_yogurt.csv"))
+lum  <- read_csv(file.path(dd, "03_luminex_results_yogurt.csv"))
+
+ids <- ids |>
+  mutate(
+    time_point = fct_relevel(time_point, "baseline", "after_antibiotic"),
+    arm        = fct_relevel(arm, "unchanged_diet", "yogurt")
+  )
+
+# qPCR joined to study design, long over the three targets
+qpcr_long <- qpcr |>
+  left_join(ids, by = "sample_id") |>
+  pivot_longer(starts_with("qpcr_"), names_to = "target", values_to = "copies") |>
+  mutate(target = recode(target,
+    qpcr_bacteria  = "Total bacteria",
+    qpcr_crispatus = "L. crispatus",
+    qpcr_iners     = "L. iners"
+  ))
+
+# Cytokines joined to study design
+cyt <- lum |>
+  left_join(ids, by = "sample_id")
+```
+
+# Part 1 · The dataset {background-color="#1b3a4b"}
+
+## The study
+
+A **randomized controlled trial** in 51 women. Everyone received a course of
+antibiotics; half were randomized to eat yogurt daily, half kept their usual
+diet.
+
+Each woman was sampled **twice** — once at baseline, once after the antibiotic
+course — and three kinds of measurement were taken from each sample:
+
+- **qPCR** — absolute load of total bacteria, *L. crispatus*, and *L. iners*
+- **Luminex** — concentrations of 10 cytokines (inflammation markers)
+- participant metadata — age, contraception, education
+
+The question: **does yogurt shape how the vaginal microbiome recovers from
+antibiotics?**
+
+## Who is in the study? {auto-animate="true"}
+
+```{r}
+#| label: table-one
+meta |>
+  select(arm, age, birth_control, education, days_since_last_sex) |>
+  tbl_summary(
+    by = arm,
+    label = list(
+      age ~ "Age (years)",
+      birth_control ~ "Contraception",
+      education ~ "Education",
+      days_since_last_sex ~ "Days since last sex"
+    )
+  ) |>
+  add_p() |>
+  add_overall() |>
+  bold_labels() |>
+  modify_header(label ~ "**Characteristic**")
+```
+
+## A note on balance
+
+The arms are well matched on age and education. Contraception is the one
+variable to keep in mind: Depo-Provera is roughly twice as common in the
+yogurt arm. Hormonal contraception can influence the vaginal environment, so
+it is a plausible confounder we would want to revisit.
+
+## How the study is laid out
+
+```{r}
+#| label: design-plot
+#| fig-width: 12
+#| fig-height: 6
+ids |>
+  ggplot(aes(time_point, fct_rev(pid), colour = arm)) +
+  geom_line(aes(group = pid), colour = "grey75") +
+  geom_point(size = 3) +
+  facet_wrap(~ arm, scales = "free_y") +
+  scale_colour_brewer(palette = pal) +
+  labs(x = NULL, y = "Participant", colour = "Arm",
+       title = "Two samples per woman: before and after antibiotics") +
+  theme(legend.position = "none", axis.text.y = element_blank())
+```
+
+## The antibiotic course reshapes the microbiome
+
+```{r}
+#| label: qpcr-overview
+#| fig-width: 12
+#| fig-height: 5.5
+qpcr_long |>
+  ggplot(aes(time_point, copies + 1, fill = time_point)) +
+  geom_boxplot(outlier.shape = NA, alpha = 0.8) +
+  geom_line(aes(group = pid), alpha = 0.15) +
+  facet_wrap(~ target) +
+  scale_y_log10(labels = scales::label_log()) +
+  scale_fill_brewer(palette = pal) +
+  labs(x = NULL, y = "Gene copies / mL (log scale)",
+       title = "Total bacteria fall; lactobacilli bloom") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 20, hjust = 1))
+```
+
+::: {style="font-size: 0.7em"}
+qPCR spans many orders of magnitude, so we always read it on a log scale.
+:::
+
+## Which cytokines can we actually use?
+
+```{r}
+#| label: cytokine-detection
+#| fig-width: 11
+#| fig-height: 5
+cyt |>
+  group_by(cytokine) |>
+  summarise(within = mean(limits == "within limits"), .groups = "drop") |>
+  ggplot(aes(within, fct_reorder(cytokine, within))) +
+  geom_col(fill = "#377eb8") +
+  geom_vline(xintercept = 0.75, linetype = "dashed", colour = "grey40") +
+  scale_x_continuous(labels = scales::label_percent(), limits = c(0, 1)) +
+  labs(x = "Measurements within the assay's detection range", y = NULL,
+       title = "Five cytokines are reliably detected (dashed line = 75%)")
+```
+
+# Part 2 · Three short analyses {background-color="#1b3a4b"}
+
+## Three questions
+
+1. After antibiotics, do **lactobacilli rebound**, and does yogurt change the
+   rebound?
+2. Does the antibiotic course change **IL-1a**, and does the effect depend on
+   the diet arm?
+3. Across **all** cytokines, which ones shift from before to after?
+
+# Story 1 · Lactobacillus rebound {background-color="#2a4d3a"}
+
+## The question
+
+After a course of antibiotics, total bacterial load drops sharply. The
+clinically interesting question is what grows back.
+
+*L. iners* and *L. crispatus* are the "good" lactobacilli associated with a
+healthy vaginal environment. **Do they rebound after antibiotics, and does
+eating yogurt change how much they rebound?**
+
+We compare each woman to herself (baseline vs after), separately within each
+arm, with a paired Wilcoxon test.
+
+## The code
+
+```r
+qpcr_long |>
+  ggplot(aes(time_point, copies + 1)) +
+  geom_boxplot(aes(fill = time_point), outlier.shape = NA, alpha = 0.8) +
+  geom_line(aes(group = pid), alpha = 0.2) +
+  facet_grid(arm ~ target) +
+  scale_y_log10(expand = expansion(mult = c(0.05, 0.15))) +
+  scale_fill_brewer(palette = "Set1") +
+  stat_compare_means(method = "wilcox.test", paired = TRUE,
+                     label = "p.format", size = 4) +
+  labs(x = NULL, y = "Gene copies / mL (log scale)")
+```
+
+A paired test pairs each woman's *after* sample with her own *baseline*
+sample, so we measure within-person change, not differences between people.
+
+## The figure
+
+```{r}
+#| label: story1-figure
+#| fig-width: 12.5
+#| fig-height: 6
+qpcr_long |>
+  ggplot(aes(time_point, copies + 1)) +
+  geom_boxplot(aes(fill = time_point), outlier.shape = NA, alpha = 0.8) +
+  geom_line(aes(group = pid), alpha = 0.2) +
+  facet_grid(arm ~ target) +
+  scale_y_log10(expand = expansion(mult = c(0.05, 0.15)),
+                labels = scales::label_log()) +
+  scale_fill_brewer(palette = pal) +
+  stat_compare_means(method = "wilcox.test", paired = TRUE,
+                     label = "p.format", size = 4) +
+  labs(x = NULL, y = "Gene copies / mL (log scale)") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 20, hjust = 1))
+```
+
+## What it means
+
+- **Total bacteria fall** after antibiotics, as expected.
+- ***L. iners* blooms** — its median jumps roughly four orders of magnitude in
+  both arms (p < 0.001). This is the dominant recovery signal.
+- ***L. crispatus*** is undetectable in most women at both timepoints, so its
+  test is underpowered.
+- The rebound looks **the same with or without yogurt**: the *after* boxes sit
+  at the same height in both rows.
+
+The headline: antibiotics clear the field and *L. iners* repopulates it —
+yogurt does not visibly steer that process.
+
+# Story 2 · Modeling IL-1a {background-color="#2a4d3a"}
+
+## The question
+
+*L. iners* came back. Did inflammation come down with it?
+
+**IL-1a** is the best-detected cytokine here, so we model it directly. We want
+two things at once: the change after antibiotics, and whether that change
+differs by arm. That calls for an **interaction model**, with a per-participant
+random effect because each woman appears twice.
+
+```{r}
+#| label: story2-motivation
+#| fig-width: 10
+#| fig-height: 3.4
+cyt |>
+  filter(cytokine == "IL-1a") |>
+  ggplot(aes(time_point, conc, group = pid, colour = arm)) +
+  geom_line(alpha = 0.5) +
+  facet_wrap(~ arm) +
+  scale_y_log10() +
+  scale_colour_brewer(palette = pal) +
+  labs(x = NULL, y = "IL-1a (log)") +
+  theme(legend.position = "none")
+```
+
+## The code
+
+```r
+il1 <- cyt |> filter(cytokine == "IL-1a")
+
+fit <- lmer(
+  log(conc) ~ arm + arm:time_point + (1 | pid),
+  data = il1
+)
+
+tbl_regression(fit, intercept = TRUE)
+```
+
+`arm:time_point` lets the after-antibiotic change be different in each arm.
+`(1 | pid)` says the two samples from one woman are correlated. We model
+`log(conc)` because cytokine measurement error is multiplicative.
+
+## The table
+
+```{r}
+#| label: story2-table
+il1 <- cyt |> filter(cytokine == "IL-1a")
+
+fit <- lmer(
+  log(conc) ~ arm + arm:time_point + (1 | pid),
+  data = il1
+)
+
+tbl_regression(fit, intercept = TRUE) |>
+  bold_labels() |>
+  modify_header(label ~ "**Term**")
+```
+
+## What it means
+
+Reading the coefficients on the log scale:
+
+- **At baseline the arms are level** (`arm yogurt` ≈ 0, p = 0.9) — randomization
+  worked.
+- **IL-1a falls after antibiotics in both arms**: about −0.63 in the
+  unchanged-diet arm and −0.77 in the yogurt arm, both clearly significant.
+- The two drops are **close in size**, so yogurt does not meaningfully change
+  the inflammatory response.
+
+Same conclusion as Story 1, reached a different way: the microbiome recovers
+and inflammation subsides, with or without yogurt.
+
+# Story 3 · The whole cytokine panel {background-color="#2a4d3a"}
+
+## The question
+
+IL-1a fell. Was it special, or does the whole inflammatory panel come down
+after antibiotics?
+
+We run the **same paired test on every well-detected cytokine at once**, then
+correct for testing several hypotheses.
+
+## The code
+
+```r
+panel <- cyt |> filter(limits == "within limits")
+
+# one paired Wilcoxon per cytokine, then Benjamini-Hochberg
+panel |>
+  pivot_wider(id_cols = c(pid, cytokine),
+              names_from = time_point, values_from = conc,
+              values_fn = mean) |>
+  drop_na() |>
+  group_by(cytokine) |>
+  summarise(p = wilcox.test(baseline, after_antibiotic,
+                            paired = TRUE)$p.value, n = n()) |>
+  mutate(p_BH = p.adjust(p, "BH")) |>
+  arrange(p_BH)
+```
+
+## The figure
+
+```{r}
+#| label: story3-figure
+#| fig-width: 12.5
+#| fig-height: 6
+# the five cytokines detected in >75% of samples (Part 1)
+keep <- c("IL-1a", "IP-10", "IL-8", "MIG", "MIP-3a")
+
+cyt |>
+  filter(limits == "within limits", cytokine %in% keep) |>
+  ggboxplot(x = "time_point", y = "conc", fill = "time_point",
+            palette = pal, facet.by = "cytokine", outlier.shape = NA) +
+  geom_line(aes(group = pid), alpha = 0.12) +
+  scale_y_log10(expand = expansion(mult = c(0.05, 0.2))) +
+  stat_compare_means(method = "wilcox.test", paired = TRUE,
+                     label = "p.format", size = 3.6) +
+  labs(x = NULL, y = "Concentration (log scale)") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 20, hjust = 1))
+```
+
+## What it means
+
+```{r}
+#| label: story3-table
+cyt |>
+  filter(limits == "within limits", cytokine %in% keep) |>
+  pivot_wider(id_cols = c(pid, cytokine),
+              names_from = time_point, values_from = conc,
+              values_fn = mean) |>
+  drop_na() |>
+  group_by(cytokine) |>
+  summarise(n = n(),
+            p = wilcox.test(baseline, after_antibiotic, paired = TRUE)$p.value,
+            .groups = "drop") |>
+  mutate(p_BH = p.adjust(p, "BH")) |>
+  arrange(p_BH) |>
+  mutate(across(c(p, p_BH), ~ scales::label_pvalue()(.x))) |>
+  knitr::kable(col.names = c("Cytokine", "n pairs", "p", "p (BH)"))
+```
+
+Five cytokines move together and all survive Benjamini-Hochberg correction.
+The inflammatory panel comes down as a group after antibiotics — IL-1a was
+representative, not exceptional.
+
+# Wrap-up {background-color="#1b3a4b"}
+
+## What we found
+
+- Antibiotics drop total bacterial load; ***L. iners* repopulates** strongly.
+- **Inflammation subsides** alongside that recovery, across the cytokine panel.
+- **Yogurt left no visible fingerprint** on either process in this trial.
+
+## A caveat and a next step
+
+- Depo-Provera was imbalanced between arms; a fair yogurt comparison should
+  adjust for it.
+- Everything here used only the workshop's own toolkit — `tidyverse`,
+  `gtsummary`, `ggpubr`, and `lme4` — assembled with an LLM assistant. The
+  judgement about *which* test, *which* scale, and *what it means* stayed with
+  us.

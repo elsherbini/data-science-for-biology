@@ -244,3 +244,17 @@ Bring:
 - A short list of limitations and next steps
 
 Full prompts live in `group_project/README_session3.md` in your codespace.
+
+## Example presentations
+
+Want to see where this can go? These two example decks were built from the
+exact datasets in your codespace, using only the tools from Modules 3–6
+(`tidyverse`, `gtsummary`, `ggpubr`, and `lme4`), assembled with an LLM
+assistant. Each one walks a Table 1 and a few exploratory plots, then tells
+three short data stories — question, code, figure, interpretation.
+
+They are a target to aim for, not a template to copy. Your question and your
+dataset are your own.
+
+- [**Yogurt & the vaginal microbiome**](example_presentation_yogurt.qmd) — Group A
+- [**The vaginal immune environment across the menstrual cycle**](example_presentation_menstruation.qmd) — Group B
