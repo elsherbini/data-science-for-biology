@@ -41,7 +41,29 @@ permanent, you **commit** the change and **push** it to GitHub. Once it is on
 GitHub, you can delete the codespace and recreate it later with all your work
 intact.
 
-### Push with the Source Control panel
+### The fast way: one line in the terminal
+
+In the terminal, paste this and press Enter:
+
+```bash
+git add -A && git commit -m "save my work" && git push
+```
+
+That one line does all three steps at once: it gathers up every file you have
+changed (including brand-new ones), records them as a save point, and sends them
+to GitHub. If you have not changed anything since your last save, it simply says
+"nothing to commit" and stops, which is fine.
+
+Run it whenever you want to save, for example at the end of a session or after
+finishing an exercise. It is worth keeping the line somewhere handy so you can
+paste it again next time.
+
+If you would rather not use the terminal at all, you can also ask Pi: *"commit my
+work and push it to GitHub."* It runs the same steps for you.
+
+### The button way: the Source Control panel
+
+If you prefer clicking:
 
 1. Click the Source Control icon in the left bar of the editor (the branching
    icon, or press `Ctrl/Cmd` + `Shift` + `G`). It lists every file you have
@@ -50,10 +72,13 @@ intact.
    example `finish exercise 2`.
 3. Click **Commit**. If it offers to stage all your changes first, say yes.
 4. Click **Sync Changes** (sometimes labelled **Push**). This sends your commit
-   up to GitHub.
+   up to GitHub, and is the step that takes a few seconds while it talks to
+   GitHub.
 
-If you would rather not click through that, ask Pi in the terminal: *"commit my
-work and push it to GitHub."* It will run the same steps for you.
+If your codespace was created from the current template, the Commit button
+already pushes for you, so you can skip step 4. You will know this is set up if
+clicking **Commit** clears the changed-files list on its own without a separate
+sync.
 
 ### Confirm it actually worked
 
