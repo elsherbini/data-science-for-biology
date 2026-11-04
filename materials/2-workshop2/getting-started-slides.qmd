@@ -38,7 +38,7 @@ No setup or extensions needed. We'll do that together.
 
 **Sign in to GitHub first**, or the buttons won't appear.
 
-Open the [workshop 2 participant repository](WORKSHOP2_REPO_URL) and click **"Use this template"**.
+Open the [workshop 2 participant repository](https://github.com/elsherbini/data-science-for-biology-nov2026-codespace) and click **"Use this template"**.
 
 ![](../../assets/images/getting-started/1-use-this-template.png){width=900 fig-align="center" fig-alt="GitHub repo page with the 'Use this template' button highlighted"}
 
