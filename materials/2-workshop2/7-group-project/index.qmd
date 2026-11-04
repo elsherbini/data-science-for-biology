@@ -5,37 +5,98 @@ format:
     toc: true
 ---
 
-> Each group picks a question about one of two new datasets, works on it over two
-> mornings, and on Friday presents to a group that worked on the other dataset.
-> We do not give you an answer to check against.
+> Each group picks three questions about one of two new datasets, works on them
+> in pairs over two mornings, and on Friday presents to a group that worked on
+> the other dataset. We do not give you an answer to check against.
 
-## Groups and schedule
+## Groups and pairs
 
 There are ten groups of six people. Five groups (A1 to A5) take Study A and five
 (B1 to B5) take Study B. You meet your group on Wednesday morning.
+
+Inside your group you work in three pairs, and each pair takes one
+sub-question. Both partners work on the same sub-question separately, each in
+their own Codespace with their own Pi, and you do not compare notes until the
+first check-in. Pi will usually take a different route for each of you, and
+working out why is most of the job.
 
 On Friday each Study A group pairs with the Study B group of the same number and
 sits with them. A1 presents to B1, then B1 presents to A1; A2 and B2 do the same
 nearby, and so on. Your audience has spent two mornings on a different dataset,
 so explain your study before your result.
 
-| when | how long | what |
+## Wednesday
+
+By Wednesday morning you have done count-table anatomy and ordination.
+Differential testing is on Wednesday afternoon.
+
+| time | who | what |
 |---|---|---|
-| Wednesday AM | 3 hours | meet, read the data, agree a question, first analysis: Tuesday's ordination and PERMANOVA are a good place to start |
-| Thursday AM | 3 hours | add Wednesday's differential tests, finish the analysis, build the figures, write the talk |
-| Friday AM | 30 minutes | final preparation |
-| Friday AM | 1 hour | present to your paired group for 30 minutes, then listen to theirs for 30 |
+| 9:00 | group | Meet. |
+| 9:10 | everyone | Ask Pi questions about your dataset. Do not ask for code yet. What is in each file, how many people are in each arm, what does a column mean, what is Amsel? |
+| 9:30 | group | Pick three sub-questions from the menu below and form pairs. In each pair, decide who takes which model. |
+| 9:40 | each person | Write the [QC report](#the-qc-report). |
+| 10:00 | | Tea |
+| 10:15 | each person | Finish the QC report, then start on your sub-question. |
+| **10:45** | **pair** | [Check-in W1](#check-ins) |
+| 11:00 | each person | Ask Pi for whatever your QC report missed, then carry on with your sub-question. |
+| **11:45** | **group** | [Check-in W2](#check-ins) |
+| 12:05 | each person | Rerun with the group's QC decision and carry on. Before lunch, write a few lines at the top of your `.qmd` saying where you got to. |
+| 12:30 | | Lunch |
 
-: {tbl-colwidths="[18,16,66]"}
+: {tbl-colwidths="[12,14,74]"}
 
-Both datasets have exactly the file layout you have been using all week, with the
-same column names. Your code from the modules should run on them with the file
-path changed and nothing else.
+## Thursday
 
-```r
-source("R/count_tables.R")
-d <- read_counts("group_a")   # or "group_b"
-```
+By Thursday morning you have done differential testing too. Sets and enrichment
+is on Thursday afternoon, after the group work.
+
+| time | who | what |
+|---|---|---|
+| 9:00 | pair | Read yesterday's notes and swap models. |
+| 9:05 | each person | Ask your new model to review your `.qmd` from yesterday: "Read this document and critique the choices made. What would you do differently?" Decide what to change. |
+| 10:00 | | Tea |
+| 10:15 | each person | Carry on and render your final figures. |
+| **10:45** | **pair** | [Check-in T1](#check-ins) |
+| 11:00 | each person | Put your figures in the deck. |
+| **11:45** | **group** | [Check-in T2](#check-ins) |
+| 12:05 | group | Finish the slides. |
+| 12:30 | | Lunch |
+
+: {tbl-colwidths="[12,14,74]"}
+
+## Friday
+
+| how long | what |
+|---|---|
+| 30 minutes | Run through your deck as a group. Each pair asks another pair one question about their slide. |
+| 1 hour | Present to your paired group for 30 minutes, then listen to theirs for 30. |
+
+: {tbl-colwidths="[20,80]"}
+
+## Two models in each pair
+
+On Wednesday one partner uses `z-ai/glm-5.3-flash`, the default, and the other
+switches to `z-ai/glm-5.3` by typing `/model` in Pi. On Thursday you swap. The
+stronger model costs roughly ten times as much for a morning's work, a couple
+of dollars, which is still a small part of your budget.
+
+If you are curious on Thursday, try `anthropic/claude-opus-5.5` for a while.
+Then look at what it cost on your [OpenRouter activity page](https://openrouter.ai/activity)
+and decide for yourself whether it was worth it.
+
+## Your group's deck
+
+Each group gets a shared Google Slides deck on Wednesday morning. From the
+start it has a slide for the group's QC decision and one open-questions slide
+for each pair. Put anything you and your partner cannot explain yet on your
+pair's open-questions slide, and note what you found out as you go, with a link
+to whatever you read. On Thursday that slide becomes your "choice we made"
+slide.
+
+To get a figure into the deck, ask Pi to save it as a PNG in
+`group_project/figures/`, then right-click the file in the Codespace file list
+and choose **Download**.
 
 ## Study A: does a vaginal probiotic change the community?
 
@@ -51,16 +112,20 @@ product or a placebo, and were sampled before and after the course of treatment.
 
 : {tbl-colwidths="[30,70]"}
 
-The obvious question is whether the product changed the bacterial community, and
-whether it changed host gene expression.
-
-There are less obvious ones. Did it work in everyone, or only in people whose
-community was already a particular way before treatment? Does the host response
-track the community change, or move on its own? Is a difference after treatment
-meaningful if the two arms already differed before it?
-
 The arms are unbalanced, 121 against 55, so check your baseline before you
 interpret anything about the follow-up.
+
+### Study A sub-questions
+
+We suggest one from each column, so that your three pairs cover the bacteria,
+the host and the link between them.
+
+| Microbiome | Host | Connecting the two |
+|---|---|---|
+| Did the community shift from pre to post, and differently by arm? *Tuesday's ordination is a good start.* | Did host gene expression change with treatment? *Wednesday afternoon's module covers this; on Wednesday morning, start by ordinating the genes.* | Did the probiotic only work in people whose community started a certain way? *Tuesday's community grouping is a good start.* |
+| Which species changed in the probiotic arm, besides *L. crispatus*? *Wednesday afternoon's module covers this.* | Which biological processes do the gene changes point to? *Harder. Enrichment is taught on Thursday afternoon, so you will learn it from Pi and from reading.* | Do pH, Nugent score and cytokines move with the community change, or on their own? *Tuesday's anatomy module is a good start.* |
+
+: {tbl-colwidths="[33,34,33]"}
 
 ## Study B: do hormonal contraceptives differ in their effect?
 
@@ -75,17 +140,88 @@ once.
 
 : {tbl-colwidths="[30,70]"}
 
-The obvious question is whether the three methods differ in bacterial community
-composition, in host gene expression, or in both.
+The study is cross-sectional. Nobody was randomised to a method, and people who
+choose different methods differ in other ways. With 93 samples in three groups,
+ask which of your comparisons is actually powered.
 
-Then the less obvious ones. One of the three methods is delivered locally and two
-are systemic. Does that grouping explain more than the three-way split does? Is
-bacterial vaginosis more common in one arm, and if so is that the explanation for
-everything else you find? With 93 samples and three groups, which of your
-comparisons is actually powered?
+### Study B sub-questions
 
-Keep in mind that the study is cross-sectional. Nobody was randomised to a
-method, and people who choose different methods differ in other ways.
+We suggest one from each column.
+
+| Microbiome | Host | Connecting the two |
+|---|---|---|
+| Do the three methods differ in community composition? *Tuesday's ordination is a good start.* | The ring is delivered locally and the other two are systemic. Does the ring differ from the other two in host gene expression? *Wednesday afternoon's module covers this; on Wednesday morning, start by ordinating the genes.* | Group people by community type, then test their genes. Does community type explain more than the method does? *Tuesday's community grouping is a good start.* |
+| Is bacterial vaginosis more common in one arm? *Tuesday's anatomy module is a good start.* | Which biological processes do the ring-versus-systemic genes point to? *Harder. Enrichment is taught on Thursday afternoon, so you will learn it from Pi and from reading.* | Is bacterial vaginosis the explanation for whatever the method seems to do? *Start from your group's other two sub-questions.* |
+
+: {tbl-colwidths="[33,34,33]"}
+
+If your pair finishes early, write your own sub-question and tell the rest of
+your group at the next check-in.
+
+## The QC report
+
+Everyone starts with the same prompt. Copy it into Pi as it is, with your
+study's letter:
+
+```
+Make group_project/01-qc.qmd that checks the quality of the Study A data
+before we analyse it. Render it.
+```
+
+The prompt is short on purpose. Your partner's model will decide differently
+from yours what a quality check needs, and you will compare the two at 10:45.
+
+## Check-ins
+
+::: {.callout-note collapse="false"}
+## W1, Wednesday 10:45, with your partner
+
+1. Open your two QC reports side by side. Does each one check
+
+    - that sample IDs match across all the tables?
+    - library sizes in both count tables, and which samples have very few reads?
+    - missing metadata?
+    - `rnaseq_batch` cross-tabulated against arm (and against time point in Study A)?
+    - whether the arms differed at baseline (Study A)?
+
+    For anything missing, ask your Pi to add it.
+2. Compare the **Choices made** sections at the end of your two reports. For
+   each difference, can either of you say why? If not, add it to your pair's
+   open-questions slide.
+3. Split the open questions between you.
+:::
+
+::: {.callout-note collapse="false"}
+## W2, Wednesday 11:45, the whole group
+
+1. Each pair shows one figure and its open-questions slide, about three minutes
+   per pair.
+2. Answer each other's open questions where you can.
+3. Agree one QC decision for the whole group: which samples you drop and how you
+   filter features. Write it on the QC slide. All three pairs use it from now on.
+4. What did your morning cost? Look at your OpenRouter activity page and compare
+   the two models.
+:::
+
+::: {.callout-note collapse="false"}
+## T1, Thursday 10:45, with your partner
+
+1. Which approach are you keeping, or are you keeping both to show the result
+   does not depend on it? What is your reason, and what did you read that
+   supports it?
+2. Which one or two figures go in the talk?
+3. Turn your open-questions slide into your "choice we made" slide.
+:::
+
+::: {.callout-note collapse="false"}
+## T2, Thursday 11:45, the whole group
+
+1. Write the question for the whole talk in one sentence.
+2. Put the slides in order.
+3. State the answer as plainly as the data allow.
+4. Write down what you do not believe about your own result.
+5. Decide who is speaking.
+:::
 
 ## Deliverables
 
@@ -94,13 +230,15 @@ A presentation that fits your 30-minute slot, containing:
 1. the question you settled on, in one sentence
 2. what you did, including what you filtered and why
 3. two or three figures, each with a caption you read out
-4. the answer, stated as plainly as the data allow
-5. what you do not believe about your own result
+4. for each sub-question, a "choice we made" slide: the two routes you and your
+   partner were given, which one you kept and why, and one source you opened and
+   read yourself, even if Pi found it for you
+5. the answer, stated as plainly as the data allow
+6. what you do not believe about your own result
 
 The last of these is required. When you are the audience, ask the other group
-about theirs. Every
-analysis this week had something wrong with it, so look for the problems in
-yours before you present.
+about theirs. Every analysis this week had something wrong with it, so look for
+the problems in yours before you present.
 
 ## Advice from the modules
 
@@ -118,16 +256,3 @@ yours before you present.
 - Your dataset has an `rnaseq_batch` column. Cross-tabulate it against your
   groups early, and find out whether you have a confound rather than a finding.
 :::
-
-## Using the agent
-
-Use Pi as much as you like. It writes most code faster than you can, and groups
-that use it well tend to get further.
-
-At some point this week it will also give you an answer that is confident and
-wrong.
-Before any number goes on a slide, one person in the group who did not write the
-code should be able to say where it came from.
-
-Divide the work: someone drives the analysis, someone checks it, someone builds
-the figures, someone writes the talk. Swap at least once.
