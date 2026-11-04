@@ -71,7 +71,7 @@ It takes about 10 minutes and helps us improve the next one.
 
 ## Getting started
 
-New here? Head to the [Get Started](getting-started.qmd) page to open the
+New here? Head to the [Get Started](materials/2-workshop2/getting-started.qmd) page to open the
 workshop environment and begin.
 
 ## Past workshops

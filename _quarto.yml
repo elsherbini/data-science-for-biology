@@ -23,7 +23,7 @@ website:
     foreground: dark
     right:
       - text: "Get Started"
-        href: getting-started.qmd
+        href: materials/2-workshop2/getting-started.qmd
       - text: "Datasets"
         href: datasets.qmd
       - text: "Resources"
@@ -42,6 +42,8 @@ website:
     contents:
       - section: "<b>2. Multiomics: Microbiome and Host Gene Expression</b>"
         contents:
+          - text: "<b>Get Started</b>"
+            href: materials/2-workshop2/getting-started.qmd
           - text: "<b>Module 0</b>: Welcome to the Workshop"
             href: materials/2-workshop2/0-welcome/index.qmd
           - text: "<b>Module 1</b>: From Reads to Count Tables"

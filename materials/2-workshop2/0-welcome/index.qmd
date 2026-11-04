@@ -32,7 +32,7 @@ you come.
 morning. On Friday your group presents to one paired group that worked on the
 other dataset, and listens to theirs.
 
-**Getting set up.** Follow [Getting Started](../../../getting-started.qmd) before
+**Getting set up.** Follow [Get Started](../getting-started.qmd) before
 Tuesday morning. You need a GitHub account and the Codespace from the workshop
 template repository. If anything fails, find a teaching assistant on Monday
 rather than on Tuesday.
