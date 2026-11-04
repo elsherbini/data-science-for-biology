@@ -42,6 +42,10 @@ Same notebook, second half.
 6. How many samples land in each group? Does the split change across the three
    visits?
 
+7. Compare the effective number of species between the two groups, with a
+   boxplot on a log scale. Which group is more diverse, and is that what you
+   would call healthy?
+
 ### Part 3: Check the agent
 
 - Ask Pi to compute the *Lactobacillus* fraction. Then check: does its answer
@@ -65,5 +69,7 @@ so your code should run unchanged. If it does not, you hard-coded something.
 - What did you filter, and what did you lose?
 - The 0.5 cutoff is arbitrary. What would change in your conclusions if it were
   0.3, or 0.8?
+- In the gut, higher diversity is usually read as healthier. What did you find
+  here, and why might the vagina be different?
 - We are about to use a grouping built from the species table to test the gene
   table. Why is that a fair thing to do, and what would make it unfair?

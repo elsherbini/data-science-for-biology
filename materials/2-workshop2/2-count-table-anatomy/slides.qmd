@@ -27,6 +27,35 @@ fc <- read_csv(file.path(res, "filter_curve.csv"), show_col_types = FALSE) |>
 fs <- read_csv(file.path(res, "feature_summary.csv.gz"), show_col_types = FALSE) |>
   mutate(table = factor(table, c("species", "genes")),
          mean_cpm = mean_share * 1e6)   # mean of the per-sample proportions, x 1e6
+qc <- qc |> mutate(effective = exp(shannon))
+groups <- read_csv("../4-differential/results/sample_groups.csv", show_col_types = FALSE) |>
+  select(sample_id, community)
+species_qc <- qc |> filter(table == "species") |> inner_join(groups, by = "sample_id")
+eff_by_comm <- species_qc |> group_by(community) |> summarise(m = median(effective)) |> deframe()
+
+# Monday's four pom-pom bags, copied from the "Fill the four bags" table in
+# ../1-reads-to-counts/analog_activities.qmd. Keep the two in step.
+ball_hex <- c(orange = "#E69F00", green = "#009E73", blue = "#0072B2", pink = "#CC79A7",
+              vermillion = "#D55E00", sky_blue = "#56B4E9", yellow = "#F0E442",
+              grey = "#999999")
+bags <- tribble(
+  ~bag,    ~orange, ~green, ~blue, ~pink, ~vermillion, ~sky_blue, ~yellow, ~grey,
+  "bag 1",      42,      4,     1,     0,           1,         0,       1,     1,
+  "bag 2",       4,     38,     4,     0,           1,         0,       1,     2,
+  "bag 3",       1,      4,    35,     0,           4,         2,       2,     2,
+  "bag 4",       0,      1,     9,    23,           5,         5,       5,     2
+) |>
+  pivot_longer(-bag, names_to = "colour", values_to = "n") |>
+  group_by(bag) |>
+  mutate(p = n / sum(n)) |>
+  ungroup()
+shannon_of <- function(p) { p <- p[p > 0]; -sum(p * log(p)) }
+bag_summary <- bags |>
+  group_by(bag) |>
+  summarise(colours = sum(n > 0), top = max(p), shannon = shannon_of(p)) |>
+  bind_rows(tibble(bag = c("one colour only", "8 colours, 6 of each"),
+                   colours = c(1, 8), top = c(1, 1 / 8), shannon = c(0, log(8)))) |>
+  mutate(effective = exp(shannon))
 ```
 
 ## Yesterday you built a count table out of pom-poms {.center}
@@ -143,19 +172,43 @@ One sample has 438 bacterial reads. What would you do with it?
 #| echo: false
 #| fig-width: 14
 #| fig-height: 5
+rho <- qc |>
+  group_by(table) |>
+  summarise(rho = cor(library_size, features_detected, method = "spearman"),
+            # extra features seen in the deepest fifth of samples vs the shallowest
+            gain = median(features_detected[library_size >= quantile(library_size, 0.8)]) -
+                   median(features_detected[library_size <= quantile(library_size, 0.2)]))
+rho_of <- setNames(rho$rho, rho$table)
+strip <- setNames(sprintf("%s, Spearman rho = %.2f", rho$table, rho$rho), rho$table)
 qc |>
-  mutate(share = features_detected / features_total) |>
   ggplot(aes(library_size, features_detected, colour = table)) +
   geom_point(alpha = 0.5, size = 2) +
   scale_x_log10(labels = scales::label_number(scale_cut = scales::cut_short_scale())) +
   scale_colour_manual(values = tab_col) +
-  facet_wrap(~table, scales = "free") +
+  facet_wrap(~table, scales = "free", labeller = as_labeller(strip)) +
   labs(x = "library size (log scale)", y = "features with a count above zero") +
   theme(legend.position = "none")
+
+# species detected by community type, using the grouping built later today
+richness <- qc |>
+  filter(table == "species") |>
+  inner_join(read_csv("../4-differential/results/sample_groups.csv", show_col_types = FALSE) |>
+               select(sample_id, community), by = "sample_id") |>
+  group_by(community) |>
+  summarise(median_detected = median(features_detected))
+rich_of <- setNames(richness$median_detected, richness$community)
 ```
 
-In the species table, how many you see depends on how hard you looked. In the
-gene table it does not.
+Deeper gene libraries do detect more genes (rho = `r sprintf("%.2f", rho_of[["genes"]])`),
+but only about `r round(rho$gain[rho$table == "genes"], -1)` more from the shallowest
+fifth of samples to the deepest, out of 14,226.
+
+. . .
+
+In the species table depth barely matters at these depths
+(rho = `r sprintf("%.2f", rho_of[["species"]])`). The community does:
+samples dominated by *Lactobacillus* show a median of
+`r rich_of[["lactobacillus"]]` species, and the rest show `r rich_of[["anaerobe"]]`.
 
 ## The same picture as a fraction
 
@@ -193,33 +246,155 @@ ggplot(qc, aes(top_feature_share, fill = table)) +
 Half of our bacterial samples are more than 60% one species. The most extreme
 is 99.9%.
 
-## Richness and evenness, in one number
+## Same number of colours, different diversity
+
+```{r}
+#| echo: false
+#| fig-width: 13
+#| fig-height: 3.2
+bags |>
+  filter(bag %in% c("bag 1", "bag 4"), n > 0) |>
+  left_join(bag_summary |> select(bag, colours), by = "bag") |>
+  mutate(label = sprintf("%s: %d colours", bag, colours),
+         colour = factor(colour, rev(names(ball_hex)))) |>
+  ggplot(aes(p, fct_rev(label), fill = colour)) +
+  geom_col(colour = "white", width = 0.7) +
+  scale_fill_manual(values = ball_hex, guide = "none") +
+  scale_x_continuous(labels = scales::percent) +
+  labs(x = "share of the bag", y = NULL) +
+  theme(panel.grid = element_blank(), axis.text.y = element_text(size = 16))
+```
+
+Which bag is more diverse? Counting colours says they are nearly the same.
+
+::: {.notes}
+Demo with Monday's bags 1 and 4. Ask the room which is more diverse, then count
+the colours together: 6 against 7.
+
+Then the guessing game. A volunteer names the colour before each draw, five
+draws from each bag. From bag 1 they are right almost every time. From bag 4
+they keep being surprised. That surprise is what the next slide measures.
+
+If you have spare pom-poms, pour a bag of one colour and a bag of eight colours,
+six of each, to show the two ends of the scale: 0 and 2.08.
+:::
+
+## Shannon diversity is the average surprise
+
+:::: {.columns}
+::: {.column width="48%"}
+Draw one ball. If its colour makes up a share *p* of the bag, your surprise is
+−ln(*p*).
+
+::: {.incremental}
+- an orange from bag 1, 84% of it: `r round(-log(42/50), 2)`
+- a blue from bag 1, 2% of it: `r round(-log(1/50), 2)`
+- Shannon is the average over many draws: −Σ *p* ln(*p*)
+- Rare colours surprise you a lot, but you rarely draw them, so they add little.
+:::
+:::
+::: {.column width="52%" style="font-size: 0.8em;"}
+::: {.fragment}
+```{r}
+#| echo: false
+bag_summary |>
+  transmute(bag, colours, `top colour` = scales::percent(top, 1),
+            Shannon = sprintf("%.2f", shannon)) |>
+  kable(align = "lrrr")
+```
+:::
+:::
+::::
+
+## The effective number of species
+
+exp(Shannon) is **how many equally common colours** would give the same
+Shannon value.
+
+```{r}
+#| echo: false
+bag_summary |>
+  transmute(bag, colours, `effective number` = sprintf("%.1f", effective)) |>
+  kable(align = "lrr")
+```
+
+. . .
+
+Bag 1 has six colours but behaves like two. Bag 4 behaves like five.
+
+## Our two tables, as effective numbers
 
 ```{r}
 #| eval: false
-# number of features seen, and how evenly the counts are spread
-richness <- colSums(counts > 0)
-shannon  <- vegan::diversity(t(proportions), index = "shannon")
+shannon   <- vegan::diversity(t(counts), index = "shannon")   # natural log
+effective <- exp(shannon)
 ```
 
 ```{r}
 #| echo: false
 #| fig-width: 13
-#| fig-height: 4.1
-ggplot(qc, aes(shannon, fill = table)) +
+#| fig-height: 3.8
+ggplot(qc, aes(effective, fill = table)) +
   geom_histogram(bins = 40, colour = "white") +
+  scale_x_log10(labels = scales::label_comma()) +
   scale_fill_manual(values = tab_col) +
   facet_wrap(~table, scales = "free") +
-  labs(x = "Shannon diversity", y = "samples") +
+  labs(x = "effective number of features (log scale)", y = "samples") +
   theme(legend.position = "none")
 ```
 
-Species: median `r round(median(qc$shannon[qc$table == "species"]), 2)`. Genes:
-median `r round(median(qc$shannon[qc$table == "genes"]), 2)`.
+The median vaginal sample behaves like
+`r round(median(qc$effective[qc$table == "species"]))` equally common species.
+The median transcriptome behaves like about
+`r scales::comma(signif(median(qc$effective[qc$table == "genes"]), 2))` equally
+expressed genes.
+
+## In the vagina, low diversity is the healthy state
+
+```{r}
+#| echo: false
+#| fig-width: 13
+#| fig-height: 3.8
+species_qc |>
+  ggplot(aes(effective, community, colour = community)) +
+  geom_boxplot(outlier.shape = NA, width = 0.5) +
+  geom_jitter(height = 0.15, alpha = 0.4, size = 1.5) +
+  scale_x_log10() +
+  scale_colour_manual(values = c(lactobacillus = pal[["teal"]], anaerobe = pal[["orange"]]),
+                      guide = "none") +
+  labs(x = "effective number of species (log scale)", y = NULL)
+```
+
+Samples dominated by *Lactobacillus* behave like about
+`r round(eff_by_comm[["lactobacillus"]])` species. The rest behave like about
+`r round(eff_by_comm[["anaerobe"]])`.
+In the gut, more diverse usually reads as healthier. Here it is the reverse.
+
+## What Shannon diversity tracks in our tables
+
+```{r}
+#| echo: false
+qc |>
+  group_by(table) |>
+  summarise(`library size` = cor(shannon, library_size, method = "spearman"),
+            `features detected` = cor(shannon, features_detected, method = "spearman"),
+            `top feature's share` = cor(shannon, top_feature_share, method = "spearman")) |>
+  pivot_longer(-table, names_to = "Shannon against", values_to = "rho") |>
+  pivot_wider(names_from = table, values_from = rho) |>
+  mutate(across(c(species, genes), ~ sprintf("%.2f", .x))) |>
+  kable(align = "lrr", caption = "Spearman correlations")
+```
+
+. . .
+
+Depth barely moves it, because depth mostly changes how many rare features you
+catch, and rare features add little. In both tables it is close to the mirror
+image of dominance, the share held by the top feature.
 
 ## Shannon diversity of a transcriptome {.center}
 
-Nobody reports the Shannon diversity of a transcriptome.
+Nobody reports the Shannon diversity of a transcriptome, even though "behaves
+like about a thousand equally expressed genes" is a fair summary of one.
 
 . . .
 

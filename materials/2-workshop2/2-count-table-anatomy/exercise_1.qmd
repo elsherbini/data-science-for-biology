@@ -17,6 +17,8 @@ Write your answers down. You will compare them to the real numbers in Part 2.
 3. Which table do you expect to have more zeros, as a fraction of its cells?
 4. One sample in the species table has 438 total reads. The median is about
    28,700. What do you expect to be wrong with that sample's numbers?
+5. A typical sample behaves like how many equally common species? And like how
+   many equally expressed genes?
 
 ### Part 2: Build
 
@@ -38,10 +40,24 @@ Write your answers down. You will compare them to the real numbers in Part 2.
    frame, because every plot after this facets by table.
 
 4. Plot `library_size` for both tables. You will need a log scale. Then plot
-   `features_detected` against `library_size`, faceted by table.
+   `features_detected` against `library_size`, faceted by table. For each table,
+   compute `cor(library_size, features_detected, method = "spearman")`. Does
+   the number agree with what you see? A strong correlation can still be a
+   small effect, so check how many features it amounts to.
 
 5. Find the sample with 438 bacterial reads. Look at its full column. How many
    species does it show? What is its `top_feature_share`?
+
+6. Add Shannon diversity and the effective number of features to your summary
+   table:
+
+   ```r
+   shannon   <- vegan::diversity(t(counts), index = "shannon")
+   effective <- exp(shannon)
+   ```
+
+   What is the median effective number in each table? Compare it with your
+   Part 1 prediction, and with `features_detected` for the same samples.
 
 ### Part 3: Check the agent
 
@@ -56,6 +72,10 @@ before you believe any of it:
 - Ask it: "which samples should I drop and why?" Then ask it what happens to
   your results if you keep them. See whether the second answer contradicts the
   first.
+- Ask it which logarithm `vegan::diversity()` uses. Then ask what the effective
+  number would be if it had used log base 2. The Shannon value changes with the
+  base; the effective number does not, as long as you undo it with the matching
+  base.
 
 ### Discussion
 
