@@ -14,7 +14,7 @@ here <- "materials/2-workshop2/1-reads-to-counts"
 out <- file.path(here, "results")
 
 cards <- read_csv(file.path(out, "analog_cards.csv"), show_col_types = FALSE)
-colours <- c("orange", "green", "blue", "pink", "vermillion", "sky_blue", "yellow", "grey")
+colours <- c("orange", "green", "blue", "pink", "red", "sky_blue", "yellow", "grey")
 props <- as.matrix(cards[colours]) / cards$depth
 rownames(props) <- cards$card_id
 

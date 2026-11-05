@@ -570,7 +570,7 @@ ball <- tribble(
   "green",      "G",   "#009E73",
   "blue",       "B",   "#0072B2",
   "pink",       "P",   "#CC79A7",
-  "vermillion", "V",   "#D55E00",
+  "red",        "R",   "#CA0C0C",
   "sky_blue",   "S",   "#56B4E9",
   "yellow",     "Y",   "#F0E442",
   "grey",       "X",   "#999999"

@@ -36,10 +36,10 @@ eff_by_comm <- species_qc |> group_by(community) |> summarise(m = median(effecti
 # Monday's four pom-pom bags, copied from the "Fill the four bags" table in
 # ../1-reads-to-counts/analog_activities.qmd. Keep the two in step.
 ball_hex <- c(orange = "#E69F00", green = "#009E73", blue = "#0072B2", pink = "#CC79A7",
-              vermillion = "#D55E00", sky_blue = "#56B4E9", yellow = "#F0E442",
+              red = "#CA0C0C", sky_blue = "#56B4E9", yellow = "#F0E442",
               grey = "#999999")
 bags <- tribble(
-  ~bag,    ~orange, ~green, ~blue, ~pink, ~vermillion, ~sky_blue, ~yellow, ~grey,
+  ~bag,    ~orange, ~green, ~blue, ~pink, ~red, ~sky_blue, ~yellow, ~grey,
   "bag 1",      42,      4,     1,     0,           1,         0,       1,     1,
   "bag 2",       4,     38,     4,     0,           1,         0,       1,     2,
   "bag 3",       1,      4,    35,     0,           4,         2,       2,     2,

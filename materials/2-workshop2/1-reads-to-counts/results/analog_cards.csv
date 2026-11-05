@@ -1,4 +1,4 @@
-card_id,source,depth,inflammation,orange,green,blue,pink,vermillion,sky_blue,yellow,grey
+card_id,source,depth,inflammation,orange,green,blue,pink,red,sky_blue,yellow,grey
 S01,blue,35,low,0,2,30,0,1,1,1,0
 S02,orange~green,60,low,20,30,0,0,1,1,2,6
 S03,green,59,low,2,46,7,0,0,1,0,3

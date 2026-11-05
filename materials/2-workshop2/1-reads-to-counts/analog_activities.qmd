@@ -36,7 +36,7 @@ afternoon's deck.
 **Fill the four bags** with about 50 pom-poms each, and tag each bag with its
 inflammation status.
 
-| bag | orange | green | blue | pink | vermillion | sky blue | yellow | grey | tag |
+| bag | orange | green | blue | pink | red | sky blue | yellow | grey | tag |
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | 42 | 4 | 1 | | 1 | | 1 | 1 | low |
 | 2 | 4 | 38 | 4 | | 1 | | 1 | 2 | low |
