@@ -17,8 +17,15 @@ format:
 ## Library prep
 
 Lindsay Droit (Washington University School of Medicine) walks through how a
-swab becomes a sequencing library for 16S and for RNA-seq. Her slides will be
-added here.
+swab becomes a sequencing library for 16S and for RNA-seq, and what that means for your
+analysis.
+
+[Make slides full screen](library-prep-slides.qmd) ·
+[Download the slides (PDF)](library-prep/droit-before-it-reaches-r.pdf)
+
+```{=html}
+<iframe class="slide-deck" src="library-prep-slides.html" height="420" width="747" style="border: 1px solid #2e3846;"></iframe>
+```
 
 ## Practical details
 

@@ -209,7 +209,9 @@ table_01 |> count(arm, smoker)
 
 Each row is one arm × smoker combination.
 
-{{< include ../_wooclap.qmd >}}
+## Let's take a poll {.your-turn}
+
+{{< live-poll M3.1 >}}
 
 ## Keep the table in mind when you prompt
 
@@ -561,7 +563,9 @@ ggplot(table_02, aes(x = arm, y = ph, fill = arm)) +
 
 Each row in the data still becomes one mark, placed in its `time_point` panel.
 
-{{< include ../_wooclap_2.qmd >}}
+## Let's take another poll {.your-turn}
+
+{{< live-poll M3.2 >}}
 
 ## Exercise 2 {.your-turn}
 

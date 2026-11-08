@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Poll</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="participant">
+<main id="app"><p class="muted">Loading…</p></main>
+
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script>
+(function () {
+  const { h, params, get, post, token, store, configured } = LivePoll;
+  const app = document.getElementById('app');
+  const moment = (params.get('m') || '').trim().toUpperCase();
+
+  function show(...nodes) { app.replaceChildren(...nodes.flat().filter((n) => n !== null && n !== undefined)); }
+
+  function joinForm(message) {
+    const input = h('input', { class: 'text-input', placeholder: 'e.g. M3.1', autocapitalize: 'characters', 'aria-label': 'Poll code' });
+    const go = () => {
+      const code = input.value.trim().toUpperCase();
+      if (!code) return;
+      const q = new URLSearchParams(location.search);
+      q.set('m', code);
+      location.search = q.toString();
+    };
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
+    show(
+      h('h1', {}, 'Live poll'),
+      message ? h('p', { class: 'error' }, message) : null,
+      h('p', { class: 'muted' }, 'Type the code shown on the screen.'),
+      h('div', { class: 'join' }, input, h('button', { class: 'btn', onclick: go }, 'Join'))
+    );
+    input.focus();
+  }
+
+  function retryButton() {
+    return h('button', { class: 'btn ghost', onclick: load }, 'Try again');
+  }
+
+  async function load() {
+    show(h('p', { class: 'muted' }, 'Loading ' + moment + '…'));
+    let data;
+    try {
+      data = await get('questions', { m: moment });
+    } catch (e) {
+      show(h('p', { class: 'tag' }, moment),
+           h('p', { class: 'error' }, 'Could not load the questions. Check your connection.'),
+           retryButton());
+      return;
+    }
+    if (!data.questions.length) {
+      show(h('p', { class: 'tag' }, moment),
+           h('p', {}, 'No questions for ' + moment + ' yet. Check the code, or wait for the instructor and try again.'),
+           retryButton());
+      return;
+    }
+    render(data.questions);
+  }
+
+  function render(questions) {
+    const saved = store('lp_answers:' + moment) || {};
+    const getters = {};
+
+    const cards = questions.map((q, i) => {
+      const prev = saved[q.id];
+      let body;
+      if (q.type === 'mcq' || q.type === 'poll' || q.type === 'multi') {
+        const kind = q.type === 'multi' ? 'checkbox' : 'radio';
+        const inputs = q.choices.map((c) => h('input', {
+          type: kind, name: q.id, value: c,
+          checked: kind === 'radio' ? prev === c : Array.isArray(prev) && prev.includes(c),
+        }));
+        body = q.choices.map((c, j) => h('label', { class: 'choice' }, inputs[j], h('span', {}, c)));
+        getters[q.id] = kind === 'radio'
+          ? () => { const x = inputs.find((el) => el.checked); return x ? x.value : undefined; }
+          : () => { const xs = inputs.filter((el) => el.checked).map((el) => el.value); return xs.length ? xs : undefined; };
+      } else if (q.type === 'number') {
+        const input = h('input', { class: 'text-input', type: 'text', inputmode: 'decimal', placeholder: 'A number', value: prev ?? '' });
+        body = [input];
+        getters[q.id] = () => { const v = input.value.trim(); return v === '' ? undefined : v; };
+      } else {
+        const input = h('input', { class: 'text-input', type: 'text', maxlength: 80, placeholder: 'Short answer', value: prev ?? '' });
+        body = [input];
+        getters[q.id] = () => { const v = input.value.trim(); return v === '' ? undefined : v; };
+      }
+      const hint = q.type === 'multi' ? h('p', { class: 'muted', style: { margin: '-6px 0 8px', fontSize: '0.9rem' } }, 'Pick any that apply') : null;
+      return h('section', { class: 'card' },
+        h('h2', {}, h('span', { class: 'qn' }, (i + 1) + '.'), q.prompt), hint, body);
+    });
+
+    const status = h('p', { class: 'status', role: 'status' });
+    const button = h('button', { class: 'btn block', onclick: submit }, 'Submit');
+    if (Object.keys(saved).length) {
+      status.textContent = 'You already answered. Change anything and submit again to update.';
+    }
+
+    show(
+      h('p', { class: 'tag' }, moment),
+      cards,
+      h('div', { class: 'submit-bar' }, h('div', { class: 'inner' }, status, button))
+    );
+
+    async function submit() {
+      const answers = {};
+      for (const [id, fn] of Object.entries(getters)) {
+        const v = fn();
+        if (v !== undefined) answers[id] = v;
+      }
+      if (!Object.keys(answers).length) {
+        status.className = 'status error';
+        status.textContent = 'Answer at least one question first.';
+        return;
+      }
+      button.disabled = true;
+      button.textContent = 'Sending…';
+      status.className = 'status muted';
+      status.textContent = '';
+      try {
+        await post({ moment, token: token(), answers });
+        store('lp_answers:' + moment, answers);
+        status.className = 'status ok';
+        status.textContent = '✓ Saved. You can change answers and submit again.';
+        button.textContent = 'Update answers';
+      } catch (e) {
+        status.className = 'status error';
+        status.textContent = e.fatal ? e.message : 'Could not reach the server. Your answers are still here, press Submit to try again.';
+        button.textContent = 'Submit';
+      } finally {
+        button.disabled = false;
+      }
+    }
+  }
+
+  if (!configured()) show(h('p', { class: 'error' }, 'This poll is not set up yet (config.js has no Supabase URL and key).'));
+  else if (!moment) joinForm();
+  else load();
+})();
+</script>
+</body>
+</html>
