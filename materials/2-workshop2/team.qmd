@@ -1,0 +1,146 @@
+---
+title: "Teaching Team: Multiomics Workshop"
+---
+
+<!-- Photos: when they arrive, put them in images/ and add a line like
+     ![](../../images/Name.png){width=120px fig-align="left"}
+     at the top of each person's block. -->
+
+## Instructors
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Joseph Elsherbini** \
+Ragon Institute of MGB, MIT and Harvard
+:::
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Scott Handley** \
+Washington University School of Medicine
+:::
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Lindsay Droit** \
+Washington University School of Medicine
+:::
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Afrah Khairallah** \
+Africa Health Research Institute (AHRI)
+:::
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Dennis Kirema** \
+Kenyatta University
+:::
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Thommas Musyoka** \
+Kenyatta University
+:::
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Josphat Gichure** \
+Mount Kenya University
+:::
+
+:::
+
+## Teaching Assistants
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Shannon Ramkistan** \
+Africa Health Research Institute (AHRI)
+:::
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Kelebogile Happy Sathekge** \
+Africa Health Research Institute (AHRI)
+:::
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Brenda Kamau** \
+Kenya Medical Research Institute (KEMRI)
+:::
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Waihuini Githaiga** \
+KAVI Institute of Clinical Research (KAVI-ICR)
+:::
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Loice Jebiwott Kanda** \
+KAVI Institute of Clinical Research (KAVI-ICR)
+:::
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Tshwanelo Moroka** \
+Centre for the AIDS Programme of Research in South Africa (CAPRISA)
+:::
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Caivil Ndobela** \
+Centre for the AIDS Programme of Research in South Africa (CAPRISA)
+:::
+
+:::
+
+## Keynote Speakers
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Douglas Kwon** \
+Ragon Institute of MGB, MIT and Harvard
+:::
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Daniel Muema** \
+KAVI Institute of Clinical Research (KAVI-ICR)
+:::
+
+:::
+
+## Logistics and Support
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Tebogo Taueatsoala** \
+Africa Health Research Institute (AHRI)
+:::
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Eyerusalem Alemu** \
+Ragon Institute of MGB, MIT and Harvard
+:::
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**CiCi Brodie** \
+Ragon Institute of MGB, MIT and Harvard
+:::
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Meral Pasha** \
+Harvard Center for AIDS Research (CFAR)
+:::
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Alberto Ottoboni** \
+Harvard Center for AIDS Research (CFAR)
+:::
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Victoria Kasprowicz** \
+Sub-Saharan African Network for TB/HIV Research Excellence (SANTHE)
+:::
+
+::: {.g-col-12 .g-col-md-6 .g-col-lg-4}
+**Sipho Khumalo** \
+Sub-Saharan African Network for TB/HIV Research Excellence (SANTHE)
+:::
+
+:::
