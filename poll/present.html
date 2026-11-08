@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Poll Presenter</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+<div id="root"><p class="muted" style="padding:16px">Loading…</p></div>
+
+<script src="config.js"></script>
+<script src="common.js"></script>
+<script>
+(function () {
+  const { h, params, get, configured } = LivePoll;
+  const root = document.getElementById('root');
+  const moment = (params.get('m') || '').trim().toUpperCase();
+  const POLL_MS = 2000;
+  const HIDDEN_BY_DEFAULT = { mcq: true, number: true }; // avoid herding on quiz questions
+
+  if (!configured()) { root.replaceChildren(h('p', { class: 'error', style: { padding: '16px' } }, 'config.js has no Supabase URL and key yet.')); return; }
+  if (!moment) { showIndex(); return; }
+
+  // ---------- participant link ----------
+  const joinUrl = new URL('./', location.href);
+  joinUrl.searchParams.set('m', moment);
+  if (params.get('sb')) joinUrl.searchParams.set('sb', params.get('sb'));
+  const joinText = joinUrl.href.replace(/^https?:\/\//, '');
+
+  // ---------- state ----------
+  const state = {
+    data: null,
+    idx: Math.max(0, (parseInt(params.get('q'), 10) || 1) - 1),
+    shown: {},
+    revealed: {},
+    error: null,
+  };
+
+  // ---------- layout ----------
+  const elCount = h('span', { class: 'count' }, '–');
+  const elMeta = h('div', { class: 'meta' });
+  const elPrompt = h('h1');
+  const elViz = h('div', { class: 'viz' });
+  const elExplain = h('p', { class: 'explanation', hidden: true });
+  const btnPrev = h('button', { class: 'btn ghost', onclick: () => go(-1) }, '←');
+  const btnShow = h('button', { class: 'btn ghost', onclick: toggleShow }, 'Show results', h('kbd', {}, 'S'));
+  const btnReveal = h('button', { class: 'btn ghost', onclick: toggleReveal }, 'Reveal answer', h('kbd', {}, 'R'));
+  const btnNext = h('button', { class: 'btn ghost', onclick: () => go(1) }, '→');
+  const btnQr = h('button', { class: 'btn ghost', onclick: toggleQr }, 'Join code', h('kbd', {}, 'Q'));
+
+  const qrBox = h('div', { class: 'qr' });
+  const overlay = h('div', { class: 'overlay', onclick: toggleQr },
+    h('div', { class: 'big-code' }, 'Answer on your phone · ', h('b', {}, moment)),
+    qrBox,
+    h('div', { class: 'big-url' }, joinText),
+    h('div', { class: 'muted' }, 'Click anywhere or press Q to see results')
+  );
+
+  document.body.className = 'presenter';
+  root.replaceWith(
+    h('header', {},
+      h('span', { class: 'moment' }, moment),
+      h('span', { class: 'join-url' }, 'Join: ', h('b', {}, joinText)),
+      elCount),
+    h('main', { class: 'stage' }, elMeta, elPrompt, elViz, elExplain),
+    h('footer', {}, btnPrev, btnShow, btnReveal, btnNext, btnQr),
+    overlay
+  );
+
+  try {
+    new QRCode(qrBox, { text: joinUrl.href, width: 512, height: 512, correctLevel: QRCode.CorrectLevel.M });
+  } catch (e) {
+    qrBox.remove(); // CDN blocked: the URL text is still there
+  }
+
+  // ---------- controls ----------
+  function current() { return state.data && state.data.questions[state.idx]; }
+  function isShown(q) { return state.shown[q.id] ?? !HIDDEN_BY_DEFAULT[q.type]; }
+  function hasAnswer(q) {
+    return q.type === 'number' ? q.correct !== null : (q.type === 'mcq' || q.type === 'multi') && Array.isArray(q.correct) && q.correct.length > 0;
+  }
+
+  function go(delta) {
+    if (!state.data) return;
+    const n = state.data.questions.length;
+    state.idx = Math.min(n - 1, Math.max(0, state.idx + delta));
+    render(true);
+  }
+  function toggleShow() {
+    const q = current(); if (!q) return;
+    state.shown[q.id] = !isShown(q);
+    if (!state.shown[q.id]) state.revealed[q.id] = false;
+    render(false);
+  }
+  function toggleReveal() {
+    const q = current(); if (!q || !hasAnswer(q)) return;
+    state.revealed[q.id] = !state.revealed[q.id];
+    if (state.revealed[q.id]) state.shown[q.id] = true;
+    render(false);
+  }
+  function toggleQr() { overlay.hidden = !overlay.hidden; }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const k = e.key;
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ') { e.preventDefault(); if (!overlay.hidden) toggleQr(); else go(1); }
+    else if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); go(-1); }
+    else if (k === 's' || k === 'S') toggleShow();
+    else if (k === 'r' || k === 'R') toggleReveal();
+    else if (k === 'q' || k === 'Q') toggleQr();
+    else if (k === 'f' || k === 'F') {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else document.documentElement.requestFullscreen?.();
+    }
+  });
+
+  // ---------- rendering ----------
+  let builtFor = null; // question id whose bar rows currently exist in elViz
+
+  function render(questionChanged) {
+    const data = state.data;
+    if (!data) {
+      elPrompt.textContent = state.error ? 'Could not load results' : 'Loading…';
+      elMeta.textContent = state.error || '';
+      return;
+    }
+    elCount.textContent = data.participants + (data.participants === 1 ? ' person' : ' people');
+    if (!data.questions.length) {
+      elMeta.textContent = '';
+      elPrompt.textContent = 'No questions found for ' + moment;
+      elViz.replaceChildren();
+      return;
+    }
+    const q = current();
+    const shown = isShown(q);
+    const revealed = !!state.revealed[q.id];
+    const labels = { mcq: 'Quiz', poll: 'Poll', multi: 'Pick any', open: 'Open answer', number: 'Number' };
+    elMeta.textContent = `Question ${state.idx + 1} of ${data.questions.length} · ${labels[q.type]} · ${q.n} ${q.n === 1 ? 'answer' : 'answers'}`;
+    if (elPrompt.textContent !== q.prompt) elPrompt.textContent = q.prompt;
+
+    btnPrev.disabled = state.idx === 0;
+    btnNext.disabled = state.idx === data.questions.length - 1;
+    btnShow.firstChild.textContent = shown ? 'Hide results' : 'Show results';
+    btnReveal.disabled = !hasAnswer(q);
+    btnReveal.firstChild.textContent = revealed ? 'Hide answer' : 'Reveal answer';
+
+    elExplain.hidden = !(revealed && q.explanation);
+    elExplain.textContent = q.explanation || '';
+
+    if (!shown) {
+      builtFor = null;
+      elViz.replaceChildren(h('div', { class: 'waiting' }, q.n, h('small', {}, q.n === 1 ? 'answer so far' : 'answers so far')));
+      return;
+    }
+    if (q.type === 'open') { builtFor = null; renderCloud(q); return; }
+    if (q.type === 'number') { builtFor = null; renderNumber(q, revealed); return; }
+    renderBars(q, q.choices, q.counts, revealed ? new Set(q.correct || []) : null, questionChanged);
+  }
+
+  // Bar rows are built once per question and then only resized, so the
+  // widths animate as answers come in.
+  function renderBars(q, labels, counts, correctSet, rebuild) {
+    const key = q.id + '|' + labels.join('\u0000');
+    if (rebuild || builtFor !== key) {
+      builtFor = key;
+      elViz.replaceChildren(h('div', { class: 'bars' }, labels.map((label) =>
+        h('div', { class: 'bar-row' },
+          h('div', { class: 'bar-label' }, label),
+          h('div', { class: 'bar-track' }, h('div', { class: 'bar-fill' })),
+          h('div', { class: 'bar-num' })))));
+      void elViz.offsetWidth; // commit 0-width bars so the first resize animates
+    }
+    const bars = elViz.firstChild;
+    bars.classList.toggle('revealed', !!correctSet);
+    const max = Math.max(1, ...counts);
+    const total = counts.reduce((a, b) => a + b, 0);
+    [...bars.children].forEach((row, i) => {
+      row.classList.toggle('correct', !!correctSet && correctSet.has(i));
+      row.querySelector('.bar-fill').style.width = (100 * counts[i] / max) + '%';
+      const pct = total ? Math.round(100 * counts[i] / (q.type === 'multi' ? Math.max(1, q.n) : total)) : 0;
+      row.querySelector('.bar-num').textContent = `${counts[i]} · ${pct}%`;
+    });
+  }
+
+  function renderCloud(q) {
+    const words = q.words || [];
+    if (!words.length) { elViz.replaceChildren(h('div', { class: 'waiting' }, 0, h('small', {}, 'answers so far'))); return; }
+    const max = words[0].count;
+    // Biggest words land in the middle: alternate adding to each side.
+    const arranged = [];
+    words.slice(0, 60).forEach((w, i) => (i % 2 ? arranged.push(w) : arranged.unshift(w)));
+    const colors = ['--cloud-1', '--cloud-2', '--cloud-3', '--cloud-4', '--cloud-5'];
+    elViz.replaceChildren(h('div', { class: 'cloud' }, arranged.map((w) => {
+      const scale = Math.sqrt(w.count / max);
+      const color = colors[hashStr(w.text) % colors.length];
+      return h('span', {
+        title: w.count + '×',
+        style: { fontSize: `clamp(14px, ${(1.2 + 3.6 * scale).toFixed(2)}vw, ${Math.round(24 + 70 * scale)}px)`, color: `var(${color})` },
+      }, w.text);
+    })));
+  }
+
+  function renderNumber(q, revealed) {
+    const vals = (q.values || []).slice().sort((a, b) => a - b);
+    const summary = h('div', { class: 'number-summary' });
+    if (vals.length) {
+      summary.append('Median ', h('strong', {}, fmt(quantile(vals, 0.5))));
+      if (revealed && q.correct !== null) summary.append(' · Answer ', h('b', {}, fmt(q.correct)));
+    }
+    const distinct = [...new Set(vals)];
+    let labels, counts, correctIdx = -1;
+    if (distinct.length <= 10) {
+      labels = distinct.map(fmt);
+      counts = distinct.map((d) => vals.filter((v) => v === d).length);
+      correctIdx = distinct.indexOf(q.correct);
+    } else {
+      // Bin between the 5th and 95th percentile so one wild guess doesn't
+      // squash everything else into a single bar.
+      const lo = quantile(vals, 0.05), hi = quantile(vals, 0.95);
+      const nb = 8, width = (hi - lo) / nb || 1;
+      const edges = Array.from({ length: nb + 1 }, (_, i) => lo + i * width);
+      labels = []; counts = [];
+      const below = vals.filter((v) => v < lo).length;
+      if (below) { labels.push('< ' + fmt(lo)); counts.push(below); }
+      const offset = labels.length;
+      for (let i = 0; i < nb; i++) {
+        labels.push(fmt(edges[i]) + ' – ' + fmt(edges[i + 1]));
+        counts.push(vals.filter((v) => v >= edges[i] && (i === nb - 1 ? v <= hi : v < edges[i + 1])).length);
+      }
+      const above = vals.filter((v) => v > hi).length;
+      if (above) { labels.push('> ' + fmt(hi)); counts.push(above); }
+      if (q.correct !== null) {
+        if (q.correct < lo) correctIdx = below ? 0 : -1;
+        else if (q.correct > hi) correctIdx = above ? labels.length - 1 : -1;
+        else correctIdx = offset + Math.min(nb - 1, Math.floor((q.correct - lo) / width));
+      }
+    }
+    elViz.replaceChildren(summary, h('div', { class: 'bars' }));
+    builtFor = null;
+    const bars = elViz.lastChild;
+    bars.classList.toggle('revealed', revealed);
+    const max = Math.max(1, ...counts);
+    labels.forEach((label, i) => bars.append(
+      h('div', { class: 'bar-row' + (revealed && i === correctIdx ? ' correct' : '') },
+        h('div', { class: 'bar-label' }, label),
+        h('div', { class: 'bar-track' }, h('div', { class: 'bar-fill', style: { width: (100 * counts[i] / max) + '%' } })),
+        h('div', { class: 'bar-num' }, counts[i]))));
+  }
+
+  function quantile(sorted, p) {
+    const i = (sorted.length - 1) * p, lo = Math.floor(i), hi = Math.ceil(i);
+    return sorted[lo] + (sorted[hi] - sorted[lo]) * (i - lo);
+  }
+  function fmt(x) { return Number.isInteger(x) ? String(x) : String(+x.toPrecision(3)); }
+  function hashStr(s) { let x = 0; for (const c of s.toLowerCase()) x = (x * 31 + c.charCodeAt(0)) >>> 0; return x; }
+
+  // ---------- polling ----------
+  async function poll() {
+    if (!document.hidden) {
+      try {
+        const data = await get('results', { m: moment });
+        const first = !state.data;
+        state.data = data;
+        state.error = null;
+        if (state.idx >= data.questions.length) state.idx = Math.max(0, data.questions.length - 1);
+        render(first);
+      } catch (e) {
+        state.error = e.message;
+        if (!state.data) render(true);
+      }
+    }
+    setTimeout(poll, POLL_MS);
+  }
+  render(true);
+  poll();
+
+  // ---------- index of moments (no ?m=) ----------
+  async function showIndex() {
+    root.className = 'index';
+    root.replaceChildren(h('h1', {}, 'Live poll moments'), h('p', { class: 'muted' }, 'Loading…'));
+    try {
+      const data = await get('moments');
+      const link = (m) => {
+        const u = new URL(location.href);
+        u.searchParams.set('m', m);
+        return u.href;
+      };
+      root.replaceChildren(h('div', {},
+        h('h1', {}, 'Live poll moments'),
+        data.moments.length
+          ? h('ul', {}, data.moments.map((m) => h('li', {}, h('a', { href: link(m.moment) }, m.moment), ` · ${m.count} question${m.count === 1 ? '' : 's'}`)))
+          : h('p', {}, 'No questions in the sheet yet.'),
+        data.problems.length ? [h('h2', {}, 'Problems in the Questions tab'), h('ul', {}, data.problems.map((p) => h('li', { class: 'error' }, p)))] : null
+      ));
+    } catch (e) {
+      root.replaceChildren(h('h1', {}, 'Live poll moments'), h('p', { class: 'error' }, 'Could not load: ' + e.message));
+    }
+  }
+})();
+</script>
+</body>
+</html>
