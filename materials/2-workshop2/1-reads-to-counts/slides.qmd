@@ -63,16 +63,16 @@ tibble(cycle = 1:150) |>
   ylim(10, 42)
 ```
 
-Before any counting, someone trimmed off the low-quality ends.
+Before counting, the low-quality ends are usually trimmed off.
 
 . . .
 
 All the processing after this tries to answer **what was in the tube, and how
 much of it?**
 
-## The decisions already made for you
+## Decisions that may already be made
 
-By the time you receive a count table, someone has chosen:
+Between the sequencer and the count table, someone may have chosen:
 
 ::: {.incremental}
 - where to trim each read
@@ -84,9 +84,10 @@ By the time you receive a count table, someone has chosen:
 
 . . .
 
-You won't find these choices in the table, but each one changed its numbers.
-Ask who made them, and ask for the raw reads and the reference version.
-Lindsay's ten questions from this morning are the full list to send.
+Sometimes that someone is you, starting from raw reads. Sometimes it is a
+facility or a collaborator, and the choices don't travel with the table. Each
+choice changes the numbers, so find out who made them. Lindsay's ten questions from
+this morning are a good list to send.
 
 ## Both pipelines end in a count table
 
