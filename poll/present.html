@@ -150,8 +150,18 @@
     elExplain.textContent = q.explanation || '';
 
     if (!shown) {
+      const answersSoFar = h('div', { class: 'waiting' }, q.n, h('small', {}, q.n === 1 ? 'answer so far' : 'answers so far'));
+      if (q.choices && q.choices.length) {
+        // Keep the choices on screen so the presenter can talk about them;
+        // only the bars and counts wait for "Show results".
+        renderBars(q, q.choices, q.choices.map(() => 0), null, questionChanged, true);
+        answersSoFar.classList.add('below-choices');
+        if (elViz.children.length > 1) elViz.lastChild.replaceWith(answersSoFar);
+        else elViz.append(answersSoFar);
+        return;
+      }
       builtFor = null;
-      elViz.replaceChildren(h('div', { class: 'waiting' }, q.n, h('small', {}, q.n === 1 ? 'answer so far' : 'answers so far')));
+      elViz.replaceChildren(answersSoFar);
       return;
     }
     if (q.type === 'open') { builtFor = null; renderCloud(q); return; }
@@ -161,7 +171,7 @@
 
   // Bar rows are built once per question and then only resized, so the
   // widths animate as answers come in.
-  function renderBars(q, labels, counts, correctSet, rebuild) {
+  function renderBars(q, labels, counts, correctSet, rebuild, veiled = false) {
     const key = q.id + '|' + labels.join('\u0000');
     if (rebuild || builtFor !== key) {
       builtFor = key;
@@ -173,6 +183,8 @@
       void elViz.offsetWidth; // commit 0-width bars so the first resize animates
     }
     const bars = elViz.firstChild;
+    if (!veiled) while (elViz.children.length > 1) elViz.lastChild.remove();
+    bars.classList.toggle('veiled', veiled);
     bars.classList.toggle('revealed', !!correctSet);
     const max = Math.max(1, ...counts);
     const total = counts.reduce((a, b) => a + b, 0);

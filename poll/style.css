@@ -184,6 +184,10 @@ button { font: inherit; cursor: pointer; }
 .revealed .bar-row:not(.correct) .bar-fill { background: var(--wrong); }
 .revealed .bar-row:not(.correct) .bar-label { color: var(--muted); }
 .bar-num { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+.bars.veiled .bar-row { grid-template-columns: minmax(0, 1fr); }
+.bars.veiled .bar-track, .bars.veiled .bar-num { display: none; }
+.bars.veiled .bar-label { padding: 0.35em 0.6em; border-left: 4px solid var(--accent); }
+.waiting.below-choices { font-size: clamp(18px, 2.6vw, 44px); margin-top: 2.5vh; }
 .waiting {
   text-align: center;
   font-size: clamp(24px, 5vw, 90px);
