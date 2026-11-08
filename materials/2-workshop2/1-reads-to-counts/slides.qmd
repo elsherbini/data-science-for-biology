@@ -41,30 +41,14 @@ We won't run any software today.
 By the end of the afternoon you should be able to explain, in your own words,
 where each number in a count table came from.
 
-## A sequencer returns text
+## Millions of reads per sample
 
-```
-@A00984:412:HTKJ7DSXX:1:1101:2645:1000 1:N:0:ACTGAGCG
-TACGTAGGGTGCGAGCGTTGTCCGGATTTATTGGGCGTAAAGCGCGCGCAGGCGGTTTGTT
-+
-FFFFFFFFFFFFFFFF:FFFFFFFFFFFFFFFFFFFFF,FFFFFFFFFFFFFFFFFF,FFF
-```
-
-. . .
-
-Each sample produces millions of these records: a read name, the sequence, and
-a quality score for every base.
-
-. . .
-
-All the processing after this tries to answer **what was in the tube, and how
-much of it?**
-
-## Not every base is trustworthy
+Lindsay showed you one FASTQ read this morning. Each sample produces millions
+of them, and the quality drops toward the end of every read.
 
 ```{r}
 #| fig-width: 13
-#| fig-height: 4.3
+#| fig-height: 3.6
 set.seed(7)
 tibble(cycle = 1:150) |>
   mutate(q = 38 - 0.00035 * cycle^2 - rnorm(150, 0, 0.4),
@@ -79,8 +63,12 @@ tibble(cycle = 1:150) |>
   ylim(10, 42)
 ```
 
-Quality drops toward the end of each read. Before any counting, someone trimmed
-off the low-quality ends.
+Before any counting, someone trimmed off the low-quality ends.
+
+. . .
+
+All the processing after this tries to answer **what was in the tube, and how
+much of it?**
 
 ## The decisions already made for you
 
@@ -96,8 +84,9 @@ By the time you receive a count table, someone has chosen:
 
 . . .
 
-You won't find these choices in the table, but each one changed its numbers, so
-ask who made them.
+You won't find these choices in the table, but each one changed its numbers.
+Ask who made them, and ask for the raw reads and the reference version.
+Lindsay's ten questions from this morning are the full list to send.
 
 ## Both pipelines end in a count table
 
@@ -151,8 +140,8 @@ The 16S ribosomal RNA gene is in every bacterium, and parts of it differ between
 species.
 
 ::: {.incremental}
-- amplify one variable region with PCR
-- sequence only that amplicon
+- copy one variable region by PCR and sequence it, as Lindsay showed this
+  morning
 - group identical sequences together
 - look each one up in a reference database
 :::
@@ -275,14 +264,16 @@ It is not the number of bacteria. The count also depends on
 - how deeply the sample was sequenced
 :::
 
+## Quick check {.your-turn}
+
+{{< live-poll W2M1.2 height="700px" >}}
+
 ## RNA-seq: every gene, one organism
 
 ::: {.columns}
 ::: {.column width="52%"}
 ::: {.incremental}
-- pull out messenger RNA
-- copy it to cDNA and fragment it
-- sequence the fragments
+- select messenger RNA, fragment it and sequence it
 - find where each fragment belongs in the genome
 - count fragments overlapping each gene
 :::
@@ -428,39 +419,17 @@ tibble(sample = c("sample 1", "sample 2"),
 The normalised values match. Only the raw counts show that sample 1 rests on
 ten reads.
 
-## When C grows, A and B appear to shrink
+## Quick check {.your-turn}
 
-```{r}
-#| fig-width: 14
-#| fig-height: 5.2
-d <- tibble(
-  sample = rep(c("sample 1", "sample 2"), each = 3),
-  feature = rep(c("A", "B", "C"), 2),
-  absolute = c(100, 100, 100, 100, 100, 700)
-) |>
-  group_by(sample) |>
-  mutate(relative = absolute / sum(absolute)) |>
-  ungroup()
+{{< live-poll W2M1.3 height="700px" >}}
 
-p_abs <- ggplot(d, aes(sample, absolute, fill = feature)) +
-  geom_col(width = 0.6) +
-  labs(title = "what is really there", x = NULL, y = "cells") +
-  scale_fill_manual(values = unname(pal[c("teal", "navy", "orange")]))
-p_rel <- ggplot(d, aes(sample, relative, fill = feature)) +
-  geom_col(width = 0.6) +
-  scale_y_continuous(labels = scales::percent) +
-  labs(title = "what the count table shows", x = NULL, y = "share of reads") +
-  scale_fill_manual(values = unname(pal[c("teal", "navy", "orange")]))
-p_abs + p_rel + plot_layout(guides = "collect")
-```
-
-A and B have 100 cells in both samples, but their share of the reads falls from
-a third to a ninth.
-
-## Both of our tables are compositional
+## Both of our tables are compositional {.smaller}
 
 :::: {.columns}
 ::: {.column width="48%"}
+As Lindsay put it this morning, the sequencer tells you the slices of the pie,
+not the size of the pie.
+
 ::: {.incremental}
 - 16S is hit hardest, because one species routinely holds 90% of the reads.
 - RNA-seq is affected less, since no single gene dominates, but the effect is
@@ -489,35 +458,6 @@ ggplot(dominance, aes(table, share, colour = table)) +
 :::
 ::::
 
-## Ask your sequencing facility for
-
-::: {.incremental}
-- the raw reads, not just the table
-- the exact reference and version used
-- which samples failed and were re-run
-- which plate, run and lane each sample sat on
-- the negative and positive controls, with their counts
-:::
-
-. . .
-
-The controls are how you catch contamination, and few people ask for them.
-
-## Common problems and how to spot them
-
-| problem | how you notice |
-|---|---|
-| contamination from reagents | the same taxa in your negative controls |
-| low-biomass samples | tiny library sizes, odd composition |
-| index hopping between samples | a trace of everything in everything |
-| a batch effect | samples cluster by run, not by biology |
-
-: {tbl-colwidths="[42,58]"}
-
-. . .
-
-You can only see three of these four if somebody recorded the metadata.
-
 ## The sentence to remember {.center}
 
 A count measures how much of something was in the tube **relative to everything
@@ -541,6 +481,8 @@ afternoon the third. The fourth waits until Wednesday.
 
 The gene table was produced in **two sequencing batches**, and we kept that
 label in the metadata.
+
+Lindsay showed you this morning what a batch effect looks like in a PCA.
 
 . . .
 
