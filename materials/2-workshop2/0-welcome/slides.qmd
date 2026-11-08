@@ -28,6 +28,10 @@ Golden Tulip Westlands
 - Ten groups of six
 :::
 
+## Who is in the room {.your-turn}
+
+{{< live-poll W2M0.1 height="700px" >}}
+
 ## The week
 
 ```{r}
@@ -167,9 +171,7 @@ Lindsay Droit, Washington University School of Medicine
 
 How a swab becomes a sequencing library, for 16S and for RNA-seq.
 
-::: {.callout-note}
-Placeholder. Lindsay's slides go here.
-:::
+[Open Lindsay's slides](library-prep-slides.qmd){target="_blank"}
 
 ## Each module runs for two and a half hours
 

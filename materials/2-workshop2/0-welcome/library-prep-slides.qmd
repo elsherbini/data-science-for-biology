@@ -1,0 +1,136 @@
+---
+# Lindsay Droit's library prep talk (Workshop 2, Monday morning).
+# Each slide is a page of library-prep/droit-before-it-reaches-r.pdf rendered
+# to WebP. If she sends a new PDF, re-render the pages and keep the poll slide
+# after her roadmap. The poll questions (moment W2M1.1) live in the live-poll
+# Google Sheet.
+pagetitle: "Before It Reaches R"
+format:
+  revealjs:
+    width: 1600
+    height: 900
+    margin: 0
+    controls: true
+    progress: true
+    slide-number: false
+    transition: none
+    menu: false
+    hash: true
+    embed-resources: false
+    css: library-prep-slides.css
+resources:
+  - library-prep/
+---
+
+## {background-image="library-prep/slide-01.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-02.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-03.webp" background-size="contain" background-color="white"}
+
+## Three quick questions {.poll-slide}
+
+{{< live-poll W2M1.1 height="700px" >}}
+
+## {background-image="library-prep/slide-04.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-05.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-06.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-07.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-08.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-09.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-10.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-11.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-12.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-13.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-14.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-15.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-16.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-17.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-18.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-19.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-20.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-21.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-22.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-23.webp" background-size="contain" background-color="white"}
+
+<a class="video-link" href="https://www.youtube.com/watch?v=fCd6B5HRaZ8" target="_blank" rel="noopener" aria-label="Illumina: sequencing by synthesis (YouTube)"></a>
+
+## {background-image="library-prep/slide-24.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-25.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-26.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-27.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-28.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-29.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-30.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-31.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-32.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-33.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-34.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-35.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-36.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-37.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-38.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-39.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-40.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-41.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-42.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-43.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-44.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-45.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-46.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-47.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-48.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-49.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-50.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-51.webp" background-size="contain" background-color="white"}
+
+## {background-image="library-prep/slide-52.webp" background-size="contain" background-color="white"}
+
+<a class="video-link" href="https://www.youtube.com/watch?v=VxGliKyYuFQ" target="_blank" rel="noopener" aria-label="Oxford Nanopore sequencing (YouTube)"></a>
+
