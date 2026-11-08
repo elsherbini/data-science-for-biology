@@ -23,10 +23,7 @@ set.seed(2026)
 
 Golden Tulip Westlands
 
-::: {.incremental}
-- 61 of us, from 12 countries
-- Ten groups of six
-:::
+61 of us, from 12 countries
 
 ## Who is in the room {.your-turn}
 
@@ -173,38 +170,35 @@ How a swab becomes a sequencing library, for 16S and for RNA-seq.
 
 [Open Lindsay's slides](library-prep-slides.qmd){target="_blank"}
 
-## Each module runs for two and a half hours
+## Each module is three and a half hours
 
-```{r}
-#| fig-width: 14
-#| fig-height: 2.2
-session <- tribble(
-  ~start, ~end, ~label, ~fill,
-  0, 60, "We talk, with code on the screen", pal[["teal"]],
-  60, 100, "Exercise 1", pal[["navy"]],
-  100, 110, "", pal[["gold"]],
-  110, 150, "Exercise 2", pal[["navy"]]
-)
-ggplot(session) +
-  geom_rect(aes(xmin = start, xmax = end, ymin = 0, ymax = 1, fill = I(fill)),
-            colour = "white", linewidth = 2) +
-  geom_text(aes((start + end) / 2, 0.5, label = label), colour = "white",
-            size = 5.5, fontface = "bold") +
-  annotate("text", x = 105, y = 1.2, label = "discussion", size = 4.6,
-           colour = "grey35") +
-  scale_x_continuous(breaks = c(0, 60, 150),
-                     labels = c("0 min", "60 min", "150 min")) +
-  theme_void(base_size = 16) +
-  theme(axis.text.x = element_text(colour = "grey25", margin = margin(t = 4)))
-```
+That includes a 30-minute break.
 
-The first hour is ours. The next ninety minutes are yours, writing code: two
-exercises with a discussion in between.
+The order changes from module to module. A common one is slides, an
+exercise, more slides, then a second exercise.
 
 . . .
 
 You will have an AI coding agent the whole time. Every exercise ends by asking
 you to check what it did.
+
+## Slides like this one explain an idea
+
+A concept, a figure, or a few lines of code to read.
+
+Most slides look like this.
+
+## Our turn {.our-turn}
+
+We work live on the screen: a demonstration in the Codespace, or a worked
+example from start to finish.
+
+Watch, or follow along on your own laptop.
+
+## Your turn {.your-turn}
+
+You do something: an exercise, a poll on your phone, or a question to talk
+over with the people next to you.
 
 ## Before Tuesday morning
 
