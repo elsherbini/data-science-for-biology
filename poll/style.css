@@ -166,25 +166,6 @@ button { font: inherit; cursor: pointer; }
   flex-direction: column;
   min-height: 0;
 }
-.stage-head { display: flex; align-items: flex-start; gap: 3vw; }
-.stage-text { flex: 1; min-width: 0; }
-.mini-qr {
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.6vh;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--muted);
-  font: inherit;
-  font-size: clamp(11px, 0.9vw, 16px);
-  cursor: zoom-in;
-}
-.mini-qr .qr { background: #fff; padding: 0.8vh; border-radius: 8px; line-height: 0; border: 1px solid var(--line); }
-.mini-qr .qr img, .mini-qr .qr canvas { width: min(15vh, 12vw) !important; height: auto !important; }
-.mini-qr:hover .qr, .mini-qr:focus-visible .qr { border-color: var(--accent); }
 .stage .meta { color: var(--muted); font-size: clamp(12px, 1.3vw, 22px); }
 .stage h1 {
   font-size: clamp(20px, 3.2vw, 56px);
@@ -245,6 +226,9 @@ button { font: inherit; cursor: pointer; }
 }
 .presenter footer .btn { padding: 0.7em 1.1em; }
 .presenter footer kbd { opacity: 0.65; font-size: 0.85em; margin-left: 0.3em; }
+.presenter footer .qr-btn { display: inline-flex; align-items: center; gap: 0.5em; }
+.qr-icon { display: inline-block; background: #fff; padding: 2px; border-radius: 3px; line-height: 0; }
+.qr-icon img, .qr-icon canvas { width: 1.6em !important; height: 1.6em !important; image-rendering: pixelated; }
 .overlay {
   position: fixed;
   inset: 0;
