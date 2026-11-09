@@ -20,6 +20,10 @@ execute:
 website:
   title: "Data Science for Biology Workshop Series"
   page-navigation: true
+  page-footer:
+    right:
+      - text: "TA setup guide"
+        href: materials/2-workshop2/ta-setup-guide.qmd
   navbar:
     background: light
     foreground: dark
