@@ -1,0 +1,8 @@
+# Workshop 2 (Nairobi) decks use the Nairobi map on the title slide
+# instead of the Durban map that the qmdrslides extension sets by default.
+# Kept top-level, not under `format:`, so it doesn't add a slide format
+# to the html pages in this folder.
+title-slide-attributes:
+  data-background-image: /assets/images/nairobi-watercolor.jpg
+  data-background-size: contain
+  data-background-color: "#f8f5f0"
