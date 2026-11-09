@@ -58,6 +58,14 @@ bag_summary <- bags |>
   mutate(effective = exp(shannon))
 ```
 
+## Wi-Fi {.center}
+
+Network: **Golden_Tulip**
+
+Click on **Conference**
+
+Password: **Diamond254**
+
 ## Yesterday you built a count table out of pom-poms {.center}
 
 Today the same table has 220 rows of bacteria, 14,226 rows of human genes, and

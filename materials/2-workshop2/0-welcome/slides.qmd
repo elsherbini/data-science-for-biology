@@ -19,6 +19,14 @@ theme_set(theme_minimal(base_size = 15))
 set.seed(2026)
 ```
 
+## Wi-Fi {.center}
+
+Network: **Golden_Tulip**
+
+Click on **Conference**
+
+Password: **Diamond254**
+
 ## Nairobi, 9 to 13 November 2026 {.center}
 
 Golden Tulip Westlands
