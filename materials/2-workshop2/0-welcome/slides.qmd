@@ -240,6 +240,38 @@ Analyse the data as carefully as you would your own, and do not cite the result.
 Say this out loud once.
 :::
 
+## What you will learn this week
+
+::: {.incremental}
+- Check a count table before trusting it: sequencing depth, prevalence, filtering
+- Measure how similar samples are, and draw it as an ordination
+- Test which species or genes differ between groups
+- Find what the hits have in common: taxonomy and gene sets
+- Put the species and gene tables together for the same samples
+:::
+
+. . .
+
+Each method is taught on one table and practised on the other.
+
+## Pi, your AI coding agent
+
+Pi works in your Codespace. It reads your files, writes code, runs it and
+reads the output.
+
+What we want you to practise with it:
+
+::: {.incremental}
+- asking for an analysis clearly enough that Pi does what you meant
+- reading the code it wrote and checking the result makes sense
+- picking a model: a cheap one for routine work, a stronger one when it matters
+:::
+
+. . .
+
+Your API key has a **\$3 daily limit** and expires about **six months after the
+workshop**.
+
 ## Library prep {.center}
 
 Lindsay Droit, Washington University School of Medicine
@@ -303,11 +335,10 @@ over with the people next to you.
 Teaching assistants are in the room all day Monday. Bring setup problems to them
 then, not on Tuesday morning.
 
-## Questions {.your-turn}
+## Three questions {.your-turn}
 
-What do you want to be able to do on Friday that you cannot do today?
+{{< live-poll W2M0.2 height="700px" >}}
 
-```{r}
-#| echo: false
-countdown::countdown(3, left = 0, right = NULL, play_sound = TRUE)
-```
+## What were you hoping for? {.your-turn}
+
+{{< live-poll W2M0.3 height="700px" >}}
