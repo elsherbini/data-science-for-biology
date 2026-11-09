@@ -3,9 +3,11 @@ title: "TA Guide: Helping with Setup"
 toc: true
 ---
 
-This page is for teaching assistants. It follows the participant's
-[Get Started](getting-started.qmd) page step by step, and for each step lists
-what to check on the participant's screen and what usually goes wrong.
+This page is for teaching assistants. It covers the same steps as the
+participant's [Get Started](getting-started.qmd) page, in the order to do them
+when you're helping someone from scratch: the API key goes into GitHub
+**before** the codespace is created. For each step it lists what to check on
+the participant's screen and what usually goes wrong.
 
 Let the participant drive their own keyboard where you can. They will repeat
 some of these steps (opening the codespace, `/key`, `/usage`) on their own
@@ -19,9 +21,9 @@ Ask which step they reached, then jump to it:
 |---|---|
 | "I can't see the Use this template button" | [GitHub account](#ta-github) |
 | "I don't have a repository" or "I'm not sure which repo is mine" | [Their own repository](#ta-repo) |
+| "/claim doesn't work" or "I didn't get a key" | [Discord and the API key](#ta-claim) |
 | "The codespace is still loading" or "R doesn't work" | [Launch the codespace](#ta-launch) |
 | "VS Code won't open the codespace" | [Connect](#ta-connect), then the [browser fallback](#ta-browser) |
-| "/claim doesn't work" or "I didn't get a key" | [Discord and the API key](#ta-claim) |
 | "Pi says there's no API key" | [The secret](#ta-secret), then [restart and test](#ta-restart) |
 
 ## 1. GitHub account {#ta-github}
@@ -63,107 +65,7 @@ they did this, delete that codespace at
 Forks don't work either. If they see "forked from" under the repository name,
 have them create a fresh repository from the template.
 
-## 3. Launch the codespace {#ta-launch}
-
-::: {.callout-important title="Order matters: key before codespace"}
-A codespace reads its secrets only when it **starts**. If the participant
-already has their API key, do [the Discord step](#ta-claim) and
-[the secret step](#ta-secret) first, then launch the codespace. If the
-codespace already exists (most people built it on Monday), that's fine, but
-it must be [stopped and restarted](#ta-restart) after the secret is added.
-:::
-
-- [ ] On **their own** repository: **"Code" → "Codespaces" tab →
-      "Create codespace on main"**.
-- [ ] Only **one** codespace for this repository. Check
-      [github.com/codespaces](https://github.com/codespaces). If they clicked
-      the button several times, delete the extras so they don't open the
-      wrong one later. (Brand-new extras hold no work, so they're safe to
-      delete. For older ones, see the warning in [step 4](#ta-connect).)
-- [ ] Machine type is the default **2-core**. Bigger machines use up their
-      free monthly Codespaces hours faster.
-- [ ] The first build has finished. It takes 10 minutes or more. Closing the
-      tab doesn't stop the build.
-
-Check that R works: **Terminal → New Terminal**, type `R`, then
-`library(tidyverse)`. A list of attached packages and no line starting with
-`Error` means the build is good. `q("no")` leaves R.
-
-::: {.callout-warning title="If the build failed"}
-A message about **recovery mode**, or `R: command not found` in the terminal,
-means the container didn't build. Open the Command Palette
-(<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>, or
-<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> on a Mac) and run
-**"Codespaces: Full Rebuild Container"**. If that fails too, delete the
-codespace and create a new one, and tell Joseph.
-:::
-
-## 4. Connect from VS Code on their laptop {#ta-connect}
-
-The codespace opens in a browser tab by default. We'd like participants to
-use the VS Code desktop app, which handles keyboard shortcuts and copy-paste
-better than the browser.
-
-- [ ] VS Code is installed on the laptop
-      ([code.visualstudio.com/download](https://code.visualstudio.com/download)).
-- [ ] They have launched the codespace at least once from GitHub
-      ([step 3](#ta-launch)). VS Code can only connect to a codespace that
-      already exists.
-
-To connect:
-
-1. In VS Code, click the icon in the **bottom-left corner** of the window
-   (two small arrows).
-2. Choose **"Connect to Codespace"**.
-3. The first time, VS Code asks them to sign in to GitHub and authorize VS
-   Code. This opens a browser page; they approve it there and return to
-   VS Code.
-4. Their codespace appears in the list. Click it.
-
-::: {.callout-warning title="Connect, never Create"}
-The same menu offers **"Create New Codespace"**. Tell the participant to
-choose **"Connect to Codespace"** every time, today and every morning after.
-Someone who picks Create gets a fresh, empty codespace, and their work ends
-up split across several codespaces.
-
-If a participant already has more than one, open
-[github.com/codespaces](https://github.com/codespaces) and work out which one
-holds their work (usually the oldest). Before deleting any extra codespace,
-open it and check the **Source Control** panel: if it lists changed files,
-they commit and push them first. Deleting a codespace deletes anything in it
-that wasn't pushed to GitHub.
-:::
-
-- [ ] The bottom-left corner of VS Code shows **Codespaces:** followed by the
-      codespace's name. If it doesn't, the window is a local VS Code window,
-      not the codespace.
-- [ ] VS Code is signed in to the **same** GitHub account as the browser (the
-      person icon at the bottom of the left-hand bar). If the codespace list
-      is empty, this is usually why.
-
-## 5. Fall back to the browser {#ta-browser}
-
-If the desktop app won't connect after a couple of tries, don't spend the
-session on it. VS Code in the browser is the same editor, and everything in
-the workshop works there.
-
-- [ ] At [github.com/codespaces](https://github.com/codespaces), click **⋯**
-      next to the codespace and choose **"Open in" → "Open in browser"**.
-- [ ] Use Chrome, Edge or Firefox. Safari has trouble pasting into the
-      terminal.
-- [ ] When the browser asks for clipboard permission, allow it. Without it,
-      pasting into the terminal fails.
-
-Some shortcuts belong to the browser instead of VS Code
-(<kbd>Ctrl</kbd>+<kbd>W</kbd> closes the browser tab, for example). The
-**Terminal**, **View** and other menus are in the ☰ menu at the top left.
-
-If clicking the codespace's name tries to launch the desktop app when they
-wanted the browser, their default is set to VS Code. They can change it under
-**Editor preference** on the
-[Codespaces settings page](https://github.com/settings/codespaces).
-
-## 6. Discord and the API key {#ta-claim}
+## 3. Discord and the API key {#ta-claim}
 
 Before they type anything:
 
@@ -201,7 +103,7 @@ the message and tell Joseph so the key can be replaced. Don't photograph or
 copy anyone's key yourself.
 :::
 
-## 7. Add the secret to GitHub {#ta-secret}
+## 4. Add the secret to GitHub {#ta-secret}
 
 - [ ] They are on their **personal** Codespaces settings page:
       [github.com/settings/codespaces](https://github.com/settings/codespaces).
@@ -220,15 +122,115 @@ copy anyone's key yourself.
 To fix a typo in the value or the repository access, click **Update** next to
 the secret. To fix a typo in the name, delete the secret and add a new one.
 
+## 5. Launch the codespace {#ta-launch}
+
+::: {.callout-important title="Secret saved? Then launch"}
+A codespace reads its secrets only when it **starts**, so check that
+[step 4](#ta-secret) is done before creating the codespace. If they already
+have a codespace from before the secret existed (for example, built on
+Monday), don't create another one: skip to [step 8](#ta-restart) and restart
+it.
+:::
+
+- [ ] On **their own** repository: **"Code" → "Codespaces" tab →
+      "Create codespace on main"**.
+- [ ] Only **one** codespace for this repository. Check
+      [github.com/codespaces](https://github.com/codespaces). If they clicked
+      the button several times, delete the extras so they don't open the
+      wrong one later. (Brand-new extras hold no work, so they're safe to
+      delete. For older ones, see the warning in [step 6](#ta-connect).)
+- [ ] Machine type is the default **2-core**. Bigger machines use up their
+      free monthly Codespaces hours faster.
+- [ ] The first build has finished. It takes 10 minutes or more. Closing the
+      tab doesn't stop the build.
+
+Check that R works: **Terminal → New Terminal**, type `R`, then
+`library(tidyverse)`. A list of attached packages and no line starting with
+`Error` means the build is good. `q("no")` leaves R.
+
+::: {.callout-warning title="If the build failed"}
+A message about **recovery mode**, or `R: command not found` in the terminal,
+means the container didn't build. Open the Command Palette
+(<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>, or
+<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> on a Mac) and run
+**"Codespaces: Full Rebuild Container"**. If that fails too, delete the
+codespace and create a new one, and tell Joseph.
+:::
+
+## 6. Connect from VS Code on their laptop {#ta-connect}
+
+The codespace opens in a browser tab by default. We'd like participants to
+use the VS Code desktop app, which handles keyboard shortcuts and copy-paste
+better than the browser.
+
+- [ ] VS Code is installed on the laptop
+      ([code.visualstudio.com/download](https://code.visualstudio.com/download)).
+- [ ] They have launched the codespace at least once from GitHub
+      ([step 5](#ta-launch)). VS Code can only connect to a codespace that
+      already exists.
+
+To connect:
+
+1. In VS Code, click the icon in the **bottom-left corner** of the window
+   (two small arrows).
+2. Choose **"Connect to Codespace"**.
+3. The first time, VS Code asks them to sign in to GitHub and authorize VS
+   Code. This opens a browser page; they approve it there and return to
+   VS Code.
+4. Their codespace appears in the list. Click it.
+
+::: {.callout-warning title="Connect, never Create"}
+The same menu offers **"Create New Codespace"**. Tell the participant to
+choose **"Connect to Codespace"** every time, today and every morning after.
+Someone who picks Create gets a fresh, empty codespace, and their work ends
+up split across several codespaces.
+
+If a participant already has more than one, open
+[github.com/codespaces](https://github.com/codespaces) and work out which one
+holds their work (usually the oldest). Before deleting any extra codespace,
+open it and check the **Source Control** panel: if it lists changed files,
+they commit and push them first. Deleting a codespace deletes anything in it
+that wasn't pushed to GitHub.
+:::
+
+- [ ] The bottom-left corner of VS Code shows **Codespaces:** followed by the
+      codespace's name. If it doesn't, the window is a local VS Code window,
+      not the codespace.
+- [ ] VS Code is signed in to the **same** GitHub account as the browser (the
+      person icon at the bottom of the left-hand bar). If the codespace list
+      is empty, this is usually why.
+
+## 7. Fall back to the browser {#ta-browser}
+
+If the desktop app won't connect after a couple of tries, don't spend the
+session on it. VS Code in the browser is the same editor, and everything in
+the workshop works there.
+
+- [ ] At [github.com/codespaces](https://github.com/codespaces), click **⋯**
+      next to the codespace and choose **"Open in" → "Open in browser"**.
+- [ ] Use Chrome, Edge or Firefox. Safari has trouble pasting into the
+      terminal.
+- [ ] When the browser asks for clipboard permission, allow it. Without it,
+      pasting into the terminal fails.
+
+Some shortcuts belong to the browser instead of VS Code
+(<kbd>Ctrl</kbd>+<kbd>W</kbd> closes the browser tab, for example). The
+**Terminal**, **View** and other menus are in the ☰ menu at the top left.
+
+If clicking the codespace's name tries to launch the desktop app when they
+wanted the browser, their default is set to VS Code. They can change it under
+**Editor preference** on the
+[Codespaces settings page](https://github.com/settings/codespaces).
+
 ## 8. Restart and test {#ta-restart}
 
-Skip the restart only if the codespace was created **after** the secret was
-saved.
+If the codespace was created **after** the secret was saved (the order on
+this page), skip the first two checks and go straight to the test.
 
 - [ ] At [github.com/codespaces](https://github.com/codespaces), **⋯ → "Stop
       codespace"**. Wait until it shows as stopped. Closing the tab or
       reloading the page is not enough.
-- [ ] Open it again (desktop app or browser, as in step 4 or 5).
+- [ ] Open it again (desktop app or browser, as in step 6 or 7).
 - [ ] In a new terminal, run:
 
   ```bash
@@ -237,7 +239,7 @@ saved.
 
   It should print `sk-or-v1-` and nothing else of the key. A blank line
   means the codespace can't see the secret: go back to
-  [step 7](#ta-secret), check the name and the repository access, then
+  [step 4](#ta-secret), check the name and the repository access, then
   restart again.
 - [ ] Run `pi`. Pi starts and answers a short question such as
       "what files are in this folder?".
