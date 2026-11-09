@@ -19,13 +19,37 @@ theme_set(theme_minimal(base_size = 15))
 set.seed(2026)
 ```
 
-## Wi-Fi {.center}
+## {data-menu-title="Wi-Fi"}
 
+\
+\
+
+### Wi-Fi {style="font-size: 2.5em; text-align: center"}
+
+::: {style="font-size: 1.5em; text-align: center"}
 Network: **Golden_Tulip**
 
 Click on **Conference**
 
 Password: **Diamond254**
+:::
+
+## {data-menu-title="Workshop Goals"}
+
+\
+\
+
+### Goals for this session {style="font-size: 2.5em; text-align: center"}
+
+::: {.incremental style="font-size: 1.5em"}
+1. Get to know your instructors and neighbors
+
+2. Set expectations for the week
+
+3. Meet the study and the data we'll work on all week
+
+4. Get excited!
+:::
 
 ## Nairobi, 9 to 13 November 2026 {.center}
 
@@ -46,6 +70,16 @@ Please stand up and introduce yourselves:
 3. Logistics and support
 
 Everyone's name and institution is on the [team page](../team.qmd){target="_blank"}.
+
+## Let's make this workshop work for all
+
+::: {.incremental style="font-size: 1.2em"}
+1. You belong here. This workshop is intended for a wide-audience with a focus on beginners. If you feel out of place - it's our problem, not yours!
+
+2. Stay committed. This week-long workshop is intended to build each day and leave you with skills you can really use. Commit to stay engaged for best results, for you and your group!
+
+3. This is a challenging but friendly environment. We are here to learn and grow. In order to make the right environment please follow "[the 4 social rules](https://www.recurse.com/social-rules)" and [code-of-conduct](https://docs.carpentries.org/topic_folders/policies/code-of-conduct.html).
+:::
 
 ## The week
 
@@ -225,6 +259,18 @@ exercise, more slides, then a second exercise.
 
 You will have an AI coding agent the whole time. Every exercise ends by asking
 you to check what it did.
+
+## Flow of the Workshop
+
+::: {.r-stretch layout="[2, 2]" style="text-align: center"}
+![](images/slide-normal.png){width=540 .drop .fragment}
+
+![](images/slide-discord.png){width=540 .drop .fragment}
+
+![](images/slide-our-turn.png){width=540 .drop .fragment}
+
+![](images/slide-your-turn.png){width=540 .drop .fragment}
+:::
 
 ## Slides like this one explain an idea
 

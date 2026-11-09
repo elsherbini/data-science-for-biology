@@ -58,13 +58,20 @@ bag_summary <- bags |>
   mutate(effective = exp(shannon))
 ```
 
-## Wi-Fi {.center}
+## {data-menu-title="Wi-Fi"}
 
+\
+\
+
+### Wi-Fi {style="font-size: 2.5em; text-align: center"}
+
+::: {style="font-size: 1.5em; text-align: center"}
 Network: **Golden_Tulip**
 
 Click on **Conference**
 
 Password: **Diamond254**
+:::
 
 ## Yesterday you built a count table out of pom-poms {.center}
 
