@@ -269,7 +269,7 @@ It is not the number of bacteria. The count also depends on
 
 {{< live-poll W2M1.2 height="700px" >}}
 
-## RNA-seq: every gene, one organism
+## RNA-seq: every gene, one organism\*
 
 ::: {.columns}
 ::: {.column width="52%"}
@@ -301,6 +301,10 @@ tibble(x = 0) |>
 :::
 :::
 
+::: {.fragment style="font-size: 0.65em;"}
+\*Metatranscriptomics is RNA-seq on multiple organisms in a sample, usually microbes.
+:::
+
 ## An RNA-seq count is a number of fragments
 
 A cell in the gene table is **the number of fragments in this sample assigned
@@ -317,7 +321,7 @@ It is not the number of mRNA molecules either. The count also depends on
 - how deeply the sample was sequenced
 :::
 
-## One swab, two experiments
+## One sample can generate multiple 'omics datasets
 
 A cervicovaginal swab contains human cells and bacteria together.
 
