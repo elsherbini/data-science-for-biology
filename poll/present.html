@@ -51,11 +51,14 @@
   const btnQr = h('button', { class: 'btn ghost', onclick: toggleQr }, 'Join code', h('kbd', {}, 'Q'));
 
   const qrBox = h('div', { class: 'qr' });
+  const miniQrBox = h('div', { class: 'qr' });
+  const miniQr = h('button', { class: 'mini-qr', type: 'button', title: 'Show the join code large (Q)', onclick: toggleQr },
+    miniQrBox, h('span', {}, 'Click to enlarge'));
   const overlay = h('div', { class: 'overlay', onclick: toggleQr },
     h('div', { class: 'big-code' }, 'Answer on your phone · ', h('b', {}, moment)),
     qrBox,
     h('div', { class: 'big-url' }, joinText),
-    h('div', { class: 'muted' }, 'Click anywhere or press Q to see results')
+    h('button', { class: 'btn ghost back', type: 'button' }, '← Show Question', h('kbd', {}, 'shortcut: Q'))
   );
 
   document.body.className = 'presenter';
@@ -64,15 +67,19 @@
       h('span', { class: 'moment' }, moment),
       h('span', { class: 'join-url' }, 'Join: ', h('b', {}, joinText)),
       elCount),
-    h('main', { class: 'stage' }, elMeta, elPrompt, elViz, elExplain),
+    h('main', { class: 'stage' },
+      h('div', { class: 'stage-head' }, h('div', { class: 'stage-text' }, elMeta, elPrompt), miniQr),
+      elViz, elExplain),
     h('footer', {}, btnPrev, btnShow, btnReveal, btnNext, btnQr),
     overlay
   );
 
   try {
     new QRCode(qrBox, { text: joinUrl.href, width: 512, height: 512, correctLevel: QRCode.CorrectLevel.M });
+    new QRCode(miniQrBox, { text: joinUrl.href, width: 256, height: 256, correctLevel: QRCode.CorrectLevel.M });
   } catch (e) {
     qrBox.remove(); // CDN blocked: the URL text is still there
+    miniQr.remove();
   }
 
   // ---------- controls ----------
