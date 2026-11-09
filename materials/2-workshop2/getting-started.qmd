@@ -49,9 +49,13 @@ password. You will sign in to GitHub every day of the workshop.
 Go to [discord.com/register](https://discord.com/register) and create a free
 account. You can use the desktop app, the phone app, or the browser.
 
-Then open the [workshop Discord invite](https://discord.gg/NUqf8GRGa) and
+Then open the [workshop Discord invite](https://discord.gg/9a9WcAUMR) and
 accept it. This is where we post announcements, answer questions during the
 week, and give you your API key for the coding agent.
+
+Once you've joined, the
+[workshop channel](https://discord.com/channels/1567172556065079337/1567172557340278806) is where
+most of the conversation happens.
 
 ## 3. Install VS Code {#sec-vscode}
 

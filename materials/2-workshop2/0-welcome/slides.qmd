@@ -37,6 +37,16 @@ Golden Tulip Westlands
 
 {{< live-poll W2M0.1 height="700px" >}}
 
+## Meet the team {.center}
+
+Please stand up and introduce yourselves:
+
+1. Instructors
+2. Teaching assistants
+3. Logistics and support
+
+Everyone's name and institution is on the [team page](../team.qmd){target="_blank"}.
+
 ## The week
 
 ```{r}
@@ -76,6 +86,32 @@ ggplot(blocks, aes(x, y, fill = kind)) +
 
 The navy blocks are the four coding modules and the orange blocks are group
 project time. Teal blocks are lectures.
+
+## Today
+
+**This morning**
+
+- Talk from Dr. Douglas Kwon, Ragon Institute
+- Lindsay Droit on library prep
+- Scott Handley on generating count tables from sequencing data
+- Interactive activity
+
+**Lunch** 12:30 to 1:30 pm
+
+## No computer activities today
+
+We planned day one without any computer work on purpose, while we find out
+how the venue works for us.
+
+Please finish the first [getting started](../getting-started.qmd){target="_blank"}
+steps here in the room today:
+
+1. Create a GitHub account
+2. Create a Discord account
+3. Join the workshop Discord: [discord.gg/9a9WcAUMR](https://discord.gg/9a9WcAUMR)
+
+Once you've joined, this is the
+[workshop channel](https://discord.com/channels/1567172556065079337/1567172557340278806).
 
 ## Both kinds of data arrive as a table of counts
 
