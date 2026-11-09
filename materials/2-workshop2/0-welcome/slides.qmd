@@ -339,6 +339,13 @@ then, not on Tuesday morning.
 
 {{< live-poll W2M0.2 height="700px" >}}
 
+## Next we hear from Dr. Douglas Kwon {.our-turn}
+
+\
+\
+
+### Ragon Institute {style="font-size: 2em; text-align: center"}
+
 ## What were you hoping for? {.your-turn}
 
 {{< live-poll W2M0.3 height="700px" >}}
