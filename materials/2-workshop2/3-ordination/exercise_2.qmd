@@ -1,7 +1,11 @@
 ## Exercise 2: The identical pipeline on 14,000 genes
 
-Use the same notebook. Change three words in your code from Exercise 1 and run
-it again on a table sixty times larger.
+> The same pipeline runs on a table sixty times larger with three words
+> changed. That makes it easy to try many versions. The hard part is the batch
+> effect: removing it is a choice with consequences, and Pi will make that
+> choice for you if you let it.
+
+Same notebook. Type `/new` in Pi first.
 
 ### Part 1: Predict
 
@@ -12,54 +16,69 @@ it again on a table sixty times larger.
 3. The gene table was produced in two sequencing batches. What share do you
    expect `rnaseq_batch` to explain?
 
-### Part 2: Build
+### Part 2: Ask, look, decide
 
-1. Build the gene object, filtering as you go:
+1. The gene ordination:
 
-   ```r
-   ps_genes <- as_counts(table = "rnaseq", min_count = 10, min_samples = 100)
-   ```
+   > Using `ps_genes` from the setup chunk, make a CLR plus Euclidean PCoA at
+   > the `symbol` level, as three panels coloured by `community`, `outcome`
+   > and `rnaseq_batch`.
 
-2. Run the pipeline with `"clr"` and `"euclidean"`, aggregating at
-   `rank = "symbol"`. Plot it coloured by `community`, then `outcome`, then
-   `rnaseq_batch`.
+   Ask Pi how many genes `ps_genes` holds after its filter, and what
+   pseudocount the CLR transform used for zeros. Ask where that number came
+   from. Write both down.
 
-3. Run `dist_permanova()` with the same four variables you used on the species
-   table. Put the two sets of `R2` values side by side in one small table.
+2. Species and genes side by side. Ask for PERMANOVA on the gene ordination
+   with the same four labels as Exercise 1, then one table and one bar chart
+   with the species and gene `R2` values next to each other. Check it against
+   the slides: in the gene table, community, outcome and batch each explain
+   about 2%.
 
-4. Look at the batch row. Then do something about it: add `rnaseq_batch` to the
-   PERMANOVA formula before `outcome` and see whether the outcome `R2` changes.
+3. Ask for a report, then audit it. Ask Pi to write a paragraph comparing the
+   two tables. Read it one sentence at a time and mark each sentence as backed
+   by a number you can point to, or not. If it says the gene table has
+   "weaker biological signal", is that a claim the ordination can support?
+   Tomorrow you test the genes one at a time. Write down what you expect to
+   find.
 
-5. Check whether batch is confounded with anything you care about. A
-   cross-tabulation of `rnaseq_batch` against `outcome` and against `community`
-   is enough. If the groups were unbalanced across batches, what would that
-   mean for tomorrow's differential tests, which compare the groups one gene at
-   a time?
+4. Is batch tangled up with the biology? Ask for `rnaseq_batch` cross-tabulated
+   against `outcome`, `community` and `time_point`, as tables and as one plot.
+   Ask also how participants are spread across batches: are a participant's
+   three visits always in the same batch?
 
-6. Also try Bray-Curtis on the gene table, just to see. Compare it to your CLR
-   ordination and decide which you believe.
+   If the groups were unbalanced across batches, what would that mean for
+   tomorrow's differential tests, which compare the groups one gene at a time?
 
-### Part 3: Check the agent
+5. Two ways to handle batch. First, ask for PERMANOVA with `rnaseq_batch`
+   entered before `outcome`, using `by = "terms"`, next to `outcome` on its
+   own. Does the outcome `R2` change?
 
-- Ask Pi to compare the species and gene `R2` tables and tell you what it means.
-  Its answer will probably say the gene table has "weaker biological signal".
-  That is a claim about biology drawn from an ordination. Is it justified? An
-  ordination summarises every gene at once. Tomorrow you test them one at a
-  time, so write down what you expect to find and check it then.
-- Ask it whether you should remove the batch effect. Then ask it to actually do
-  it. Look closely at what it does, because "batch correction" covers several
-  very different operations with very different consequences.
-- CLR cannot handle zeros without a pseudocount. Ask Pi what pseudocount it used
-  and where that choice came from.
+   Then ask Pi to remove the batch effect and redraw the ordination, before and
+   after, coloured by batch and by outcome. Tell it to use only packages that
+   are already installed. Then ask exactly what it did to the numbers. "Batch
+   correction" covers several different operations. Which one did it pick, and
+   could it have removed some of the outcome signal along with the batch?
 
-### Part 4: Reach (optional)
+6. Other choices, side by side. Ask for the gene ordination three more ways
+   and put them next to your CLR version: Bray-Curtis on the gene table, and
+   CLR with a looser gene filter and with a stricter one. Which differences
+   would change what you conclude, and which are cosmetic?
 
-Take the first two axes of your gene ordination and the first two of your species
-ordination, and plot gene axis 1 against species axis 1 for the same samples. Are
-they related?
+7. One figure for a talk. Ask Pi to put the species and gene ordinations side
+   by side, coloured by `community` with the same two colours in both panels,
+   one shared legend, and the community `R2` in each panel's subtitle. Iterate
+   on it until you would show it in a lab meeting.
 
-This scatter plot is the simplest form of multiomics integration. Friday
-morning starts from it.
+### Part 3: Reach (optional)
+
+Ask Pi to plot gene axis 1 against species axis 1 for the same samples, and to
+give you the correlation. Then ask for axis 2 against axis 2. Are the two
+tables related? This scatter plot is the simplest form of multiomics
+integration, and Friday morning starts from it.
+
+If you have time after that, ask for a short Quarto report of this afternoon's
+work ending in `## Choices made`: the distance for each table, the gene filter,
+the pseudocount, what you did about batch, and one alternative for each.
 
 ### Discussion
 
@@ -67,5 +86,7 @@ morning starts from it.
   write that in a paper, and how would you phrase it?
 - The batch effect is as large as the biological effect. What should the people
   who generated this data have done differently?
+- What did Pi do when you asked it to remove the batch effect, and would you
+  keep that step in your analysis?
 - You now have two ordinations of the same 471 samples. What would it take to
   combine them, and what would you hope to gain?

@@ -1,6 +1,14 @@
 ## Exercise 1: Distances and ordination on the species table
 
-Open `notebooks/03-ordination.qmd`.
+> As this morning, Pi writes the code and you decide what it means. An
+> ordination is easy to produce and easy to over-read: a clean split on a plot
+> invites a story about axis 1. This exercise asks you to get the numbers
+> behind each story before you believe it.
+
+Open `notebooks/03-ordination.qmd`, run the setup chunk, and start Pi with a
+fresh conversation. The setup chunk builds `ps_species` and `ps_genes` and
+attaches your `community` column to both. Tell Pi to use those objects rather
+than building new ones.
 
 ### Part 1: Predict
 
@@ -12,57 +20,78 @@ Open `notebooks/03-ordination.qmd`.
 3. One sample has 438 reads. Where do you expect it to sit in a Bray-Curtis
    ordination?
 
-### Part 2: Build
+### Part 2: Ask, look, decide
 
-1. Build the phyloseq object for the species table:
+1. The first ordination:
 
-   ```r
-   library(microViz)
-   source("R/count_tables.R")
-   ps <- as_counts(table = "microbiome")
-   ```
+   > Using `ps_species` from the setup chunk, make a Bray-Curtis PCoA with
+   > microViz at the species level and colour it by `community`. Put the share
+   > of variation on each axis title.
 
-   Inspect it. How many taxa, how many samples, how many sample variables? Add
-   the `community` column you built this morning if it is not already there.
+   Check it before you read anything into it. Ask Pi how many points are on
+   the plot (there should be 471) and how many samples have no `community`
+   value (there should be none). If the colours are all grey, your column did
+   not attach.
 
-2. Run the pipeline three times, changing only the transform and the distance:
+2. Three distances, side by side:
 
-   - `"identity"` with `"bray"`
-   - `"binary"` with `"jaccard"`
-   - `"clr"` with `"euclidean"`
+   > Make the same ordination three ways, side by side: `"identity"` with
+   > `"bray"`, `"binary"` with `"jaccard"`, and `"clr"` with `"euclidean"`.
+   > Under them, add a scree plot for each showing the share of variation held
+   > by the first eight axes.
 
-   Plot all three, coloured by `community`. Put them side by side.
+   Compare the three with your answer to question 1. Then decide which one you
+   would put in a paper and write one sentence in your notebook saying why.
 
-3. Colour your Bray-Curtis ordination by `outcome` instead. Then by
-   `time_point`. Then by `nugent`.
+3. One plot, many colourings. Ask Pi for the Bray-Curtis ordination as a grid
+   of panels, coloured by `outcome`, `time_point`, `nugent`, `lacto_fraction`
+   and library size. Which colouring lines up with axis 1? Which one shows
+   nothing you can see by eye?
 
-4. Run `dist_permanova()` on the Bray-Curtis distance with `community`,
-   `outcome`, `time_point` and `rnaseq_batch` as variables. Report the `R2`
-   for each.
+4. What is axis 1? From here on, write your own requests. Ask Pi to interpret
+   your ordination. It will probably write a confident paragraph about the
+   biology of axis 1. Now ask for the numbers behind it: the correlation of
+   axis 1 with `lacto_fraction`, and the five genera whose abundance tracks
+   axis 1 most closely, each with its correlation. Does the paragraph still
+   hold up?
 
-5. Find your 438-read sample in the ordination. Was your Part 1 prediction
-   right? Re-run the Bray-Curtis ordination with that sample removed and see
-   whether anything else moves.
+5. PERMANOVA. Ask for the `R2` and p-value of `community`, `outcome`,
+   `time_point` and `rnaseq_batch`, as a table and as a bar chart. Check it
+   against the slides: about 17.5% for community, 8.7% for visit, 0.5% for
+   outcome, and an RNA batch that explains nothing here.
 
-6. Make a stacked bar plot of community composition with
-   `comp_barplot(tax_level = "Genus", n_taxa = 10)`, faceted or ordered by
-   `community`. Most 16S papers open with this figure.
+   Then make the null distribution yourself:
 
-### Part 3: Check the agent
+   > Shuffle the `outcome` labels across samples 20 times, run PERMANOVA on
+   > each shuffled version with 99 permutations, and plot the 20 `R2` values
+   > as a histogram with the real outcome `R2` marked as a line.
 
-- Ask Pi for the `R2` of `outcome`. Then ask it what the `R2` of a random label
-  would be. If it does not say "close to zero but not zero", push back.
-- PERMANOVA with `by = "margin"` and `by = "terms"` give different answers when
-  variables are correlated. Ask Pi which it used and why it matters.
-- Ask it to interpret your ordination. It will produce a paragraph of confident
-  biological narrative about axis 1. Then ask it what axis 1 actually is.
-  Neither it nor you can tell from the plot alone.
-- Ask it whether your three distance choices "agree". Then look at the three
-  plots yourself and decide if its answer matches what you see.
+   How does this compare with your answer to question 2? Where does the real
+   value sit?
+
+6. Argue about the settings. The slides used `by = "margin"`. Ask Pi to run it
+   again with `by = "terms"` and to put both results side by side, then to
+   explain why they differ when labels are related to each other. Then ask it:
+   "Each participant appears three times. Does PERMANOVA know that, and does it
+   matter?" Push on the answer until you could explain it to your neighbour.
+
+7. The 438-read sample. Ask Pi to mark it and label it on the ordination. Was
+   your prediction right? Then ask for the ordination again without the
+   samples you dropped this morning, side by side with the original. Did
+   anything else move?
+
+8. Polish one figure. Take the community-coloured Bray-Curtis plot and ask for
+   variations: ellipses around each group, one panel per visit, point size by
+   library size, lines joining each participant's three visits for ten
+   participants. Keep the version that shows the most, then make it ready for
+   a talk: your own colours, axis titles in words, a legend people can read,
+   saved as a PNG.
 
 ### Discussion
 
 - Which of the three distances would you publish? Defend it in one sentence.
 - `community` explains a very large share of this table. Is that a finding?
+- Pi's first paragraph about axis 1: what did it get right, and what did it say
+  that the numbers did not support?
 - Your ordination shows visit structure. Each participant appears three times.
   Does PERMANOVA know that, and does it matter?

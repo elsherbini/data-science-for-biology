@@ -378,11 +378,18 @@ mind until then.
 ## In the exercises
 
 ::: {.incremental}
-1. Build the species ordination three ways and argue about which to show
-2. Put a number on each label with PERMANOVA
-3. Run the identical pipeline on the gene table
-4. Measure the batch effect and decide what you would do about it
+1. Ask Pi for the species ordination three ways and argue about which to show
+2. Ask Pi what axis 1 means, then ask for the numbers that would back it up
+3. Put a number on each label with PERMANOVA, and build a null distribution
+   by shuffling one
+4. Run the identical pipeline on the gene table
+5. Measure the batch effect, let Pi remove it, and work out what it did
 :::
+
+. . .
+
+As this morning, Pi writes the code. Every step ends with something for you to
+check or decide.
 
 ## Your turn {.your-turn}
 
