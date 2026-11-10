@@ -946,22 +946,43 @@ About ten minutes, driving a real Codespace on the projector.
    as it happens: read, edit, run.
 4. Open the notebook and read the chunk aloud. Check one library size by hand
    with `sum(species$P001_week_18)`.
-5. Show `/model`, switch to z-ai/glm-5.3 and back. Show `/new`.
+5. Ask for two changes in a row: "put it on a log scale", then "colour the
+   bars by visit and write the axis titles in words". Then ask for the same
+   numbers as a different kind of plot. Point out how little each one cost.
+6. Show `/model`, switch to z-ai/glm-5.3 and back. Show `/new`.
 :::
+
+## What changes when code is cheap
+
+Code is cheap now. Cognitive load is more expensive, because we can do more
+than we used to. It is still your job, as a scientist or a statistician, to
+understand the choices you made and be able to defend them.
+
+. . .
+
+So you spend less time coding and more time reviewing. Ask for lots of plots.
+Ask for reports. Argue with the computer.
+
+. . .
+
+You can get to the first polished-looking output very fast, but in some ways
+that is when your job begins now.
 
 ## Plan for the next ninety minutes
 
 ::: {.incremental}
-1. Load both tables and check their shape against the metadata
-2. Compute library size, features detected and dominance for both
-3. Decide which samples and features to drop, and write down why
-4. Build the one column the rest of the week depends on
-5. Draw both tables with microViz, as bar charts and as heatmaps
+1. Ask Pi for library size, features detected and diversity in both tables,
+   and check them
+2. Look at the same numbers several ways and decide which samples to drop
+3. Polish one figure, one request at a time
+4. Compare several filters side by side and pick one you can defend
+5. Build the one column the rest of the week depends on
+6. Draw both tables as bar charts and heatmaps, and ask for variations
 :::
 
 . . .
 
-Do not skip step 4. This afternoon you colour your ordinations by that column,
+Do not skip step 5. This afternoon you colour your ordinations by that column,
 and Wednesday afternoon starts from it.
 
 ## Your turn {.your-turn}

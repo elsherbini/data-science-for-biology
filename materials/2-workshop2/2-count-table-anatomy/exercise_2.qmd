@@ -1,6 +1,14 @@
-## Exercise 2: Filtering, normalising, and one column you will need all week
+## Exercise 2: Filters are choices
 
-Same notebook, second half.
+> Every filter and cutoff in this exercise is a choice that someone else could
+> make differently. Pi can produce the result of each choice in seconds.
+> Putting them side by side, and picking one you can defend, is your part.
+
+Same notebook, second half. Type `/new` in Pi to start a fresh conversation, so
+that the first exercise does not steer this one.
+
+Step 5 builds a file that this afternoon's notebook reads. If you are short on
+time, do step 5 first.
 
 ### Part 1: Predict
 
@@ -9,141 +17,109 @@ Same notebook, second half.
 2. Apply the same 10% prevalence rule to the 14,226 genes. How many survive?
 3. You want to compare one species between two samples. Name the single
    operation you must do to the counts first.
+4. If you drop the rare species, does the effective number of species in a
+   sample go up, go down, or stay about the same?
 
-### Part 2: Build
+### Part 2: Ask, look, decide
 
-1. Compute `prevalence` for every feature in both tables, the share of samples
-   where its count is above zero. Start from the long tables you made in
-   Exercise 1 and group by the feature this time:
+1. Prevalence. Ask Pi for the prevalence of every feature in both tables, the
+   share of samples where its count is above zero, and a plot of its
+   distribution in each table. Then ask for the filter curve from the slides:
+   for prevalence cutoffs from 0 to 0.9, how many features survive and what
+   share of all counts survives, in both tables.
 
-   ```r
-   species_long |>
-     group_by(taxon) |>
-     summarise(prevalence = mean(count > 0))
-   ```
+   Check it against the slides. At 10%, the species table keeps 59 of 220
+   species and loses about 0.8% of the reads, and the gene table keeps all
+   14,226 genes.
 
-   Plot the distribution for each table.
+2. A grid of filters. Comparing one cutoff at a time is slow, so ask for all of
+   them at once:
 
-2. For prevalence cutoffs from 0 to 0.9, compute how many features survive and
-   what share of total counts survives. Plot both. This figure shows that a
-   prevalence filter suits one table and does almost nothing to the other.
+   - species: prevalence of at least 5%, 10% or 25%, crossed with a mean
+     relative abundance of at least 0, 0.01% or 0.1%
+   - genes: mean CPM of at least 1, 5 or 10, crossed with prevalence of at
+     least 0%, 50% or 90%
 
-3. Convert both tables to counts per million with `group_by(sample_id)` and
-   `mutate()`, as on the slide.
+   For each combination, ask for the number of features kept and the share of
+   counts kept, first as a table and then as a plot. Ask for one summary table
+   rather than a filtered copy of the data for every combination. A folder full
+   of copies with similar names is the kind of thing that confuses Pi later.
 
-4. Choose and apply a filter to each table. Write one sentence in your notebook
-   justifying each choice. For the gene table, filter on expression level rather
-   than prevalence, something like a mean CPM of at least 5. A grouped
-   `filter()` keeps or drops a whole feature at once:
+   Pick one combination for each table and write one sentence for each saying
+   why. Compare with your neighbour. Then ask Pi to make one filtered version
+   of each table, named for what it is.
 
-   ```r
-   species_long |>
-     group_by(taxon) |>
-     filter(mean(count > 0) >= 0.10) |>
-     ungroup()
-   ```
+3. Did the filter change anything you care about? Ask for each sample's
+   effective number of species before and after your filter, as a scatter
+   plot with a 1:1 line. Compare it with your answer to Part 1, question 4.
+   Then ask for the same plot for features detected. Which number moved, and
+   why did the other one barely move?
 
-   Then add a `log2(cpm + 1)` column and plot a histogram of one feature before
-   and after the log.
+4. Normalise, then log. Ask Pi to add counts per million and `log2(cpm + 1)` to
+   your filtered tables. Pick one species and one gene and ask for histograms
+   of each before and after the log.
 
-5. **Build the grouping column.** From the species table, compute for each
-   sample the fraction of its reads that belong to the genus *Lactobacillus*.
-   `03_microbiome_taxonomy.csv` tells you which species those are, and
-   `left_join()` attaches it to `species_long` by `taxon`.
+   The `+ 1` is a choice too. Ask for the log histogram of the same gene with
+   `+ 0.5`, `+ 1` and `+ 10` side by side. Where does the choice change the
+   picture, and where does it make no difference?
 
-   Then make a two-level column:
+5. Build the grouping column. This one feeds the rest of the week, so get it
+   right before you move on:
 
-   - `lactobacillus` if that fraction is 0.5 or more
-   - `anaerobe` if it is below 0.5
+   > From the full species table, before any filtering, compute the fraction of
+   > each sample's reads that belong to the genus *Lactobacillus*. Use
+   > `03_microbiome_taxonomy.csv` to find which species those are. Add a column
+   > called `community` that is `lactobacillus` if the fraction is 0.5 or more
+   > and `anaerobe` if it is below 0.5. Save `sample_id`, `lacto_fraction` and
+   > `community` to `data/my_sample_groups.csv`.
 
-   Call the new column `community`. Save your per-sample table, including
-   `sample_id`, `lacto_fraction` and `community`, to
-   `data/my_sample_groups.csv`. This afternoon's notebook reads it back, and so
-   does Wednesday's.
+   This afternoon's notebook reads that file back, and so does Wednesday's.
+   Check it before you rely on it:
 
-6. How many samples land in each group? Does the split change across the three
-   visits?
+   - Ask Pi to list the species names it counted as *Lactobacillus*, and read
+     the list. Matching with the wrong case, or matching part of a name, can
+     catch something it should not.
+   - `lacto_fraction` must lie between 0 and 1. Ask for the smallest and
+     largest value.
+   - Ask Pi to show you one sample's *Lactobacillus* counts and its total, then
+     do the division yourself.
 
-7. Compare the effective number of species between the two groups, with a
-   boxplot on a log scale. Which group is more diverse, and is that what you
-   would call healthy?
+6. The 0.5 cutoff. Ask for a histogram of `lacto_fraction` with a line at 0.5.
+   Then ask how many samples would change group if the cutoff were 0.3 or 0.8,
+   and how the split across the three visits changes. Ask Pi to justify 0.5.
+   Is its reason about this data, or would it say the same about any dataset?
 
-### Part 3: Draw both tables with microViz
+7. Ask for the effective number of species in each community group, as a
+   boxplot on a log scale. Which group is more diverse? Is that what you would
+   call healthy?
 
-1. Build the microViz object for each table and attach your `community`
-   column to it:
+8. Bar charts and heatmaps. Ask Pi for the microViz stacked bar chart of the
+   10 largest genera, and a heatmap of the 20 largest genera with your
+   `community` column as a strip along the top. Then ask for the same two
+   figures for the gene table, by gene symbol. The gene bar chart takes about
+   a minute.
 
-   ```r
-   library(microViz)
-   source(here("R/count_tables.R"))
+   Now ask for variations: bars ordered by `lacto_fraction`, bars split into
+   two panels by community, 20 genera instead of 10. Which version tells you
+   the most? In the gene heatmap, find two genes whose rows look alike. Ask Pi
+   what they do, then look one of them up yourself on
+   [NCBI Gene](https://www.ncbi.nlm.nih.gov/gene/).
 
-   my_groups <- sample_groups |> select(sample_id, lacto_fraction, community)
+### Part 3: Reach (optional)
 
-   species_ps <- as_counts(table = "microbiome") |> ps_join(my_groups, by = "sample_id")
-   genes_ps   <- as_counts(table = "rnaseq") |> ps_join(my_groups, by = "sample_id")
-   ```
+Ask Pi to turn your notebook into a short QC report as a new Quarto document,
+with the figures you chose, ending in a section called `## Choices made`. That
+section lists every cutoff and filter you chose, with one alternative you did
+not choose. Render it and read the list. Is every choice you made today on it?
 
-   Here `sample_groups` is the table you saved in Part 2. Print `species_ps`
-   and `genes_ps` and check the numbers of features and samples. `ps_join()`
-   drops the 22 species that have no reads in any sample, so `species_ps`
-   holds 198.
-
-2. Draw the stacked bar chart for each table:
-
-   ```r
-   species_ps |> comp_barplot(tax_level = "Genus", n_taxa = 10)
-   genes_ps   |> comp_barplot(tax_level = "symbol", n_taxa = 10)
-   ```
-
-   The gene one takes about a minute. Roughly what share of a typical bar is
-   "Other" in each?
-
-3. Draw the species table as a heatmap of the 20 largest genera, with your
-   `community` column as a strip along the top:
-
-   ```r
-   species_log <- species_ps |>
-     tax_transform("compositional", rank = "Genus") |>
-     tax_transform("log2", zero_replace = "halfmin", chain = TRUE)
-
-   species_log |>
-     comp_heatmap(
-       taxa = tax_top(species_log, n = 20),
-       sample_anno = sampleAnnotation(community = anno_sample_cat("community"))
-     )
-   ```
-
-   Do samples from the same community group sit next to each other? Which
-   genera separate the two groups?
-
-4. Make the same heatmap for the gene table, with `rank = "symbol"` and the 25
-   largest genes. Do the community groups sit together this time? Find two
-   genes whose rows look alike, and look up what they do.
-
-### Part 4: Check the agent
-
-- Ask Pi to compute the *Lactobacillus* fraction. Then check: does its answer
-  for one sample you compute by hand agree to three decimal places?
-- A common failure is matching genus names with the wrong case or with partial
-  matching, so that *Lactobacillus* also catches something it should not. Ask it
-  which species names it matched, and read the list.
-- `lacto_fraction` must lie between 0 and 1 for every sample. Check the minimum
-  and maximum.
-- Ask it to justify the 0.5 cutoff. The answer will sound confident. Decide for
-  yourself whether the reasoning holds up.
-- Ask Pi what `zero_replace = "halfmin"` does in your heatmap code, then ask
-  what the heatmap would look like with `zero_replace = 1`. Run both and see
-  whether it was right.
-
-### Part 5: Reach (optional)
-
-Build the same per-sample summary table for one of the group project datasets,
-`group_a_probiotic` or `group_b_contraception`. The column names are identical,
-so your code should run unchanged. If it does not, you hard-coded something.
+Then ask Pi to run the same report on `group_a_probiotic` or
+`group_b_contraception`, changing only the data folder. If it has to change
+more than that, something was hard-coded.
 
 ### Discussion
 
-- What did you filter, and what did you lose?
+- What did you filter, and what did you lose? Did your neighbour choose
+  differently, and would either choice change a result?
 - The bar chart works for the species table and fails for the gene table. What
   is different about the two tables that explains it?
 - The 0.5 cutoff is arbitrary. What would change in your conclusions if it were

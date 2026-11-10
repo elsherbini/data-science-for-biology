@@ -1,11 +1,13 @@
-## Exercise 1: Inside the two files
+## Exercise 1: Many looks at the same two tables
 
-> Working with the agent: Pi is in your Codespace for every exercise this week,
-> so use it. Each exercise ends with a part that asks you to check what it
-> produced. The habit we most want you to build is catching a confident wrong
-> answer.
+> In this module Pi writes the code. Your job is to ask for numbers and plots,
+> look at each one, and decide what they mean. Another plot costs you a minute
+> and a few cents, so ask for more of them than you think you need. Every step
+> ends with something for you to check or decide, and that part is not Pi's job.
 
-Open `notebooks/02-count-table-anatomy.qmd`.
+Open `notebooks/02-count-table-anatomy.qmd` and start Pi in the terminal. Ask
+Pi to put its code under the step you are working on. Steps 1 to 3 give you a
+request to start from. After that, write your own.
 
 ### Part 1: Predict, before you run anything
 
@@ -20,95 +22,87 @@ Write your answers down. You will compare them to the real numbers in Part 2.
 5. A typical sample behaves like how many equally common species? And like how
    many equally expressed genes?
 
-### Part 2: Build
+### Part 2: Ask, look, decide
 
-1. Read the three files as tibbles. If the setup chunk in your notebook loads
-   the tables with `read_counts()`, replace it with this one.
+1. Ask Pi for the per-sample numbers from the slides:
 
-   ```r
-   library(tidyverse)
-   library(here)
+   > In step 1 of my notebook, make one data frame with a row for every sample
+   > in each count table, species and genes, and a `table` column saying which.
+   > Columns: library size, number of features detected, fraction of zeros, the
+   > share held by the largest feature, Shannon diversity, and the effective
+   > number of features.
 
-   data_dir <- "data/2-workshop2/instructional_dataset"
+   Check three things before you look at any plot:
 
-   metadata <- read_csv(here(data_dir, "01_metadata.csv"))
-   species  <- read_csv(here(data_dir, "02_microbiome_counts.csv"))
-   genes    <- read_csv(here(data_dir, "04_rnaseq_counts.csv.gz"))
-   taxonomy <- read_csv(here(data_dir, "03_microbiome_taxonomy.csv"))
-   ```
+   - It should have 942 rows, 471 samples for each table. If it has 471, one
+     table went missing and Pi may not have told you.
+   - Type `sum(species$P001_week_18)` in the R console yourself and compare it
+     with Pi's library size for that sample.
+   - Features detected can never be more than 220 for species or 14,226 for
+     genes.
 
-   Confirm that both count tables have a column for every `sample_id` in the
-   metadata. The first column of each count file is the feature name, `taxon`
-   in one and `ensembl_gene_id` in the other.
+2. Ask for a short report:
 
-2. Reshape each count table so it has one row per feature per sample:
+   > Under that data frame, add a summary table with the median, smallest and
+   > largest value of every column, separately for each table. Then write three
+   > sentences about anything unusual.
 
-   ```r
-   species_long <- species |>
-     pivot_longer(-taxon, names_to = "sample_id", values_to = "count")
-   ```
+   Compare the medians with your Part 1 answers. Then read Pi's three sentences
+   against the table. Did it mention the 438-read sample? Did it claim anything
+   you cannot find in the numbers?
 
-   Do the same for `genes`. Then use `group_by(sample_id)` and `summarise()`
-   to compute, for every sample:
+3. One number, four plots:
 
-   - `library_size`, the sum of its counts
-   - `features_detected`, the number of counts above zero
-   - `zero_fraction`, the share of its counts that are zero
-   - `top_feature_share`, its largest count divided by its library size
+   > Plot the library size of every sample four ways: a histogram, the same
+   > histogram on a log scale, the samples ranked from smallest to largest, and
+   > library size by visit. Use both tables.
 
-3. Put those four numbers for both tables into one data frame with
-   `bind_rows()`, and add a `table` column saying `"species"` or `"genes"`.
-   Keep both tables in one data frame, because every plot after this facets by
-   table.
+   Which view makes the 438-read sample obvious? Which one hides it? Which
+   would you put in a paper, and which would you only look at yourself?
 
-4. Plot `library_size` for both tables. You will need a log scale. Then plot
-   `features_detected` against `library_size`, faceted by table. For each table,
-   compute `cor(library_size, features_detected, method = "spearman")`. Does
-   the number agree with what you see? A strong correlation can still be a
-   small effect, so check how many features it amounts to.
+4. From here on, write your own requests. Ask for features detected against
+   library size for both tables, with the Spearman correlation for each. The
+   gene table shows a strong correlation. Ask Pi how many extra genes that
+   amounts to between the shallowest and the deepest samples, then check its
+   answer against the plot. A strong correlation can still be a small effect.
 
-5. Find the sample with 438 bacterial reads and `filter()` `species_long` down
-   to it. How many species does it show? What is its `top_feature_share`?
+5. Decide which samples to drop. Ask Pi to suggest a minimum library size for
+   the species table and to explain why. Then ask for a table: at cutoffs of
+   1,000, 5,000, 10,000 and 20,000 reads, how many samples each would drop, and
+   from which visits and outcomes. Losing samples evenly costs you less than
+   losing most of them from one group.
 
-6. Add Shannon diversity and the effective number of features to your summary
-   table:
+   Pick a cutoff and write one sentence in your notebook saying why. Then ask
+   Pi what happens to your results if you keep the samples you dropped. Does
+   that answer agree with the reason it gave the first time?
 
-   ```r
-   species_long |>
-     group_by(sample_id) |>
-     mutate(p = count / sum(count)) |>
-     filter(p > 0) |>
-     summarise(shannon   = -sum(p * log(p)),
-               effective = exp(shannon))
-   ```
+6. Polish one figure. Take the effective number plot, or any other you like,
+   and improve it one request at a time until you would put it on a poster:
 
-   What is the median effective number in each table? Compare it with your
-   Part 1 prediction, and with `features_detected` for the same samples.
+   - axis titles in words, not column names
+   - log-axis labels that read 1k and 10k, not 1e+03
+   - two colours of your choice for species and genes
+   - text large enough to read from the back of the room
+   - saved as a PNG, 6 by 4 inches
 
-### Part 3: Check the agent
+   Then ask for something you would not know how to code yourself: label the
+   438-read sample with its ID, or draw the median as a line with its value
+   printed beside it. At some point try "make it look nicer" on its own and
+   compare what you get with a specific request.
 
-Ask Pi to compute the four summaries for you if you have not already. Then,
-before you believe any of it:
-
-- Do the library sizes it reports match `sum()` of a column you pick by hand,
-  for example `sum(species$P001_week_18)`?
-- `features_detected` should never exceed the number of features in the table,
-  220 or 14,226. Is that true for every sample in its output?
-- Does its data frame have 942 rows, 471 samples for each of two tables? If it
-  has 471, it dropped one of the tables without saying so.
-- Ask it: "which samples should I drop and why?" Then ask it what happens to
-  your results if you keep them. See whether the second answer contradicts the
-  first.
-- Ask it which logarithm `log()` is in R. Then ask what the effective number
-  would be if the formula used `log2()`. The Shannon value changes with the
-  base; the effective number does not, as long as you undo it with the matching
-  base.
+7. Argue with it. Ask Pi which logarithm `log()` is in R. Then ask what the
+   effective number would be if the Shannon formula used `log2()`. The Shannon
+   value changes with the base. The effective number does not, as long as you
+   undo the log with the matching base (`2^` for `log2()`). If Pi says
+   otherwise, ask it to compute both ways and show you the numbers.
 
 ### Discussion
 
 - Which of your Part 1 predictions was furthest off?
 - Someone in the room will have decided to drop the 438-read sample and someone
   will have kept it. Both can defend it. What does each choice cost you?
+- Which plot did you get today that you would not have made if you had to write
+  the code yourself? Did it change a decision?
 - The gene table detects over 98% of its features in nearly every sample. Does
   that mean all 14,226 genes are expressed, or does it mean something about how
   the table was built?
