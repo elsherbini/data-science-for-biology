@@ -184,6 +184,10 @@ The first two axes of the species ordination hold about
 of the variation. For the genes, about
 `r scales::percent(sum(scree$variance_share[scree$table == "genes / Aitchison" & scree$axis <= 2]), 1)`.
 
+## Quick check {.your-turn}
+
+{{< live-poll W2M3.1 height="700px" >}}
+
 ## Colour the same plot by the thing you care about
 
 ```{r}
@@ -366,6 +370,10 @@ perm |>
 Small is not the same as absent. Tomorrow afternoon you ask the same question
 one gene at a time, and the answer looks very different. Keep this number in
 mind until then.
+
+## Quick check {.your-turn}
+
+{{< live-poll W2M3.2 height="700px" >}}
 
 ## In the exercises
 

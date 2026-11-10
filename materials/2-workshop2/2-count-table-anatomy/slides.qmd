@@ -492,6 +492,10 @@ both experiments.
 Microbiome papers report these numbers as alpha diversity. RNA-seq papers
 bury them in the QC section.
 
+## Quick check {.your-turn}
+
+{{< live-poll W2M2.1 height="700px" >}}
+
 ## 4. Filtering features
 
 ```{r}
@@ -778,6 +782,10 @@ a sample that is dark in those three rows have in it?
 | gene table | no | yes |
 
 : {tbl-colwidths="[20,40,40]"}
+
+## Quick check {.your-turn}
+
+{{< live-poll W2M2.2 height="700px" >}}
 
 ## Where you write code this week
 
