@@ -70,7 +70,9 @@ Later: `/key` shows it again, `/usage` shows today's spend.
 
 ## Step 8: Open Codespaces settings
 
-Go to your [Codespaces settings page](https://github.com/settings/codespaces), scroll to **"Codespace user secrets"** and click **"New secret"**.
+Click this link: [your Codespaces settings page](https://github.com/settings/codespaces). Scroll to **"Codespace user secrets"** and click **"New secret"**.
+
+No link? **Profile picture (top right) → Settings → Codespaces**. Not the repository's Settings tab.
 
 ![](../../assets/images/getting-started/5-add-new-secret.png){width=1200 fig-align="center" fig-alt="Codespace user secrets section with the New secret button highlighted"}
 

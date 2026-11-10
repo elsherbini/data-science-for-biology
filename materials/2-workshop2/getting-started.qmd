@@ -142,7 +142,14 @@ access"**, and click **"Save changes"**. Then go on to step 7.
 
 ### Open your Codespaces settings
 
-Go to your [Codespaces settings page](https://github.com/settings/codespaces).
+Click this link to go straight there:
+[your Codespaces settings page](https://github.com/settings/codespaces).
+
+If you'd rather find it yourself, these are your **account** settings, not
+the repository's. The **"Settings"** tab on your repository's page is the
+wrong place: a secret added there doesn't reach your codespace. Instead, click
+your **profile picture in the top-right corner** of any GitHub page, choose
+**"Settings"**, then click **"Codespaces"** in the left-hand menu.
 
 ### Click "New secret"
 
