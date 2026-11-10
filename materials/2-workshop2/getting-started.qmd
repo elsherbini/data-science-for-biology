@@ -18,13 +18,13 @@ The setup comes in three parts:
 **Before Tuesday morning** (Monday is fine, and teaching assistants can help)
 
 4. [Make your own copy of the workshop repository](#sec-repo)
-5. [Launch your codespace and check that R works](#sec-launch)
+5. [Claim your API key in Discord](#sec-claim)
+6. [Add the key to your GitHub account](#sec-secret)
+7. [Launch your codespace and check that R works](#sec-launch)
 
-**During the workshop** (we do this together, so don't start it on your own)
+**During the workshop** (we do this together)
 
-6. [Claim your API key in Discord](#sec-claim)
-7. [Add the key to your GitHub account](#sec-secret)
-8. [Restart your codespace and meet Pi](#sec-pi)
+8. [Meet Pi](#sec-pi)
 
 ## Instructions in slide form (long form below)
 [Make slides full screen](getting-started-slides.qmd)
@@ -69,6 +69,9 @@ together.
 
 # Before Tuesday morning
 
+Do these four steps in order. Your codespace reads the API key when it is
+first built, so the key has to be in GitHub before you launch the codespace.
+
 ## 4. Make your own copy of the workshop repository {#sec-repo}
 
 The workshop environment lives in a **template** repository on GitHub. You'll
@@ -100,35 +103,9 @@ your username.
 
 ![](../../assets/images/getting-started/3-give-repo-name.png){.img-fluid fig-alt="New repository form with the Repository name field highlighted"}
 
-## 5. Launch your codespace and check that R works {#sec-launch}
+Don't launch a codespace yet. Get your key first.
 
-On your new repository's page, click the green **"Code"** button, switch to the
-**"Codespaces"** tab, and click **"Create codespace on main"**.
-
-![](../../assets/images/getting-started/7-launch-codespace.png){.img-fluid fig-alt="Repository page with the Code button and Create codespace on main button highlighted in the Codespaces tab"}
-
-The first build takes **10 minutes or more**, because GitHub is installing R,
-Quarto and the workshop packages. Let it finish. After this first build,
-opening the codespace again is quick.
-
-When it's ready, check that R works:
-
-1. Open a terminal (**Terminal → New Terminal**).
-2. Type `R` and press Enter.
-3. Type `library(tidyverse)` and press Enter.
-
-If you see a list of packages and no line starting with `Error`, you're set.
-Type `q("no")` to leave R.
-
-You can close the browser tab now. Your codespace will be waiting for you,
-listed at [github.com/codespaces](https://github.com/codespaces).
-
-# During the workshop
-
-We'll do these last three steps together in the room. You don't need to do
-them in advance.
-
-## 6. Claim your API key in Discord {#sec-claim}
+## 5. Claim your API key in Discord {#sec-claim}
 
 The coding agent needs an OpenRouter API key, and a bot in the workshop Discord
 hands them out.
@@ -145,10 +122,22 @@ Two other commands you may want later:
 - `/usage` shows how much of today's budget you've used (it resets at midnight
   UTC)
 
-## 7. Add the key to your GitHub account {#sec-secret}
+## 6. Add the key to your GitHub account {#sec-secret}
 
 You store the key as a **Codespaces secret**. Your codespace reads it from
 there, so it never appears in your code.
+
+::: {.callout-warning}
+## Did you come to the June workshop?
+
+Then you already have a secret called `OPENROUTER_API_KEY`, holding your old
+key. Don't click **"New secret"**: GitHub won't let you make a second secret
+with the same name. Instead, on your
+[Codespaces settings page](https://github.com/settings/codespaces), click
+**"Update"** next to `OPENROUTER_API_KEY`. Replace the value with the new key
+from Discord, add the repository you created in step 4 under **"Repository
+access"**, and click **"Save changes"**. Then go on to step 7.
+:::
 
 ### Open your Codespaces settings
 
@@ -173,21 +162,49 @@ Then click **"Add secret"** at the bottom.
 
 ![](../../assets/images/getting-started/6-name-key-and-add-to-repo.png){.img-fluid fig-alt="New secret form with the Name field, Repository access dropdown, and Add secret button highlighted"}
 
-## 8. Restart your codespace and meet Pi {#sec-pi}
+## 7. Launch your codespace and check that R works {#sec-launch}
 
-Your codespace was built before the key existed, so it needs a restart to pick
-the key up.
+On your new repository's page, click the green **"Code"** button, switch to the
+**"Codespaces"** tab, and click **"Create codespace on main"**.
+
+![](../../assets/images/getting-started/7-launch-codespace.png){.img-fluid fig-alt="Repository page with the Code button and Create codespace on main button highlighted in the Codespaces tab"}
+
+The first build takes **10 minutes or more**, because GitHub is installing R,
+Quarto and the workshop packages. Let it finish. After this first build,
+opening the codespace again is quick.
+
+When it's ready, check that R works:
+
+1. Open a terminal (**Terminal → New Terminal**).
+2. Type `R` and press Enter.
+3. Type `library(tidyverse)` and press Enter.
+
+If you see a list of packages and no line starting with `Error`, you're set.
+Type `q("no")` to leave R.
+
+You can close the browser tab now. Your codespace will be waiting for you,
+listed at [github.com/codespaces](https://github.com/codespaces).
+
+# During the workshop
+
+## 8. Meet Pi {#sec-pi}
+
+Open your codespace, open a terminal (**Terminal → New Terminal**), type `pi`
+and press Enter. Pi is the AI coding agent you'll use all week. Ask it
+questions in plain language: it can read your notebook, explain code and help
+you make changes.
+
+![](../../assets/images/getting-started/8-meet-pi.png){.img-fluid fig-alt="Codespace with the integrated terminal open and the pi command typed at the prompt"}
+
+### If Pi says it can't find an API key
+
+This usually means the codespace was launched before the key was added. Check
+on your [Codespaces settings page](https://github.com/settings/codespaces) that
+the secret is named exactly `OPENROUTER_API_KEY` and that it has access to your
+repository. Then restart the codespace so it picks the key up:
 
 1. Go to [github.com/codespaces](https://github.com/codespaces).
 2. Click the **⋯** menu next to your codespace and choose **"Stop codespace"**.
 3. When it has stopped, click the codespace's name to open it again.
 
-Then open a terminal (**Terminal → New Terminal**), type `pi` and press Enter.
-Pi is the AI coding agent you'll use all week. Ask it questions in plain
-language: it can read your notebook, explain code and help you make changes.
-
-![](../../assets/images/getting-started/8-meet-pi.png){.img-fluid fig-alt="Codespace with the integrated terminal open and the pi command typed at the prompt"}
-
-If Pi says it can't find an API key, check that the secret's name is spelled
-exactly `OPENROUTER_API_KEY` and that it has access to your repository, then
-restart the codespace again. If you're still stuck, ask a teaching assistant.
+If you're still stuck, ask a teaching assistant.

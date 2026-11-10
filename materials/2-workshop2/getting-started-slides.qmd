@@ -8,9 +8,9 @@ format: qmdrslides-revealjs
 
 **Before you arrive:** a GitHub account, a Discord account, and VS Code.
 
-**Before Tuesday morning:** your own copy of the workshop repository, and your codespace built once.
+**Before Tuesday morning:** your own copy of the workshop repository, your API key added to GitHub, and your codespace built once.
 
-**During the workshop, together:** your API key, added to GitHub, and Pi.
+**During the workshop, together:** Pi.
 
 # Before you arrive
 
@@ -36,6 +36,8 @@ No setup or extensions needed. We'll do that together.
 
 # Before Tuesday morning
 
+Do these in order: the key goes into GitHub **before** you launch the codespace.
+
 ## Step 4: Open the template
 
 **Sign in to GitHub first**, or the buttons won't appear.
@@ -54,9 +56,44 @@ In the dropdown, choose **"Create a new repository"**.
 
 Give it a name (for example, `multiomics-2026`) and click **"Create repository"**.
 
+Don't launch a codespace yet. Get your key first.
+
 ![](../../assets/images/getting-started/3-give-repo-name.png){width=900 fig-align="center" fig-alt="New repository form with the Repository name field highlighted"}
 
-## Step 7: Launch a codespace
+## Step 7: Claim your key with `/claim`
+
+Ask a TA or instructor for the **Participant** role.
+
+Then type `/claim` in any channel. The reply is visible only to you and contains your API key. **Copy it.**
+
+Later: `/key` shows it again, `/usage` shows today's spend.
+
+## Step 8: Open Codespaces settings
+
+Go to your [Codespaces settings page](https://github.com/settings/codespaces), scroll to **"Codespace user secrets"** and click **"New secret"**.
+
+![](../../assets/images/getting-started/5-add-new-secret.png){width=1200 fig-align="center" fig-alt="Codespace user secrets section with the New secret button highlighted"}
+
+## Step 9: Save the secret
+
+- **Name**: `OPENROUTER_API_KEY` (exactly this)
+- **Value**: paste your key
+- **Repository access**: select the repo from step 6
+- Click **"Add secret"**
+
+![](../../assets/images/getting-started/6-name-key-and-add-to-repo.png){width=750 fig-align="center" fig-alt="New secret form with Name, Repository access, and Add secret highlighted"}
+
+## Came to the June workshop?
+
+You already have an `OPENROUTER_API_KEY` secret. **Don't make a new one**: GitHub won't allow two with the same name.
+
+On your [Codespaces settings page](https://github.com/settings/codespaces), click **"Update"** next to `OPENROUTER_API_KEY`:
+
+- Replace the value with your new key from Discord
+- Under **Repository access**, add the repo from step 6
+- Click **"Save changes"**
+
+## Step 10: Launch a codespace
 
 On your new repo: **"Code"** → **"Codespaces"** tab → **"Create codespace on main"**.
 
@@ -64,7 +101,7 @@ The first build takes **10 minutes or more**. Let it finish.
 
 ![](../../assets/images/getting-started/7-launch-codespace.png){width=800 fig-align="center" fig-alt="Repository page with the Code button and Create codespace on main button highlighted in the Codespaces tab"}
 
-## Step 8: Check that R works
+## Step 11: Check that R works
 
 1. **Terminal → New Terminal**
 2. Type `R`, press Enter
@@ -74,46 +111,21 @@ A list of packages and no `Error` means you're set. Type `q("no")` to leave R.
 
 # During the workshop
 
-We do these together. Don't start them on your own.
-
-## Step 9: Claim your key with `/claim`
-
-Ask a TA or instructor for the **Participant** role.
-
-Then type `/claim` in any channel. The reply is visible only to you and contains your API key. **Copy it.**
-
-Later: `/key` shows it again, `/usage` shows today's spend.
-
-## Step 10: Open Codespaces settings
-
-Go to your [Codespaces settings page](https://github.com/settings/codespaces), scroll to **"Codespace user secrets"** and click **"New secret"**.
-
-![](../../assets/images/getting-started/5-add-new-secret.png){width=1200 fig-align="center" fig-alt="Codespace user secrets section with the New secret button highlighted"}
-
-## Step 11: Save the secret
-
-- **Name**: `OPENROUTER_API_KEY` (exactly this)
-- **Value**: paste your key
-- **Repository access**: select the repo from step 6
-- Click **"Add secret"**
-
-![](../../assets/images/getting-started/6-name-key-and-add-to-repo.png){width=750 fig-align="center" fig-alt="New secret form with Name, Repository access, and Add secret highlighted"}
-
-## Step 12: Restart your codespace
-
-Your codespace was built before the key existed, so restart it:
-
-1. Go to [github.com/codespaces](https://github.com/codespaces)
-2. **⋯** next to your codespace → **"Stop codespace"**
-3. Click its name to open it again
-
-## Step 13: Meet Pi
+## Step 12: Meet Pi
 
 **Terminal → New Terminal**, then run `pi`.
 
 Ask in plain language. Pi can read your notebook, explain code and help you edit.
 
 ![](../../assets/images/getting-started/8-meet-pi.png){width=800 fig-align="center" fig-alt="Codespace with the integrated terminal open and the pi command typed at the prompt"}
+
+## Pi can't find your key?
+
+The codespace was probably launched before the key was added. Check the secret's name and repository access, then restart:
+
+1. Go to [github.com/codespaces](https://github.com/codespaces)
+2. **⋯** next to your codespace → **"Stop codespace"**
+3. Click its name to open it again
 
 ## You're ready
 
