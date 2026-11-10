@@ -22,22 +22,44 @@ Write your answers down. You will compare them to the real numbers in Part 2.
 
 ### Part 2: Build
 
-1. Read `01_metadata.csv`, `02_microbiome_counts.csv` and
-   `04_rnaseq_counts.csv.gz`. Confirm that both count tables have a column for
-   every `sample_id` in the metadata, and that the first column of each count
-   file is the feature name rather than a sample.
+1. Read the three files as tibbles. If the setup chunk in your notebook loads
+   the tables with `read_counts()`, replace it with this one.
 
-2. Turn each count table into a matrix with features as row names, then compute
-   for every sample:
+   ```r
+   library(tidyverse)
+   library(here)
 
-   - `library_size`, the column total
-   - `features_detected`, the number of rows above zero
-   - `zero_fraction`, the share of rows that are zero
-   - `top_feature_share`, the largest single value divided by the column total
+   data_dir <- "data/2-workshop2/instructional_dataset"
 
-3. Put those four numbers for both tables into one tidy data frame with a
-   `table` column saying `"species"` or `"genes"`. Keep both tables in one data
-   frame, because every plot after this facets by table.
+   metadata <- read_csv(here(data_dir, "01_metadata.csv"))
+   species  <- read_csv(here(data_dir, "02_microbiome_counts.csv"))
+   genes    <- read_csv(here(data_dir, "04_rnaseq_counts.csv.gz"))
+   taxonomy <- read_csv(here(data_dir, "03_microbiome_taxonomy.csv"))
+   ```
+
+   Confirm that both count tables have a column for every `sample_id` in the
+   metadata. The first column of each count file is the feature name, `taxon`
+   in one and `ensembl_gene_id` in the other.
+
+2. Reshape each count table so it has one row per feature per sample:
+
+   ```r
+   species_long <- species |>
+     pivot_longer(-taxon, names_to = "sample_id", values_to = "count")
+   ```
+
+   Do the same for `genes`. Then use `group_by(sample_id)` and `summarise()`
+   to compute, for every sample:
+
+   - `library_size`, the sum of its counts
+   - `features_detected`, the number of counts above zero
+   - `zero_fraction`, the share of its counts that are zero
+   - `top_feature_share`, its largest count divided by its library size
+
+3. Put those four numbers for both tables into one data frame with
+   `bind_rows()`, and add a `table` column saying `"species"` or `"genes"`.
+   Keep both tables in one data frame, because every plot after this facets by
+   table.
 
 4. Plot `library_size` for both tables. You will need a log scale. Then plot
    `features_detected` against `library_size`, faceted by table. For each table,
@@ -45,15 +67,19 @@ Write your answers down. You will compare them to the real numbers in Part 2.
    the number agree with what you see? A strong correlation can still be a
    small effect, so check how many features it amounts to.
 
-5. Find the sample with 438 bacterial reads. Look at its full column. How many
-   species does it show? What is its `top_feature_share`?
+5. Find the sample with 438 bacterial reads and `filter()` `species_long` down
+   to it. How many species does it show? What is its `top_feature_share`?
 
 6. Add Shannon diversity and the effective number of features to your summary
    table:
 
    ```r
-   shannon   <- vegan::diversity(t(counts), index = "shannon")
-   effective <- exp(shannon)
+   species_long |>
+     group_by(sample_id) |>
+     mutate(p = count / sum(count)) |>
+     filter(p > 0) |>
+     summarise(shannon   = -sum(p * log(p)),
+               effective = exp(shannon))
    ```
 
    What is the median effective number in each table? Compare it with your
@@ -64,16 +90,17 @@ Write your answers down. You will compare them to the real numbers in Part 2.
 Ask Pi to compute the four summaries for you if you have not already. Then,
 before you believe any of it:
 
-- Do the library sizes it reports match `sum()` of a column you pick by hand?
-- `features_detected` should never exceed the number of rows in the table. Is
-  that true for every sample in its output?
+- Do the library sizes it reports match `sum()` of a column you pick by hand,
+  for example `sum(species$P001_week_18)`?
+- `features_detected` should never exceed the number of features in the table,
+  220 or 14,226. Is that true for every sample in its output?
 - Does its data frame have 942 rows, 471 samples for each of two tables? If it
   has 471, it dropped one of the tables without saying so.
 - Ask it: "which samples should I drop and why?" Then ask it what happens to
   your results if you keep them. See whether the second answer contradicts the
   first.
-- Ask it which logarithm `vegan::diversity()` uses. Then ask what the effective
-  number would be if it had used log base 2. The Shannon value changes with the
+- Ask it which logarithm `log()` is in R. Then ask what the effective number
+  would be if the formula used `log2()`. The Shannon value changes with the
   base; the effective number does not, as long as you undo it with the matching
   base.
 

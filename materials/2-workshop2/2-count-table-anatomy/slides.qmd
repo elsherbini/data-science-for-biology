@@ -8,16 +8,34 @@ execute:
   message: false
   warning: false
   freeze: false
+auto-stretch: false
+knitr:
+  opts_chunk:
+    out.width: "100%"
+include-in-header:
+  text: |
+    <style>
+    /* Code blocks: readable from the back of the room. */
+    .reveal div.sourceCode pre code,
+    .reveal pre code { font-size: 1.5em; line-height: 1.35; }
+    .reveal .slide.smaller div.sourceCode pre code { font-size: 1.8em; }
+    /* Figures fill the slide width, so their text scales up with them. */
+    .reveal .cell-output-display, .reveal .cell-output-display > div,
+    .reveal .quarto-figure, .reveal .quarto-figure > figure { width: 100%; }
+    .reveal .cell-output-display img, .reveal .quarto-figure img {
+      width: 100%; max-width: 100%; max-height: none; }
+    </style>
 ---
 
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(patchwork)
 library(knitr)
+library(cowplot)
 pal <- c(navy = "#2b3a67", teal = "#2a9d8f", orange = "#e76f51",
          gold = "#e9c46a", grey = "#bbbbbb")
 tab_col <- c(species = pal[["teal"]], genes = pal[["orange"]])
-theme_set(theme_minimal(base_size = 15))
+theme_set(theme_cowplot(16))
 
 res <- "results"
 qc <- read_csv(file.path(res, "sample_qc.csv"), show_col_types = FALSE) |>
@@ -32,6 +50,8 @@ groups <- read_csv("../4-differential/results/sample_groups.csv", show_col_types
   select(sample_id, community)
 species_qc <- qc |> filter(table == "species") |> inner_join(groups, by = "sample_id")
 eff_by_comm <- species_qc |> group_by(community) |> summarise(m = median(effective)) |> deframe()
+top10 <- read_csv(file.path(res, "top10_share.csv"), show_col_types = FALSE)
+top10_of <- setNames(top10$median_share, top10$table)
 
 # Monday's four pom-pom bags, copied from the "Fill the four bags" table in
 # ../1-reads-to-counts/analog_activities.qmd. Keep the two in step.
@@ -78,18 +98,23 @@ Password: **Diamond254**
 Today the same table has 220 rows of bacteria, 14,226 rows of human genes, and
 471 columns.
 
-## The files {.smaller}
+## Reading the files
 
 ```{r}
 #| eval: false
 library(tidyverse)
+library(here)
 
-metadata <- read_csv("data/2-workshop2/instructional_dataset/01_metadata.csv")
-species  <- read_csv("data/2-workshop2/instructional_dataset/02_microbiome_counts.csv")
-genes    <- read_csv("data/2-workshop2/instructional_dataset/04_rnaseq_counts.csv.gz")
+data_dir <- "data/2-workshop2/instructional_dataset"
+
+metadata <- read_csv(here(data_dir, "01_metadata.csv"))
+species  <- read_csv(here(data_dir, "02_microbiome_counts.csv"))
+genes    <- read_csv(here(data_dir, "04_rnaseq_counts.csv.gz"))
 ```
 
-. . .
+Three of the six files in the folder. Each one becomes a tibble.
+
+## The six files {.smaller}
 
 ```{r}
 #| echo: false
@@ -132,6 +157,36 @@ read_csv(file.path(res, "corner_genes.csv"), show_col_types = FALSE) |>
 The same three samples. Both tables have features in rows, samples in columns
 and counts in the cells.
 
+## One row per count
+
+```{r}
+#| eval: false
+species_long <- species |>
+  pivot_longer(-taxon,
+               names_to = "sample_id", values_to = "count")
+```
+
+:::: {.columns}
+::: {.column width="55%" style="font-size: 75%;"}
+```{r}
+#| echo: false
+read_csv(file.path(res, "corner_species.csv"), show_col_types = FALSE) |>
+  select(taxon = 1, 2:4) |>
+  pivot_longer(-taxon, names_to = "sample_id", values_to = "count") |>
+  head(6) |>
+  kable()
+```
+:::
+::: {.column width="45%"}
+220 species times 471 samples gives 103,620 rows.
+
+::: {.fragment}
+In this shape, `group_by(sample_id)` works on one sample at a time and
+`group_by(taxon)` works on one species at a time.
+:::
+:::
+::::
+
 ## The questions we ask of both tables
 
 ::: {.incremental}
@@ -149,8 +204,8 @@ Answering them is the quality control step, and it is all we do today.
 
 ```{r}
 #| echo: false
-#| fig-width: 14
-#| fig-height: 3.5
+#| fig-width: 10
+#| fig-height: 2.7
 ggplot(qc, aes(library_size, fill = table)) +
   geom_histogram(bins = 45, colour = "white") +
   scale_x_log10(labels = scales::label_number(scale_cut = scales::cut_short_scale())) +
@@ -185,8 +240,8 @@ One sample has 438 bacterial reads. What would you do with it?
 
 ```{r}
 #| echo: false
-#| fig-width: 14
-#| fig-height: 5
+#| fig-width: 10
+#| fig-height: 3.0
 rho <- qc |>
   group_by(table) |>
   summarise(rho = cor(library_size, features_detected, method = "spearman"),
@@ -201,7 +256,7 @@ qc |>
   scale_x_log10(labels = scales::label_number(scale_cut = scales::cut_short_scale())) +
   scale_colour_manual(values = tab_col) +
   facet_wrap(~table, scales = "free", labeller = as_labeller(strip)) +
-  labs(x = "library size (log scale)", y = "features with a count above zero") +
+  labs(x = "library size (log scale)", y = "features detected") +
   theme(legend.position = "none")
 
 # species detected by community type, using the grouping built later today
@@ -247,8 +302,8 @@ two tables need different filters.
 
 ```{r}
 #| echo: false
-#| fig-width: 14
-#| fig-height: 5
+#| fig-width: 10
+#| fig-height: 3.6
 ggplot(qc, aes(top_feature_share, fill = table)) +
   geom_histogram(bins = 40, colour = "white") +
   scale_x_continuous(labels = scales::percent) +
@@ -265,8 +320,8 @@ is 99.9%.
 
 ```{r}
 #| echo: false
-#| fig-width: 13
-#| fig-height: 3.2
+#| fig-width: 10
+#| fig-height: 2.5
 bags |>
   filter(bag %in% c("bag 1", "bag 4"), n > 0) |>
   left_join(bag_summary |> select(bag, colours), by = "bag") |>
@@ -337,18 +392,33 @@ bag_summary |>
 
 Bag 1 has six colours but behaves like two. Bag 4 behaves like five.
 
-## Our two tables, as effective numbers
+## Computing it for every sample
 
 ```{r}
 #| eval: false
-shannon   <- vegan::diversity(t(counts), index = "shannon")   # natural log
-effective <- exp(shannon)
+species_long |>
+  group_by(sample_id) |>
+  mutate(p = count / sum(count)) |>
+  filter(p > 0) |>
+  summarise(shannon   = -sum(p * log(p)),
+            effective = exp(shannon))
 ```
+
+. . .
+
+`log()` in R is the natural log, and `exp()` undoes it.
+
+. . .
+
+Start from `genes_long` and the same six lines give the numbers for the gene
+table.
+
+## Our two tables, as effective numbers
 
 ```{r}
 #| echo: false
-#| fig-width: 13
-#| fig-height: 3.8
+#| fig-width: 10
+#| fig-height: 3.3
 ggplot(qc, aes(effective, fill = table)) +
   geom_histogram(bins = 40, colour = "white") +
   scale_x_log10(labels = scales::label_comma()) +
@@ -368,8 +438,8 @@ expressed genes.
 
 ```{r}
 #| echo: false
-#| fig-width: 13
-#| fig-height: 3.8
+#| fig-width: 10
+#| fig-height: 3.1
 species_qc |>
   ggplot(aes(effective, community, colour = community)) +
   geom_boxplot(outlier.shape = NA, width = 0.5) +
@@ -426,15 +496,17 @@ bury them in the QC section.
 
 ```{r}
 #| eval: false
-# keep a feature if it appears in at least 10% of samples
-prevalence <- rowMeans(counts > 0)
-kept <- counts[prevalence >= 0.10, ]
+# keep a species if it appears in at least 10% of samples
+species_kept <- species_long |>
+  group_by(taxon) |>
+  filter(mean(count > 0) >= 0.10) |>
+  ungroup()
 ```
 
 ```{r}
 #| echo: false
-#| fig-width: 13
-#| fig-height: 4.3
+#| fig-width: 10
+#| fig-height: 3.1
 fc |>
   pivot_longer(c(features_kept, share_of_counts_kept)) |>
   mutate(name = recode(name, features_kept = "features kept",
@@ -485,8 +557,8 @@ fc |>
 
 ```{r}
 #| echo: false
-#| fig-width: 14
-#| fig-height: 3.3
+#| fig-width: 10
+#| fig-height: 2.5
 p_prev <- fs |>
   filter(table == "species") |>
   ggplot(aes(prevalence)) +
@@ -508,21 +580,19 @@ p_prev + p_cpm
 
 ## You cannot compare raw counts
 
-A sample with twice the library size has roughly twice the count for everything.
-
 ```{r}
 #| eval: false
-# relative abundance: each column sums to 1
-proportions <- sweep(counts, 2, colSums(counts), "/")
-
-# counts per million: the same thing, scaled so the numbers are readable
-cpm <- proportions * 1e6
+species_long |>
+  group_by(sample_id) |>
+  mutate(proportion = count / sum(count),
+         cpm        = proportion * 1e6) |>
+  ungroup()
 ```
 
 ```{r}
 #| echo: false
-#| fig-width: 14
-#| fig-height: 3
+#| fig-width: 10
+#| fig-height: 2.2
 toy <- tibble(
   sample = rep(c("sample 1, 1,000 reads", "sample 2, 2,000 reads"), each = 3),
   feature = rep(c("feature A", "feature B", "feature C"), 2),
@@ -546,15 +616,14 @@ p_raw + p_prop + plot_layout(guides = "collect") &
 
 . . .
 
-Microbiome papers say "relative abundance". RNA-seq papers say "CPM". It is the
-same division.
+Microbiome papers call this "relative abundance". RNA-seq papers call it "CPM".
 
 ## And then you take a log
 
 ```{r}
 #| echo: false
-#| fig-width: 13
-#| fig-height: 4.3
+#| fig-width: 10
+#| fig-height: 3.3
 set.seed(4)
 x <- rnbinom(4000, mu = 40, size = 0.35)
 p1 <- tibble(x) |> ggplot(aes(x)) +
@@ -602,10 +671,10 @@ third slot, so the same verbs work on genes.
 ```{r}
 #| eval: false
 species_ps |>
-  comp_barplot(tax_level = "Genus", n_taxa = 10, sample_order = "bray")
+  comp_barplot(tax_level = "Genus", n_taxa = 10)
 
 genes_ps |>
-  comp_barplot(tax_level = "symbol", n_taxa = 10, sample_order = "bray")
+  comp_barplot(tax_level = "symbol", n_taxa = 10)
 ```
 
 . . .
@@ -615,8 +684,262 @@ read.
 
 . . .
 
-Nobody makes the second. Working out why tells you how the two experiments
-differ.
+Nobody makes the second. The next two slides show why.
+
+## Ten genera fill the bar
+
+![](figures/bar_species.png){width=100% fig-alt="Stacked bar chart of the ten most abundant genera in 471 samples. Lactobacillus fills most bars and the grey Other block is barely visible."}
+
+In a typical sample the ten largest genera hold
+`r scales::percent(top10_of[["species"]], 1)` of the reads.
+
+## Ten genes leave most of the bar grey
+
+![](figures/bar_genes.png){width=100% fig-alt="Stacked bar chart of the ten most abundant genes in 471 samples. The grey Other block takes up most of every bar."}
+
+In a typical sample the ten largest genes hold
+`r scales::percent(top10_of[["genes"]], 1)` of the reads. The grey block is the
+other 14,216 genes.
+
+## A heatmap gives each feature its own row
+
+A stacked bar has to share one axis between all the features, so anything
+below a few percent disappears.
+
+. . .
+
+In a heatmap each feature gets a row and each sample a column. The colour of a
+cell is that feature's share of that sample, on a log scale.
+
+. . .
+
+```{r}
+#| eval: false
+species_log <- species_ps |>
+  tax_transform("compositional", rank = "Genus") |>
+  tax_transform("log2", zero_replace = "halfmin",
+                chain = TRUE)
+
+species_log |>
+  comp_heatmap(taxa = tax_top(species_log, n = 20))
+```
+
+::: {.notes}
+"compositional" is the division by the sample total from three slides back, and
+"log2" is the log. `zero_replace = "halfmin"` is this function's answer to
+log2(0): zeros become half the smallest value above zero. It does the same job
+as the + 1.
+:::
+
+## Twenty genera in 471 samples
+
+![](figures/heat_species.png){width=100% fig-alt="Heatmap of the 20 most abundant genera across 471 samples, with a strip on top coloured by community group."}
+
+::: {style="font-size: 80%;"}
+Darker cells are larger shares. `comp_heatmap()` puts similar samples next to
+each other. The strip on top is the grouping column you build in Exercise 2.
+:::
+
+## The same heatmap for genes
+
+```{r}
+#| eval: false
+genes_log <- genes_ps |>
+  tax_transform("compositional", rank = "symbol") |>
+  tax_transform("log2", zero_replace = "halfmin",
+                chain = TRUE)
+
+genes_log |>
+  comp_heatmap(taxa = tax_top(genes_log, n = 25))
+```
+
+. . .
+
+The code changes in two places: the rank is `"symbol"`, and we ask for 25
+rows.
+
+## Twenty-five genes in 471 samples
+
+![](figures/heat_genes.png){width=100% fig-alt="Heatmap of the 25 most abundant genes across 471 samples, with a strip on top coloured by community group."}
+
+::: {style="font-size: 80%;"}
+HBA1, HBA2 and HBB are haemoglobin, and they rise and fall together. What does
+a sample that is dark in those three rows have in it?
+:::
+
+## Bar chart or heatmap?
+
+| | stacked bar chart | heatmap |
+|---|---|---|
+| shows | shares that add up to the whole sample | each feature on its own row |
+| scale | linear | log |
+| suits | a few features that hold most of the counts | many features, large and small |
+| species table | yes | yes |
+| gene table | no | yes |
+
+: {tbl-colwidths="[20,40,40]"}
+
+## Where you write code this week
+
+:::: {.columns}
+::: {.column width="38%"}
+A **Codespace** is a computer that GitHub runs for you. R, Quarto, the
+packages and the data are already on it.
+
+**VS Code** is the editor you see in the browser tab. Your files are on the
+left, the open notebook is in the middle, and the terminal is at the bottom.
+
+Nothing is installed on your laptop.
+:::
+::: {.column width="62%"}
+![](../../../assets/images/getting-started/8-meet-pi.png){width=100% fig-alt="A Codespace in the browser: file explorer on the left, a document in the middle, and a terminal at the bottom with Pi starting."}
+:::
+::::
+
+## A chat window and an agent
+
+```{r}
+#| echo: false
+#| fig-width: 10
+#| fig-height: 3.5
+boxes <- tribble(
+  ~panel,  ~x,  ~y,  ~label,                       ~fill,
+  "chat",  1,   2,   "you",                        pal[["navy"]],
+  "chat",  0,   0.4, "chat window",                pal[["grey"]],
+  "chat",  2,   0.4, "R on your\ncomputer",        pal[["teal"]],
+  "agent", 1,   2,   "you",                        pal[["navy"]],
+  "agent", 0,   0.4, "agent",                      pal[["orange"]],
+  "agent", 2,   0.4, "files and R in\nyour Codespace", pal[["teal"]]
+) |>
+  mutate(panel = factor(panel, c("chat", "agent"),
+                        c("chat: you carry the code", "agent: it runs the code itself")))
+arrows <- tribble(
+  ~panel,  ~x,   ~y,   ~xend, ~yend, ~label,                ~lx,   ~ly,
+  "chat",  0.75, 1.65, 0.2,   0.8,   "question,\nerror",    0.02,  1.3,
+  "chat",  0.4,  0.8,  0.95,  1.65,  "",                    NA,    NA,
+  "chat",  1.25, 1.65, 1.8,   0.8,   "paste code,\nrun it", 1.98,  1.3,
+  "chat",  1.6,  0.8,  1.05,  1.65,  "",                    NA,    NA,
+  "agent", 0.75, 1.65, 0.2,   0.8,   "one request",         0.05,  1.3,
+  "agent", 0.4,  0.8,  0.95,  1.65,  "",                    NA,    NA,
+  "agent", 0.55, 0.52, 1.45,  0.52,  "read, write, run",    1,     0.78,
+  "agent", 1.45, 0.28, 0.55,  0.28,  "output, errors",      1,     0.04
+) |>
+  mutate(panel = factor(panel, c("chat", "agent"), levels(boxes$panel)))
+ggplot() +
+  geom_segment(data = arrows, aes(x, y, xend = xend, yend = yend),
+               colour = "grey35", linewidth = 0.9,
+               arrow = arrow(length = unit(0.22, "cm"), type = "closed")) +
+  geom_label(data = boxes, aes(x, y, label = label, fill = I(fill)), colour = "white",
+             fontface = "bold", size = 5.5, lineheight = 0.9,
+             label.padding = unit(0.6, "lines"), label.size = 0) +
+  geom_text(data = arrows |> filter(!is.na(lx)), aes(lx, ly, label = label),
+            size = 4.6, colour = "grey25", lineheight = 0.9) +
+  facet_wrap(~panel) +
+  scale_x_continuous(limits = c(-0.6, 2.6)) +
+  scale_y_continuous(limits = c(-0.15, 2.3)) +
+  theme_void(base_size = 16) +
+  theme(strip.text = element_text(face = "bold", size = 17, margin = margin(b = 8)),
+        panel.spacing = unit(2, "lines"))
+```
+
+With a chat window you copy code into R, run it, and copy the error back. An
+agent has tools for those steps and repeats them until it thinks the task is
+done.
+
+## One request, many steps
+
+You type: *plot the library size of every sample in the species table*
+
+::: {.incremental}
+1. Pi reads `notebooks/02-count-table-anatomy.qmd`
+2. It reads the first lines of `02_microbiome_counts.csv`
+3. It writes a chunk that reshapes the table and draws a histogram
+4. It runs the chunk and gets an error about a column name
+5. It fixes the chunk and runs it again
+6. It tells you what it did
+:::
+
+. . .
+
+Pi does not stop to ask you between steps. Read the code from step 5 before
+you believe the summary in step 6.
+
+## Pi works from what is in your folder
+
+Before it answers, Pi reads `CLAUDE.md` at the top of your repository. Ours
+says you are a biologist who is new to coding.
+
+. . .
+
+After that it knows only the files it opens and the conversation so far.
+
+::: {.incremental}
+- An old notebook with a different filter looks as valid to Pi as today's.
+- Two csv files with similar names get mixed up.
+- A long conversation about one question bends its answers to the next.
+:::
+
+. . .
+
+Type `/new` to start a fresh conversation when you change task.
+
+## Pi, Claude Code and Codex
+
+All three are coding agents that run in a terminal and work in the same loop.
+
+::: {style="font-size: 75%;"}
+| | Pi | Claude Code | Codex |
+|---|---|---|---|
+| made by | an open-source project | Anthropic | OpenAI |
+| models | from any provider | built for Claude | built for GPT |
+| you pay through | our OpenRouter key, per request | an Anthropic plan or API key | an OpenAI plan or API key |
+| before running a command | does not ask | asks, unless you change it | asks, unless you change it |
+
+: {tbl-colwidths="[22,26,26,26]"}
+:::
+
+. . .
+
+We chose Pi because one key reaches models from many companies, so you can
+change model with one command and see what each costs. What you practise with
+Pi carries over to the other two.
+
+## Models cost different amounts
+
+Your key has a **\$3 daily limit**. Every request spends some of it.
+
+::: {.incremental}
+- Pi starts on `z-ai/glm-5.3-flash`, which is cheap and fast.
+- `/model` or `Ctrl+L` switches to `z-ai/glm-5.3`, the larger model from the
+  same family. It costs more per request.
+- Start on the cheap one. Switch when it gets stuck, and switch back after.
+:::
+
+. . .
+
+A long conversation costs more per message than a short one, because the whole
+conversation is sent with every request.
+
+## Pi in a Codespace {.our-turn}
+
+Open your Codespace, open a terminal, type `pi` and press Enter.
+
+Follow along while we give Pi its first task.
+
+::: {.notes}
+About ten minutes, driving a real Codespace on the projector.
+
+1. Show the three panes: files, notebook, terminal. Start `pi`. Point at the
+   [Context] line that lists CLAUDE.md.
+2. Ask: "What is in data/2-workshop2/instructional_dataset? Do not run any
+   analysis yet." Let the room watch it list and read files.
+3. Ask: "In notebooks/02-count-table-anatomy.qmd, add a chunk that plots the
+   library size of every sample in the species table." Narrate each tool call
+   as it happens: read, edit, run.
+4. Open the notebook and read the chunk aloud. Check one library size by hand
+   with `sum(species$P001_week_18)`.
+5. Show `/model`, switch to z-ai/glm-5.3 and back. Show `/new`.
+:::
 
 ## Plan for the next ninety minutes
 
@@ -625,12 +948,13 @@ differ.
 2. Compute library size, features detected and dominance for both
 3. Decide which samples and features to drop, and write down why
 4. Build the one column the rest of the week depends on
+5. Draw both tables with microViz, as bar charts and as heatmaps
 :::
 
 . . .
 
-Do not skip the last one. This afternoon you colour your ordinations by that
-column, and Wednesday afternoon starts from it.
+Do not skip step 4. This afternoon you colour your ordinations by that column,
+and Wednesday afternoon starts from it.
 
 ## Your turn {.your-turn}
 

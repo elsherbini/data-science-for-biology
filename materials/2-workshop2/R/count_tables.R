@@ -119,7 +119,12 @@ as_counts <- function(dataset = "instructional",
                           c("Domain", "Phylum", "Class", "Order", "Family", "Genus", "species"))
   } else {
     counts <- d$genes
-    ranks  <- rank_matrix(d$gene_info, "ensembl_gene_id", c("locus_group", "symbol"))
+    # A few genes have no symbol. Give them their Ensembl id, so every gene
+    # keeps a label of its own.
+    info <- d$gene_info |>
+      mutate(symbol      = coalesce(symbol, ensembl_gene_id),
+             locus_group = coalesce(locus_group, "unannotated"))
+    ranks  <- rank_matrix(info, "ensembl_gene_id", c("locus_group", "symbol"))
   }
 
   # Features present in the annotation but not the counts, and vice versa.
@@ -142,7 +147,11 @@ as_counts <- function(dataset = "instructional",
     phyloseq::tax_table(ranks)
   )
   if (fix && requireNamespace("microViz", quietly = TRUE)) {
-    ps <- microViz::tax_fix(ps, verbose = FALSE)
+    # tax_fix() treats labels shorter than 4 characters as unknown, which suits
+    # taxonomy and is wrong for genes: B2M, FTL and about 470 other short
+    # symbols would be pooled into one feature. Keep every gene symbol.
+    ps <- microViz::tax_fix(ps, min_length = if (table == "rnaseq") 1 else 4,
+                            verbose = FALSE)
   }
   ps
 }

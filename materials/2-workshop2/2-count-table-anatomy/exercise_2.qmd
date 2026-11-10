@@ -13,31 +13,53 @@ Same notebook, second half.
 ### Part 2: Build
 
 1. Compute `prevalence` for every feature in both tables, the share of samples
-   where its count is above zero. Plot the distribution for each table.
+   where its count is above zero. Start from the long tables you made in
+   Exercise 1 and group by the feature this time:
+
+   ```r
+   species_long |>
+     group_by(taxon) |>
+     summarise(prevalence = mean(count > 0))
+   ```
+
+   Plot the distribution for each table.
 
 2. For prevalence cutoffs from 0 to 0.9, compute how many features survive and
    what share of total counts survives. Plot both. This figure shows that a
    prevalence filter suits one table and does almost nothing to the other.
 
-3. Choose and apply a filter to each table. Write one sentence in your notebook
-   justifying each choice. For the gene table, filter on expression level rather
-   than prevalence, something like a mean CPM of at least 5.
+3. Convert both tables to counts per million with `group_by(sample_id)` and
+   `mutate()`, as on the slide.
 
-4. Convert both filtered tables to counts per million, then to
-   `log2(cpm + 1)`. Plot a histogram of one feature before and after.
+4. Choose and apply a filter to each table. Write one sentence in your notebook
+   justifying each choice. For the gene table, filter on expression level rather
+   than prevalence, something like a mean CPM of at least 5. A grouped
+   `filter()` keeps or drops a whole feature at once:
+
+   ```r
+   species_long |>
+     group_by(taxon) |>
+     filter(mean(count > 0) >= 0.10) |>
+     ungroup()
+   ```
+
+   Then add a `log2(cpm + 1)` column and plot a histogram of one feature before
+   and after the log.
 
 5. **Build the grouping column.** From the species table, compute for each
    sample the fraction of its reads that belong to the genus *Lactobacillus*.
-   `03_microbiome_taxonomy.csv` tells you which species those are.
+   `03_microbiome_taxonomy.csv` tells you which species those are, and
+   `left_join()` attaches it to `species_long` by `taxon`.
 
    Then make a two-level column:
 
    - `lactobacillus` if that fraction is 0.5 or more
    - `anaerobe` if it is below 0.5
 
-   Save your per-sample table, including `sample_id`, `lacto_fraction` and this
-   new column, to a csv in your repository. This afternoon's notebook reads it
-   back, and so does Wednesday's.
+   Call the new column `community`. Save your per-sample table, including
+   `sample_id`, `lacto_fraction` and `community`, to
+   `data/my_sample_groups.csv`. This afternoon's notebook reads it back, and so
+   does Wednesday's.
 
 6. How many samples land in each group? Does the split change across the three
    visits?
@@ -46,7 +68,59 @@ Same notebook, second half.
    boxplot on a log scale. Which group is more diverse, and is that what you
    would call healthy?
 
-### Part 3: Check the agent
+### Part 3: Draw both tables with microViz
+
+1. Build the microViz object for each table and attach your `community`
+   column to it:
+
+   ```r
+   library(microViz)
+   source(here("R/count_tables.R"))
+
+   my_groups <- sample_groups |> select(sample_id, lacto_fraction, community)
+
+   species_ps <- as_counts(table = "microbiome") |> ps_join(my_groups, by = "sample_id")
+   genes_ps   <- as_counts(table = "rnaseq") |> ps_join(my_groups, by = "sample_id")
+   ```
+
+   Here `sample_groups` is the table you saved in Part 2. Print `species_ps`
+   and `genes_ps` and check the numbers of features and samples. `ps_join()`
+   drops the 22 species that have no reads in any sample, so `species_ps`
+   holds 198.
+
+2. Draw the stacked bar chart for each table:
+
+   ```r
+   species_ps |> comp_barplot(tax_level = "Genus", n_taxa = 10)
+   genes_ps   |> comp_barplot(tax_level = "symbol", n_taxa = 10)
+   ```
+
+   The gene one takes about a minute. Roughly what share of a typical bar is
+   "Other" in each?
+
+3. Draw the species table as a heatmap of the 20 largest genera, with your
+   `community` column as a strip along the top:
+
+   ```r
+   species_log <- species_ps |>
+     tax_transform("compositional", rank = "Genus") |>
+     tax_transform("log2", zero_replace = "halfmin", chain = TRUE)
+
+   species_log |>
+     comp_heatmap(
+       taxa = tax_top(species_log, n = 20),
+       sample_anno = sampleAnnotation(community = anno_sample_cat("community"))
+     )
+   ```
+
+   Do samples from the same community group sit next to each other? Which
+   genera separate the two groups?
+
+4. Make the same heatmap for the gene table, with `rank = "symbol"` and the 25
+   largest genes. Do the community groups sit together this time? Find two
+   genes whose rows look alike, and look up what they do.
+
+### Part 4: Check the agent
 
 - Ask Pi to compute the *Lactobacillus* fraction. Then check: does its answer
   for one sample you compute by hand agree to three decimal places?
@@ -57,8 +131,11 @@ Same notebook, second half.
   and maximum.
 - Ask it to justify the 0.5 cutoff. The answer will sound confident. Decide for
   yourself whether the reasoning holds up.
+- Ask Pi what `zero_replace = "halfmin"` does in your heatmap code, then ask
+  what the heatmap would look like with `zero_replace = 1`. Run both and see
+  whether it was right.
 
-### Part 4: Reach (optional)
+### Part 5: Reach (optional)
 
 Build the same per-sample summary table for one of the group project datasets,
 `group_a_probiotic` or `group_b_contraception`. The column names are identical,
@@ -67,6 +144,8 @@ so your code should run unchanged. If it does not, you hard-coded something.
 ### Discussion
 
 - What did you filter, and what did you lose?
+- The bar chart works for the species table and fails for the gene table. What
+  is different about the two tables that explains it?
 - The 0.5 cutoff is arbitrary. What would change in your conclusions if it were
   0.3, or 0.8?
 - In the gut, higher diversity is usually read as healthier. What did you find
