@@ -8,7 +8,7 @@ format: qmdrslides-revealjs
 
 **Before you arrive:** a GitHub account, a Discord account, and VS Code.
 
-**Before Tuesday morning:** your own copy of the workshop repository, your API key added to GitHub, and your codespace built once.
+**Before Tuesday morning:** your own copy of the workshop repository, your API key added to GitHub, your codespace built once, and VS Code connected to it.
 
 **During the workshop, together:** Pi.
 
@@ -109,11 +109,29 @@ The first build takes **10 minutes or more**. Let it finish.
 
 A list of packages and no `Error` means you're set. Type `q("no")` to leave R.
 
+## Step 12: Connect from VS Code
+
+From now on, open the codespace in the VS Code app instead of the browser.
+
+1. In VS Code, click the **bottom-left corner** icon (two small arrows)
+2. **"Connect to Codespace"** (install the extension if asked)
+3. Sign in to GitHub when asked, then click your codespace
+
+**Connect, never Create.** "Create New Codespace" gives you a new, empty one.
+
+Connected when the bottom-left corner shows **Codespaces:** and its name.
+
+## App won't connect?
+
+Use the browser instead. At [github.com/codespaces](https://github.com/codespaces): **⋯** → **"Open in"** → **"Open in browser"**.
+
+Use Chrome, Edge or Firefox, and allow clipboard access when asked.
+
 # During the workshop
 
-## Step 12: Meet Pi
+## Step 13: Meet Pi
 
-**Terminal → New Terminal**, then run `pi`.
+Open your codespace in VS Code, then **Terminal → New Terminal** and run `pi`.
 
 Ask in plain language. Pi can read your notebook, explain code and help you edit.
 
@@ -125,7 +143,7 @@ The codespace was probably launched before the key was added. Check the secret's
 
 1. Go to [github.com/codespaces](https://github.com/codespaces)
 2. **⋯** next to your codespace → **"Stop codespace"**
-3. Click its name to open it again
+3. Connect to it again from VS Code
 
 ## You're ready
 

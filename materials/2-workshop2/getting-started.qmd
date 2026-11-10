@@ -21,10 +21,11 @@ The setup comes in three parts:
 5. [Claim your API key in Discord](#sec-claim)
 6. [Add the key to your GitHub account](#sec-secret)
 7. [Launch your codespace and check that R works](#sec-launch)
+8. [Connect to your codespace from VS Code](#sec-connect)
 
 **During the workshop** (we do this together)
 
-8. [Meet Pi](#sec-pi)
+9. [Meet Pi](#sec-pi)
 
 ## Instructions in slide form (long form below)
 [Make slides full screen](getting-started-slides.qmd)
@@ -69,7 +70,7 @@ together.
 
 # Before Tuesday morning
 
-Do these four steps in order. Your codespace reads the API key when it is
+Do these steps in order. Your codespace reads the API key when it is
 first built, so the key has to be in GitHub before you launch the codespace.
 
 ## 4. Make your own copy of the workshop repository {#sec-repo}
@@ -185,12 +186,46 @@ Type `q("no")` to leave R.
 You can close the browser tab now. Your codespace will be waiting for you,
 listed at [github.com/codespaces](https://github.com/codespaces).
 
+## 8. Connect to your codespace from VS Code {#sec-connect}
+
+The codespace opened in a browser tab. For the rest of the week, open it from
+the VS Code app you installed in step 3 instead. It is the same editor, but
+keyboard shortcuts and copy-paste work better in the app.
+
+1. Open VS Code on your laptop.
+2. Click the icon in the **bottom-left corner** of the window (two small
+   arrows).
+3. Choose **"Connect to Codespace"**. If VS Code offers to install the GitHub
+   Codespaces extension first, accept.
+4. The first time, VS Code asks you to sign in to GitHub. A browser page opens;
+   approve it there and come back to VS Code. Use the same GitHub account as
+   in step 1.
+5. Your codespace appears in the list. Click it.
+
+::: {.callout-warning}
+## Connect, never Create
+
+The same menu offers **"Create New Codespace"**. Choose **"Connect to
+Codespace"** every time, today and every morning after. Create gives you a
+new, empty codespace, and your work ends up split across several of them.
+:::
+
+When it has connected, the bottom-left corner of VS Code shows
+**Codespaces:** followed by your codespace's name. If it doesn't, you are
+looking at a plain VS Code window on your laptop, not your codespace.
+
+If the app won't connect after a couple of tries, use the browser instead:
+at [github.com/codespaces](https://github.com/codespaces), click **⋯** next to
+your codespace and choose **"Open in" → "Open in browser"**. Everything in the
+workshop works there too. Use Chrome, Edge or Firefox, and allow clipboard
+access when the browser asks, or pasting into the terminal won't work.
+
 # During the workshop
 
-## 8. Meet Pi {#sec-pi}
+## 9. Meet Pi {#sec-pi}
 
-Open your codespace, open a terminal (**Terminal → New Terminal**), type `pi`
-and press Enter. Pi is the AI coding agent you'll use all week. Ask it
+Open your codespace in VS Code (step 8), open a terminal (**Terminal → New
+Terminal**), type `pi` and press Enter. Pi is the AI coding agent you'll use all week. Ask it
 questions in plain language: it can read your notebook, explain code and help
 you make changes.
 
@@ -205,6 +240,6 @@ repository. Then restart the codespace so it picks the key up:
 
 1. Go to [github.com/codespaces](https://github.com/codespaces).
 2. Click the **⋯** menu next to your codespace and choose **"Stop codespace"**.
-3. When it has stopped, click the codespace's name to open it again.
+3. When it has stopped, connect to it again from VS Code (step 8).
 
 If you're still stuck, ask a teaching assistant.
