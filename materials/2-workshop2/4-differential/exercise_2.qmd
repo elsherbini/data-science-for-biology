@@ -1,13 +1,17 @@
 ## Exercise 2: The same test, on the species table
 
-This is the second half of the same notebook. You run the same three lines of
-code on the 220-row species table instead of the 14,226-row gene table, with a
-grouping that comes from the clinic rather than from either count table.
+> The same three lines of DESeq2 on the species table give a list of familiar
+> bacterial vaginosis organisms, and that list comes from the wrong
+> normalisation. Nothing in the output warns you. This exercise has you look
+> behind a result that looks right.
+
+Same notebook. Type `/new` in Pi first. Steps 3 and 5 each save a file that
+tomorrow's notebook reads, so make sure you reach both.
 
 ### Part 1: Predict
 
 1. Why can you not test the species table using the `community` column you built
-   yesterday? Answer in one sentence.
+   on Tuesday? Answer in one sentence.
 2. You will test species against birth outcome. The species table has 220 rows,
    but most are nearly always absent. How many do you expect to survive a
    filter of "present in at least 10% of samples"? Of those, how many are present
@@ -15,73 +19,77 @@ grouping that comes from the clinic rather than from either count table.
 3. If any species come out significant, do you expect them to be higher in the
    preterm group or the term group?
 
-### Part 2: Build
+### Part 2: Ask, look, decide
 
-1. Subset to `time_point == "week_18"` again. Filter the species table to
-   features present in at least 10% of samples.
+1. The default run:
 
-2. Run the same three lines with `design = ~ outcome` and
-   `contrast = c("outcome", "preterm", "term")`. How many species are
-   significant?
+   > Using `d` and `metadata` from the setup chunk, keep the week 18 samples
+   > and the species present in at least 10% of them. Run DESeq2 on the raw
+   > counts with `~ outcome` and the contrast preterm against term, with the
+   > default settings. Add `Genus` and `Family` from `d$taxonomy`, and list the
+   > significant species with their fold changes.
 
-3. Look at how DESeq2 normalised the samples. Count the species with no zero in
-   any sample, `sum(rowSums(counts == 0) == 0)`. Then plot `sizeFactors(dds)`
-   against each sample's *L. iners* share, both on log scales. What are the
-   size factors really measuring?
+   Ask Pi how many species it kept and how many are significant. You should
+   see 53 species tested and 19 significant. Read the names. Do they look like
+   what you would expect for preterm birth?
 
-4. Run it again with size factors built for a table full of zeros:
+2. Look behind it. Ask Pi how many of the 53 species have no zero in any
+   sample, and which ones. Then ask for two plots: each sample's size factor
+   against its *L. iners* share, and each sample's size factor against its
+   library size, both on log scales. What are the size factors measuring?
+   Ask Pi to explain why, and check its explanation against the "median of
+   ratios" slide.
 
-   ```r
-   dds <- DESeqDataSetFromMatrix(counts, sample_table, ~ outcome)
-   dds <- estimateSizeFactors(dds, type = "poscounts")
-   dds <- DESeq(dds)
-   res <- results(dds, contrast = c("outcome", "preterm", "term"))
-   ```
+3. Alternatives side by side. Ask Pi to run the same test with
+   `estimateSizeFactors(dds, type = "poscounts")`, which is built for tables
+   full of zeros, and to put the two runs in one table: species significant,
+   and how many are higher in preterm. The poscounts run should find none.
 
-   How many species are significant now? Keep this version for the rest of the
-   exercise and for tomorrow.
+   Keep the poscounts version. Save it to `data/species_by_outcome.csv` with
+   the columns `feature` (the species name), `baseMean`, `log2FoldChange`,
+   `lfcSE`, `stat`, `pvalue`, `padj`, `Genus` and `Family`. Write one sentence
+   in your notebook on why the first list, which looked right, was not.
 
-5. Join `03_microbiome_taxonomy.csv` so you have readable names, and list the
-   top ten species by `padj` with their fold changes, whether or not any pass.
-   How many of the ten lean toward preterm?
+4. Many views of a null result. Ask for the top ten species by `padj` from the
+   poscounts run, with fold changes, whether or not any pass. How many lean
+   toward preterm? Check two of the names against `d$taxonomy` yourself,
+   because agents invent plausible species names. Then ask for the relative
+   abundance of the top three by outcome, three ways: boxplots on a log scale,
+   the share of samples where each one is present in each group, and the same
+   species across all three visits. Which view is most honest about how weak
+   the signal is?
 
-6. Plot the relative abundance of the top three species by outcome. Use
-   proportions, not raw counts, and consider a log scale.
+5. The gene table against outcome. Ask for the same `~ outcome` test on the
+   gene table, set up exactly as in Exercise 1. Save it to
+   `data/genes_by_outcome.csv` with the same columns as
+   `data/genes_by_community.csv`.
 
-7. Now run the test a second way, on the gene table, with the same
-   `~ outcome` design. Compare the two result sets:
+   Then ask for one table comparing your three tests (genes by community,
+   genes by outcome, species by outcome): features tested, significant, and
+   significant with more than a two-fold change. Check it against the slides:
+   1,698 genes significant by outcome and only 50 of them more than two-fold.
+   Ask for the two gene volcano plots side by side on the same axes. Write down
+   what the comparison tells you about where the outcome signal lives.
 
-   - how many features were tested in each
-   - how many were significant in each
-   - what share of the significant ones changed by more than a factor of two
+6. Argue with it. Ask Pi whether DESeq2 is an appropriate method for
+   microbiome counts. Researchers disagree about this, so a confident
+   one-sided answer is a warning sign. Then ask it to argue the opposite
+   position, and decide which argument is stronger.
 
-   Save these gene results. Tomorrow's enrichment module starts from them.
+   Then ask it to repeat the gene test with Nugent score of 7 or more as the
+   grouping. Fewer samples have a Nugent score. Did Pi tell you it dropped
+   samples, and how many it kept?
 
-   Write down what that comparison tells you about where the outcome signal
-   lives.
+### Part 3: Reach (optional)
 
-### Part 3: Check the agent
+Ask Pi to run the species-by-outcome test on all 471 samples, with each
+participant appearing three times, and compare the number of significant
+species with your 157-sample result. More samples gave you more hits. Are they
+real? What assumption did you break?
 
-- A filter on a sparse table is easy to get wrong. Ask Pi how many species it
-  kept and recompute that number yourself from `rowMeans(counts > 0)`.
-- Ask it whether DESeq2 is an appropriate method for microbiome counts. Read its
-  answer critically. Researchers disagree about this, so a confident one-sided
-  answer is a warning sign.
-- Ask Pi how DESeq2 computed the size factors for the species table, and how
-  many species went into them. Check its answer against your count from step 3.
-- Ask it to name the top species. Then check two of them against
-  `03_microbiome_taxonomy.csv` by hand. Agents invent plausible species names.
-- Ask it to also run the test with `~ nugent >= 7` as the grouping instead of
-  outcome. Fewer samples have a Nugent score, so the sample count drops. Make
-  sure it tells you that it dropped samples.
-
-### Part 4: Reach (optional)
-
-Run your species-by-outcome analysis on all 471 samples, with each participant
-appearing three times. Compare the number of significant species to your
-157-sample result.
-
-More samples gave you more hits. Are they real? What assumption did you break?
+If you have time after that, ask for a short Quarto report of today's tests
+that ends in `## Choices made`: samples, filters, size factors, cutoffs, and
+one alternative for each.
 
 ### Discussion
 

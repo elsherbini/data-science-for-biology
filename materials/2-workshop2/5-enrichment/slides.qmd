@@ -508,10 +508,12 @@ than for whether it came from RNA-seq or 16S.
 ## In the exercise
 
 ::: {.incremental}
-1. Rank your genes and run fgsea against Hallmark
-2. Check your ranking for imbalance before you believe the result
-3. Pull out a leading edge and look at the actual genes
-4. Build taxonomic sets and run the same function on 53 species
+1. Ask Pi to rank your genes and run fgsea against Hallmark, then check that
+   the identifiers matched
+2. Let Pi interpret the top sets, then count how many genes they share
+3. Check your ranking for imbalance before you believe the result
+4. Compare against a cutoff-based test and a second set collection
+5. Build taxonomic sets and run the same function on 53 species
 :::
 
 ## Your turn {.your-turn}

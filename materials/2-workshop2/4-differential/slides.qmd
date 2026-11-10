@@ -523,6 +523,23 @@ The microbiome tools exist because that table is compositional and sparse in a
 way gene tables are not, as the size factors just showed. The case for them is worth reading before you publish a
 microbiome analysis.
 
+## In the exercises
+
+::: {.incremental}
+1. Ask Pi to test the gene table by community, and check the sample order and
+   the direction of the contrast
+2. Look at the result as a volcano plot, an MA plot, a p-value histogram and
+   boxplots
+3. Try several cutoffs and gene filters side by side
+4. Test the species table by outcome, then find out what the size factors did
+5. Save three result files for tomorrow
+:::
+
+. . .
+
+As before, Pi writes the code. Every step ends with something for you to check
+or decide.
+
 ## Your turn {.your-turn}
 
 Open `notebooks/04-differential.qmd`.

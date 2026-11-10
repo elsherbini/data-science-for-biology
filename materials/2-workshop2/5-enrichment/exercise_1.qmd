@@ -1,8 +1,13 @@
 ## Exercise 1: From a gene list to a sentence
 
-Open `notebooks/05-enrichment.qmd`. You need yesterday's preterm-versus-term
-results for the gene table, from step 7 of Module 4's second exercise. If you no
-longer have them, rerun the three lines that made them.
+> An enrichment table turns 1,698 genes into a sentence you could put in an
+> abstract, and Pi will happily write that sentence for you. The work in this
+> exercise is checking whether the sentence is real: whether the identifiers
+> matched, whether the sets are separate findings, and whether a lopsided
+> ranking could have produced the same table.
+
+Open `notebooks/05-enrichment.qmd` and run the setup chunk. It reads the three
+result files you saved yesterday. Start Pi with a fresh conversation.
 
 ### Part 1: Predict
 
@@ -14,52 +19,62 @@ longer have them, rerun the three lines that made them.
 3. Name one biological program you expect to be elevated in the people who
    delivered preterm. You will check this against the answer.
 
-### Part 2: Build
+### Part 2: Ask, look, decide
 
-1. Build the ranking vector from your outcome results: `res$stat`, named by
-   gene, with missing values dropped. How many genes are in it?
+1. Run the enrichment:
 
-2. Get the Hallmark sets:
+   > Using `genes_by_outcome` from the setup chunk, make a ranking vector from
+   > `stat`, named by the Ensembl ID in `feature`, with missing values dropped.
+   > Get the human Hallmark sets with msigdbr, using Ensembl IDs. Run
+   > `fgsea(sets, stat, minSize = 15, maxSize = 500)` and sort by `padj`.
 
-   ```r
-   hallmark <- msigdbr::msigdbr(species = "Homo sapiens", collection = "H")
-   sets <- split(hallmark$ensembl_gene, hallmark$gs_name)
-   ```
+   Then ask Pi how many genes are in the ranking (about 13,700) and how many of
+   them appear in at least one Hallmark set. If that second number is close to
+   zero, the identifiers did not match, and fgsea will still return a
+   plausible-looking table. Ask how many sets are significant and how many
+   point each way. You should see 26, with 23 higher in preterm.
 
-   Check that the identifiers in `sets` are the same kind as the names of your
-   ranking vector. If one is Ensembl and the other is a symbol, nothing will
-   match, and `fgsea` will return almost nothing without raising an error.
+2. One result, several plots. Ask for a bar chart of `NES` for the top twelve
+   sets, coloured by direction; the running-score plot for the top set; and a
+   dot plot of all 50 sets with `NES` on one axis, `-log10(padj)` on the other
+   and dot size for set size. Which would you put in a paper, and which tells
+   you most about how the method works?
 
-3. Run `fgsea(sets, stat, minSize = 15, maxSize = 500)`. Sort by `padj`. How
-   many sets are significant, and how many point in each direction?
+3. A report, audited. From here on, write your own requests. Ask Pi to
+   interpret the top five sets in a paragraph. It will probably write
+   something confident about inflammation and preterm birth. Then ask for a
+   table of how many genes each pair of those five sets share. Mark which of
+   Pi's "findings" are the same genes counted twice.
 
-4. Plot the top twelve as a bar chart of `NES`, coloured by direction.
+4. Could the ranking have done this on its own? First ask Pi that question
+   about your outcome result, and see whether it checks or just reassures you.
 
-5. **Check for imbalance.** What share of your ranking statistic is positive?
-   What is its mean? Now do the same for your anaerobe-versus-Lactobacillus
-   ranking, and run `fgsea` on that too. Compare the two in a small table:
-   genes up, genes down, sets significant, sets pointing one way.
+   Then run the same enrichment on `genes_by_community` and ask for one table
+   with both rankings: genes up, genes down, sets significant, sets pointing
+   one way. Then ask for the share of positive statistics among all genes,
+   among significant genes, and among the 500 genes with the largest absolute
+   `stat`, for both rankings. Check it against the slides: about 50% for
+   outcome and about 4% for community among the 500 strongest.
 
    Write one sentence saying which of the two enrichment results you trust and
    why.
 
-6. Take the leading edge of your top set. Map those Ensembl identifiers to
-   symbols with `05_gene_annotation.csv` and read the list. Plot normalised
-   counts for two of them by outcome.
+5. Alternatives side by side. Ask for the cutoff version as well: a
+   hypergeometric test using only the genes with `padj` below 0.05, run for up
+   and down genes separately. Then ask for fgsea on the Reactome collection
+   (msigdbr collection `C2`, subcollection `CP:REACTOME`). Put the top results
+   of all three next to each other. Where do they agree? Where they disagree,
+   which method threw away information?
 
-### Part 3: Check the agent
+6. Look at the genes. Ask for the leading edge of your top set, mapped to gene
+   symbols with `d$gene_info`, and read the list. Then ask for the counts per
+   million of two of those genes at week 18, by outcome. Does the plot look like
+   the effect the enrichment table describes?
 
-- Ask Pi to run the enrichment. Then ask how many of your genes matched into any
-  set at all. An identifier mismatch is the most common failure here, and it
-  fails silently with plausible-looking output.
-- Ask it to interpret the top five sets. It will write a confident paragraph
-  about inflammation and preterm birth. Ask it which of those five sets share
-  genes with each other. Overlapping sets are not independent findings.
-- Ask it whether your result could be an artifact of the ranking being lopsided.
-  See whether it checks or just reassures you.
-- Ask it for the hypergeometric version using only your significant genes.
-  Compare the two answers. Where they disagree, work out which is throwing away
-  information.
+7. Polish one figure. Make the `NES` bar chart ready for a talk: set names
+   without the `HALLMARK_` prefix and in lower case, colours labelled "higher
+   in preterm" and "higher in term", set size shown somewhere, and text large
+   enough for a projector.
 
 ### Discussion
 
@@ -68,3 +83,5 @@ longer have them, rerun the three lines that made them.
   counting?
 - Yesterday preterm against term gave you 1,698 genes and no clear story; today
   it gives you one sentence. What did enrichment add, and what did it hide?
+- Which of Pi's claims would you have believed if you had not asked for the
+  overlap table and the balance check?

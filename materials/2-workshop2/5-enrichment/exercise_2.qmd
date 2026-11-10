@@ -1,7 +1,10 @@
 ## Exercise 2: The same function, on 53 species
 
-Same notebook. You will now use the identical `fgsea()` call on a table with 53
-features instead of 13,738, with sets built from taxonomy instead of curation.
+> The identical `fgsea()` call runs on 53 species, with sets built from
+> taxonomy instead of curation. Pi will run it without complaint. Whether it
+> was worth running is the question you have to answer.
+
+Same notebook. Type `/new` in Pi first.
 
 ### Part 1: Predict
 
@@ -11,57 +14,54 @@ features instead of 13,738, with sets built from taxonomy instead of curation.
 3. Will testing ten genus sets need as aggressive a multiple-testing correction
    as testing fifty gene sets?
 
-### Part 2: Build
+### Part 2: Ask, look, decide
 
-1. Take your species-by-outcome DESeq2 results from yesterday, the `poscounts`
-   version. Build the ranking vector from `stat` as before.
+1. Build the sets and run it:
 
-2. Join `03_microbiome_taxonomy.csv` so each species carries its `Genus` and
-   `Family`.
+   > Using `species_by_outcome` from the setup chunk, make a ranking vector
+   > from `stat`, named by `feature`. Build one set per genus from the `Genus`
+   > column, keeping genera with at least two species. Run
+   > `fgsea(genus_sets, species_stat, minSize = 2, maxSize = 50)` and sort by
+   > `padj`.
 
-3. Build the sets:
+   Check the sets before the results. Ask Pi how many genus sets there are
+   (10) and how many species are in the largest (12, *Prevotella*). Ask it to
+   confirm that no species is in two sets and that there is no set called
+   `NA`, which is what species with a missing genus become if nobody checks.
+   Then read the results. Which genus is on top, and does anything pass?
 
-   ```r
-   genus_sets <- split(results$feature, results$Genus)
-   genus_sets <- genus_sets[lengths(genus_sets) >= 2]
-   ```
+2. Family instead of genus. Ask for the same analysis with `Family`, and both
+   tables side by side. Does the top family contain the top genus? Do the two
+   levels tell the same story?
 
-   How many genus sets do you have? How many species are in the largest?
-
-4. Run `fgsea(genus_sets, species_stat, minSize = 2, maxSize = 50)`. Which
-   genera are significant?
-
-5. Repeat with `Family` instead of `Genus`. Does the answer agree? Check whether the
-   top family contains the top genus.
-
-6. Now do it the simple way. Just sort your 53 species by `stat` and print the
-   table with genus labels. Would you have reached the same conclusion without
+3. The simple way. Ask for the 53 species sorted by `stat` as a table with
+   their genus, and as a plot of rank against `stat` with the species of the
+   top two genera coloured. Would you have reached the same conclusion without
    any enrichment analysis at all?
 
-7. Write two or three sentences in your notebook answering: for which of our two
-   tables was set-based analysis worth doing, and what feature of the table
+4. Argue with it. Ask Pi whether enrichment analysis was useful on the species
+   table. Then ask it to defend the opposite position. Compare the two answers
+   and decide which argument is stronger.
+
+5. Write two or three sentences in your notebook answering: for which of our
+   two tables was set-based analysis worth doing, and what feature of the table
    decides that?
 
-### Part 3: Check the agent
+### Part 3: Reach (optional)
 
-- Ask Pi to build the genus sets. Then check that no species appears in two
-  sets, and that the set sizes sum to no more than the number of species you
-  ranked.
-- Species with a missing genus become a set called `NA` if you are careless.
-  Check whether that happened.
-- Ask Pi whether enrichment analysis was useful on the species table. Then ask
-  it to defend the opposite position. Compare the two answers and decide which
-  argument is stronger.
+Invent a better set definition for the species table. Rather than taxonomy,
+group species by something functional: whether they are *Lactobacillus* or
+not, whether they are strict anaerobes, whether they are on a published list of
+BV-associated organisms. Ask Pi to help you build the sets, then read every set
+it makes. Where did it get the information that a species is a strict
+anaerobe, and can you check it?
 
-### Part 4: Reach (optional)
+Run `fgsea` with your hand-built sets. A set definition that encodes real
+biology can beat a taxonomic one, and designing such sets is research in its
+own right.
 
-Invent a better set definition for the species table. Rather than taxonomy, group
-species by something functional: whether they are *Lactobacillus* or not, whether
-they are strict anaerobes, whether they are on a published list of
-BV-associated organisms.
-
-Run `fgsea` with your hand-built sets. A set definition that encodes real biology
-can beat a taxonomic one, and designing such sets is research in its own right.
+If you have time after that, ask for one Quarto report covering yesterday's
+tests and today's enrichment, ending in `## Choices made`.
 
 ### Discussion
 

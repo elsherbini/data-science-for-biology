@@ -1,8 +1,13 @@
 ## Exercise 1: Test the gene table with a grouping from the species table
 
-Open `notebooks/04-differential.qmd`. Start by reading back the per-sample table
-you saved yesterday, the one with `lacto_fraction` and `community` in it. If you
-did not save it, rebuild it now; the slides from Module 2 have the recipe.
+> Pi can run DESeq2 in a minute. Most of the decisions that shape the answer
+> come before the test (which samples, which genes, which way round the
+> contrast goes) or after it (which cutoff, which plot). Those decisions are
+> yours, and this exercise has you look at several versions of each.
+
+Open `notebooks/04-differential.qmd` and run the setup chunk. It reads back the
+`community` column you saved on Tuesday and joins it to the metadata. Start Pi
+with a fresh conversation.
 
 ### Part 1: Predict
 
@@ -14,55 +19,71 @@ did not save it, rebuild it now; the slides from Module 2 have the recipe.
 3. Of the genes that do come out significant, do you expect more to be higher in
    anaerobe-dominant samples or in Lactobacillus-dominant samples?
 
-### Part 2: Build
+### Part 2: Ask, look, decide
 
-1. Subset both the metadata and the gene counts to `time_point == "week_18"`.
-   Confirm you have 157 samples and that the column order of the count matrix
-   matches the row order of the sample table. If they don't match, DESeq2 gives
-   you nonsense without any warning.
+1. Set up and run the test:
 
-2. Filter the genes. Keep a gene if it has a count of at least 10 in at least a
-   quarter of the samples.
+   > Using `d` and `metadata` from the setup chunk, keep only the week 18
+   > samples. Keep genes with a count of at least 10 in at least a quarter of
+   > those samples. Run DESeq2 on the raw counts with `~ community` and the
+   > contrast anaerobe against lactobacillus. Add gene symbols and names from
+   > `d$gene_info`. Save the results table to `data/genes_by_community.csv`
+   > with the columns `feature` (the Ensembl ID), `baseMean`,
+   > `log2FoldChange`, `lfcSE`, `stat`, `pvalue`, `padj`, `symbol` and
+   > `gene_name`.
 
-3. Run the three lines:
+   Tomorrow's notebook reads that file. Before you go on, ask Pi to tell you
+   how many samples are in each group (37 and 120), how many genes went into
+   the test (13,738), and to print the first five count-table column names
+   next to the first five `sample_id` values of the sample table. If those two
+   lists are not in the same order, DESeq2 gives you nonsense without a
+   warning.
 
-   ```r
-   dds <- DESeqDataSetFromMatrix(counts, sample_table, ~ community)
-   dds <- DESeq(dds)
-   res <- results(dds, contrast = c("community", "anaerobe", "lactobacillus"))
-   ```
+2. A short report:
 
-4. How many genes have `padj < 0.05`? How many of those have an absolute
-   `log2FoldChange` above 1?
+   > Write a summary of the results: how many genes have `pvalue` below 0.05,
+   > how many have `padj` below 0.05, how many of those change more than
+   > two-fold, and how many go each way. Then list the top 20 genes by `padj`
+   > with symbol, name and fold change.
 
-5. Join `05_gene_annotation.csv` so your results carry gene symbols rather than
-   Ensembl identifiers. Sort by `padj` and read the top twenty names out loud to
-   your group.
+   Check it against the slides: 1,815 genes at `padj` below 0.05, and 303 of
+   them more than two-fold. Read the top 20 names out loud to your group. What
+   do they have in common?
 
-6. Draw a volcano plot: `log2FoldChange` on x, `-log10(padj)` on y, coloured by
-   whether the gene passed.
+3. One result, four plots. From here on, write your own requests. Ask for a
+   volcano plot, an MA plot (fold change against mean count), a histogram of
+   the raw p-values with a line where they would sit if no gene differed, and
+   boxplots of normalised counts for the top six genes by community.
 
-7. Pick the single top gene and plot its normalised counts as a boxplot by
-   community. The direction of that plot must match the sign of its
-   `log2FoldChange`. Check that it does.
+   Check the direction: each boxplot must be higher on the side that the sign
+   of its `log2FoldChange` says. Ask Pi to explain the sign convention of your
+   contrast first, then compare its explanation with the boxplots. Getting the
+   direction backwards is the most common error in this analysis.
 
-### Part 3: Check the agent
+4. Cutoffs are choices. Ask for a table of how many genes pass at `padj` of
+   0.01, 0.05 and 0.1, crossed with an absolute fold change of 0, 1.5, 2 and 4
+   (`log2FoldChange` of 0, 0.58, 1 and 2). Then ask Pi to rerun the test with a
+   looser gene filter (at least 10 counts in 10% of samples) and a stricter one
+   (in 50%), and to show genes tested, genes significant and how much of the
+   top 20 stays the same. Which of these choices changes what you would report?
 
-- Ask Pi how many genes were significant. Then ask it how many genes went into
-  the test. If it can't give you both numbers, it doesn't know what it ran.
-- Ask it to explain the sign convention of your contrast. Then verify against
-  the boxplot from step 7. Getting the direction backwards is the most common
-  error in this analysis, and it regularly gets through peer review.
-- Ask it for the number of genes with `pvalue < 0.05` as well as `padj < 0.05`.
-  The first number should be far larger. If it is not, something is wrong.
-- Ask it to run the same test on CPM-normalised counts instead of raw counts.
-  It will probably do it. Look at what happens to the results and work out why
-  that is wrong.
+5. Argue with it. Ask Pi to rerun the test on counts per million instead of raw
+   counts. It may do it, or it may round the numbers to make DESeq2 accept
+   them. Look at what happens to the results and work out why it is wrong.
+   Then ask whether you should have used all 471 samples, and push on the
+   answer until it mentions that each person would appear three times.
+
+6. Polish the volcano plot for a talk. Label the ten strongest genes by symbol
+   without the labels overlapping. Colour up and down in two colours you
+   choose, and put the direction in words under the x axis, "higher in
+   Lactobacillus-dominant" on one side and "higher in anaerobe-dominant" on the
+   other. Draw dashed lines at your cutoffs and save it as a PNG.
 
 ### Discussion
 
 - Did the direction of the effect surprise you?
 - What do the top genes have in common? You do not need to know the genes; read
   the names in `gene_name` and describe the pattern in plain words.
+- Which cutoff did you settle on, and would a reviewer accept your reason?
 - Someone will have used all 471 samples instead of 157. What is wrong with
   that, and how wrong is it?
