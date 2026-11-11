@@ -397,6 +397,29 @@ To get a figure into the deck, ask Pi to save it as a PNG in
 `group_project/figures/`, then right-click the file in the Codespace file list
 and choose **Download**.
 
+## Sharing a report with your group
+
+A rendered `.html` file keeps its figures and styling in a separate `_files`
+folder, so if you download only the `.html` and send it to someone, the
+figures are missing. Ask Pi to put everything in one file:
+
+```
+Render group_project/01-qc.qmd with embed-resources: true so the HTML
+is a single file I can share.
+```
+
+Then right-click the `.html` file in the Codespace file list, choose
+**Download**, and send it to your group.
+
+If you want every render to do this, ask Pi to add it to the YAML header at the
+top of your `.qmd`:
+
+```yaml
+format:
+  html:
+    embed-resources: true
+```
+
 ## The QC report
 
 Everyone starts with the same prompt. Copy the one for your study into Pi as it
