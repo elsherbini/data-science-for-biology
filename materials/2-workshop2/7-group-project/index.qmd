@@ -11,11 +11,12 @@ format:
 
 ## Groups and pairs
 
-There are ten groups of six people. Five groups (A1 to A5) take Study A and five
-(B1 to B5) take Study B. You meet your group on Wednesday morning.
+There are ten groups: five of six people and five of seven. Five groups (A1 to
+A5) take Study A and five (B1 to B5) take Study B. You meet your group on
+Wednesday morning.
 
 Inside your group you work in three pairs, and each pair takes one
-sub-question. Both partners work on the same sub-question separately, each in
+sub-question. In a group of seven, one of the pairs has three people. Both partners work on the same sub-question separately, each in
 their own Codespace with their own Pi, and you do not compare notes until the
 first check-in. Pi will usually take a different route for each of you, and
 working out why is most of the job.
@@ -24,6 +25,223 @@ On Friday each Study A group pairs with the Study B group of the same number and
 sits with them. A1 presents to B1, then B1 presents to A1; A2 and B2 do the same
 nearby, and so on. Your audience has spent two mornings on a different dataset,
 so explain your study before your result.
+
+### Find your group
+
+Type part of your name to find your group. If your name is missing or spelled
+wrong, tell one of the TAs.
+
+```{=html}
+<style>
+.group-finder input {
+  width: 100%; max-width: 28rem; box-sizing: border-box; font-size: 1.25rem; padding: .5rem .75rem;
+  border: 2px solid var(--bs-border-color); border-radius: .5rem;
+}
+.group-finder input:focus { outline: none; border-color: var(--bs-primary); }
+.group-finder-status { min-height: 1.6em; margin: .5rem 0 1rem; font-size: 1.1rem; font-weight: 600; }
+.group-grid {
+  display: grid; gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr));
+}
+.group-card {
+  border: 1px solid var(--bs-border-color); border-radius: .5rem;
+  background: var(--bs-body-bg); padding: .75rem 1rem;
+  transition: opacity .15s, box-shadow .15s, border-color .15s;
+}
+.group-card header { margin-bottom: .5rem; }
+.group-card .group-label { display: block; font-size: 2rem; font-weight: 700; line-height: 1.1; color: var(--bs-primary); }
+.group-card[data-group^="B"] .group-label { color: var(--bs-success); }
+.group-card .group-meta { display: block; font-size: .8rem; color: var(--bs-secondary-color); }
+.group-card ul { list-style: none; padding: 0; margin: 0; }
+.group-card li { padding: .1rem 0; }
+.group-card li.is-match { font-weight: 700; }
+.group-card li.is-match mark { padding: 0 .1em; }
+.group-grid.is-searching .group-card { opacity: .3; }
+.group-grid.is-searching .group-card.is-match {
+  opacity: 1; border-color: var(--bs-primary); box-shadow: 0 0 0 3px rgba(0, 129, 124, .25);
+}
+</style>
+<div class="group-finder">
+  <label for="group-search" class="visually-hidden">Search for your name</label>
+  <input id="group-search" type="search" placeholder="Type your name" autocomplete="off">
+  <p class="group-finder-status" id="group-search-status" aria-live="polite"></p>
+</div>
+<div class="group-grid" id="group-grid">
+  <section class="group-card" id="group-a1" data-group="A1">
+    <header><span class="group-label">A1</span><span class="group-meta">Study A &middot; Friday with B1</span></header>
+    <ul>
+      <li>Abubakar Suleiman Masoud</li>
+      <li>Arthur Baluwa</li>
+      <li>Brian Kipkorir</li>
+      <li>Matrona Mbendo Akiso</li>
+      <li>Samuel Chima Ugbaja</li>
+      <li>Simarin Naicker</li>
+      <li>Terry Idaya Ngala</li>
+    </ul>
+  </section>
+  <section class="group-card" id="group-a2" data-group="A2">
+    <header><span class="group-label">A2</span><span class="group-meta">Study A &middot; Friday with B2</span></header>
+    <ul>
+      <li>Elizabeth Wamoni Kimani</li>
+      <li>Evans O. Mudibo</li>
+      <li>Felix Maingi</li>
+      <li>Festus David Lutaaya</li>
+      <li>Julia Wangui Nderitu</li>
+      <li>Khadija Muhammad</li>
+    </ul>
+  </section>
+  <section class="group-card" id="group-a3" data-group="A3">
+    <header><span class="group-label">A3</span><span class="group-meta">Study A &middot; Friday with B3</span></header>
+    <ul>
+      <li>Arnold Lambisia</li>
+      <li>Ezbon Kiprotich Malel</li>
+      <li>Jerome Bright Ogenrwot</li>
+      <li>Joel Walugembe</li>
+      <li>Jonathan Mutinda</li>
+      <li>Noella Awino Okumu</li>
+    </ul>
+  </section>
+  <section class="group-card" id="group-a4" data-group="A4">
+    <header><span class="group-label">A4</span><span class="group-meta">Study A &middot; Friday with B4</span></header>
+    <ul>
+      <li>Collins Amoo</li>
+      <li>David Mwania</li>
+      <li>Delphine Lagat</li>
+      <li>John Nderitu Kimotho</li>
+      <li>Joseph Michael Okorie</li>
+      <li>Samson Otiso Oyieyo</li>
+      <li>Stephen Njuguna Kuria</li>
+    </ul>
+  </section>
+  <section class="group-card" id="group-a5" data-group="A5">
+    <header><span class="group-label">A5</span><span class="group-meta">Study A &middot; Friday with B5</span></header>
+    <ul>
+      <li>Aliyi Hassen Jarso</li>
+      <li>Ann Laigong&#x27;</li>
+      <li>Mukisa John</li>
+      <li>Purity Wanjiku Njenga</li>
+      <li>Rahma Ordofa Golicha</li>
+      <li>Samuel Muoria Ng&#x27;ang&#x27;a</li>
+      <li>Vanessa Natasha Onyonyi</li>
+    </ul>
+  </section>
+  <section class="group-card" id="group-b1" data-group="B1">
+    <header><span class="group-label">B1</span><span class="group-meta">Study B &middot; Friday with A1</span></header>
+    <ul>
+      <li>Anthony Njooro</li>
+      <li>Fathy Jacob Fathy Hanna</li>
+      <li>Munyaradzi Paul Mapingure</li>
+      <li>Privilege Tendai Munjoma</li>
+      <li>Samuel Kariuki Ndegwa</li>
+      <li>Samwel Elegwa</li>
+    </ul>
+  </section>
+  <section class="group-card" id="group-b2" data-group="B2">
+    <header><span class="group-label">B2</span><span class="group-meta">Study B &middot; Friday with A2</span></header>
+    <ul>
+      <li>Doreen Kinya</li>
+      <li>Endalkachew Girma Andargie</li>
+      <li>Immaculate Nkatha Kaikitha</li>
+      <li>Khautu Zanelle</li>
+      <li>Sally Karimi Kinyua</li>
+      <li>Sandra Achieng Otieno</li>
+      <li>Shakira Babirye</li>
+    </ul>
+  </section>
+  <section class="group-card" id="group-b3" data-group="B3">
+    <header><span class="group-label">B3</span><span class="group-meta">Study B &middot; Friday with A3</span></header>
+    <ul>
+      <li>Kasmira Gopee</li>
+      <li>Misheck Ndirangu Munga</li>
+      <li>Oyintando Somila Ntsiyane</li>
+      <li>Samuel Chenge</li>
+      <li>Sheila Okwisa Francis</li>
+      <li>Sophia Mogere Nyasore</li>
+    </ul>
+  </section>
+  <section class="group-card" id="group-b4" data-group="B4">
+    <header><span class="group-label">B4</span><span class="group-meta">Study B &middot; Friday with A4</span></header>
+    <ul>
+      <li>Alvin Odongo</li>
+      <li>Bantayehu Bekele Amde</li>
+      <li>Marea Neo Pema</li>
+      <li>Meshack Tweya Omwega</li>
+      <li>Rachael Gachogo</li>
+      <li>Zamira Wesonga</li>
+    </ul>
+  </section>
+  <section class="group-card" id="group-b5" data-group="B5">
+    <header><span class="group-label">B5</span><span class="group-meta">Study B &middot; Friday with A5</span></header>
+    <ul>
+      <li>Benn Kibui Kibunja</li>
+      <li>Erika Manuela Londi Teujou</li>
+      <li>Jimmy Kipetuan Nkaiwuatei</li>
+      <li>Kitts Kikumu</li>
+      <li>Oluwaseun O. Taofeek</li>
+      <li>Paola Isabella Sabbatini</li>
+      <li>Rozy Abiero</li>
+    </ul>
+  </section>
+</div>
+<script>
+(function () {
+  var input = document.getElementById('group-search');
+  var grid = document.getElementById('group-grid');
+  var status = document.getElementById('group-search-status');
+  var cards = Array.prototype.slice.call(grid.querySelectorAll('.group-card'));
+  var norm = function (s) {
+    return s.normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[‘’']/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+  };
+  var items = [];
+  cards.forEach(function (card) {
+    card.querySelectorAll('li').forEach(function (li) {
+      items.push({ card: card, li: li, name: li.textContent, key: norm(li.textContent) });
+    });
+  });
+  var escapeHtml = function (s) {
+    return s.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
+  };
+  var lastScrolled = null;
+  function update() {
+    var q = norm(input.value);
+    items.forEach(function (it) { it.li.classList.remove('is-match'); it.li.textContent = it.name; });
+    cards.forEach(function (c) { c.classList.remove('is-match'); });
+    if (q.length < 2) {
+      grid.classList.remove('is-searching'); status.textContent = ''; lastScrolled = null; return;
+    }
+    grid.classList.add('is-searching');
+    var words = q.split(' ');
+    var hits = items.filter(function (it) {
+      return words.every(function (w) { return it.key.indexOf(w) !== -1; });
+    });
+    cards.forEach(function (c) {
+      if (norm(c.dataset.group) === q) { c.classList.add('is-match'); }
+    });
+    hits.forEach(function (it) {
+      it.li.classList.add('is-match');
+      it.li.innerHTML = '<mark>' + escapeHtml(it.name) + '</mark>';
+      it.card.classList.add('is-match');
+    });
+    var matched = cards.filter(function (c) { return c.classList.contains('is-match'); });
+    if (hits.length === 1) {
+      status.textContent = hits[0].name + ': group ' + hits[0].card.dataset.group;
+    } else if (hits.length > 1) {
+      status.textContent = hits.length + ' names match. Keep typing.';
+    } else if (matched.length === 1) {
+      status.textContent = 'Group ' + matched[0].dataset.group;
+    } else {
+      status.textContent = 'No match. Try another part of your name, or ask a TA.';
+    }
+    if (matched.length === 1 && lastScrolled !== matched[0]) {
+      lastScrolled = matched[0];
+      matched[0].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+  input.addEventListener('input', update);
+})();
+</script>
+```
 
 ## Wednesday
 
