@@ -12,7 +12,7 @@ format:
 
 1. **Find your group** below. Groups A1 to A5 work on Study A, and B1 to B5 on
    Study B.
-2. **Split into three pairs** on Wednesday at 9:30. In a group of seven, one
+2. **Split into three pairs** on Wednesday at 10:00. In a group of seven, one
    pair is three people.
 3. **Each pair takes one sub-question.** Partners work on the same
    sub-question, but each on their own laptop with their own Pi. You compare at
@@ -247,17 +247,17 @@ has the same sub-question. Don't compare notes until the check-in.
 
 | time | who | what |
 |---|---|---|
-| 9:00 | [Whole group]{.who .group} | Sit together. Open your study's card below the table. |
-| 9:10 | [On your own]{.who .solo} | Ask Pi about your dataset. No code yet: what is in each file, how many people are in each arm, what does a column mean? |
-| 9:30 | [Whole group]{.who .group} | Pick three sub-questions from your study's card. Split into three pairs and give each pair one sub-question. In each pair, decide who uses which [model](#two-models-in-each-pair). |
-| 9:40 | [On your own]{.who .solo} | Write the [QC report](#the-qc-report). |
-| 10:00 | | Tea |
-| 10:15 | [On your own]{.who .solo} | Finish the QC report, then start on your pair's sub-question. |
-| **10:45** | [With your pair]{.who .pair} | [Check-in W1](#check-ins): compare your two QC reports. |
-| 11:00 | [On your own]{.who .solo} | Ask Pi for whatever your QC report missed, then carry on with the sub-question. |
-| **11:45** | [Whole group]{.who .group} | [Check-in W2](#check-ins): agree one QC decision for the group. |
-| 12:05 | [On your own]{.who .solo} | Rerun with the group's QC decision. Before lunch, write a few lines at the top of your `.qmd` saying where you got to. |
-| 12:30 | | Lunch |
+| 9:30 | [Whole group]{.who .group} | Sit together. Open your study's card below the table. |
+| 9:40 | [On your own]{.who .solo} | Ask Pi about your dataset. No code yet: what is in each file, how many people are in each arm, what does a column mean? |
+| 10:00 | [Whole group]{.who .group} | Pick three sub-questions from your study's card. Split into three pairs and give each pair one sub-question. In each pair, decide who uses which [model](#two-models-in-each-pair). |
+| 10:10 | [On your own]{.who .solo} | Write the [QC report](#the-qc-report). |
+| 10:30 | [On your own]{.who .solo} | Finish the QC report, then start on your pair's sub-question. |
+| 11:00 | | Tea |
+| **11:15** | [With your pair]{.who .pair} | [Check-in W1](#check-ins): compare your two QC reports. |
+| 11:30 | [On your own]{.who .solo} | Ask Pi for whatever your QC report missed, then carry on with the sub-question. |
+| **12:15** | [Whole group]{.who .group} | [Check-in W2](#check-ins): agree one QC decision for the group. |
+| 12:35 | [On your own]{.who .solo} | Rerun with the group's QC decision. Before lunch, write a few lines at the top of your `.qmd` saying where you got to. |
+| 1:00 | | Lunch |
 
 : {tbl-colwidths="[10,23,67]"}
 
@@ -417,12 +417,12 @@ before we analyse it. Render it.
 ```
 
 The prompt is short on purpose. Your partner's model will decide differently
-from yours what a quality check needs, and you will compare the two at 10:45.
+from yours what a quality check needs, and you will compare the two at 11:15.
 
 ## Check-ins
 
 ::: {.callout-note collapse="false"}
-## W1, Wednesday 10:45, with your partner
+## W1, Wednesday 11:15, with your partner
 
 1. Open your two QC reports side by side. Does each one check
 
@@ -440,7 +440,7 @@ from yours what a quality check needs, and you will compare the two at 10:45.
 :::
 
 ::: {.callout-note collapse="false"}
-## W2, Wednesday 11:45, the whole group
+## W2, Wednesday 12:15, the whole group
 
 1. Each pair shows one figure and its open-questions slide, about three minutes
    per pair.
