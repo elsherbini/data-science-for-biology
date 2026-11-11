@@ -84,6 +84,7 @@ the TAs.
       <li>Festus David Lutaaya</li>
       <li>Julia Wangui Nderitu</li>
       <li>Khadija Muhammad</li>
+      <li>Lilian Nkirote Njagi</li>
     </ul>
   </section>
   <section class="group-card" id="group-a3" data-group="A3">
