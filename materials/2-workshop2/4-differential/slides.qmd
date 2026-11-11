@@ -331,6 +331,10 @@ survives peer review.
 A boxplot of the top gene, like the one on the last slide, shows the direction
 at a glance.
 
+## Quick check {.your-turn}
+
+{{< live-poll W2M4.1 height="700px" >}}
+
 ## Significant is not the same as large
 
 ```{r}
@@ -503,6 +507,10 @@ are familiar BV organisms, which is why nobody would have questioned it.
 At one visit, no single species separates preterm from term. That matches the
 field: preterm birth has modest associations with community type and few clear
 ones with individual taxa. Check single features, then look beyond them.
+
+## Quick check {.your-turn}
+
+{{< live-poll W2M4.2 height="700px" >}}
 
 ## Other people's tools
 
