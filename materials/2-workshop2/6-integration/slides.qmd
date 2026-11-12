@@ -14,23 +14,71 @@ execute:
 library(tidyverse)
 library(patchwork)
 library(knitr)
-library(ggbeeswarm)
 pal <- c(navy = "#2b3a67", teal = "#2a9d8f", orange = "#e76f51",
          gold = "#e9c46a", grey = "#bbbbbb")
 theme_set(theme_minimal(base_size = 15))
 
 res <- "results"
 cs <- read_csv("../4-differential/results/contrast_summary.csv", show_col_types = FALSE)
-n_out <- cs$n_sig[cs$contrast == "genes_by_outcome"]
+n_comm <- cs$n_sig[cs$contrast == "genes_by_community"]
 person <- read_csv(file.path(res, "scores_per_person.csv"), show_col_types = FALSE)
+per_sample <- read_csv(file.path(res, "scores_per_sample.csv"), show_col_types = FALSE)
 models <- read_csv(file.path(res, "model_comparison.csv"), show_col_types = FALSE) |>
   mutate(model = factor(model, c("microbiome only", "host only", "both")))
 rocs <- read_csv(file.path(res, "roc_curves.csv"), show_col_types = FALSE) |>
   mutate(model = factor(model, c("microbiome only", "host only", "both")))
+ranking <- read_csv(file.path(res, "predictor_ranking.csv"), show_col_types = FALSE)
+spls_scores <- read_csv(file.path(res, "spls_scores.csv"), show_col_types = FALSE)
+module_cor <- read_csv(file.path(res, "spls_module_cor.csv"), show_col_types = FALSE)
+stability <- read_csv(file.path(res, "spls_stability.csv"), show_col_types = FALSE)
+diablo_cv <- read_csv(file.path(res, "diablo_cv.csv"), show_col_types = FALSE)
+diablo_design <- read_csv(file.path(res, "diablo_design.csv"), show_col_types = FALSE)
+diablo_load <- read_csv(file.path(res, "diablo_loadings.csv"), show_col_types = FALSE)
+shuffle_scores <- read_csv(file.path(res, "shuffle_scores.csv"), show_col_types = FALSE)
+shuffle_cv <- read_csv(file.path(res, "shuffle_cv.csv"), show_col_types = FALSE)
+
 auc_of <- function(m) sprintf("%.2f", models$auc[models$model == m])
+cv_of <- function(m) sprintf("%.2f", diablo_cv$auc[diablo_cv$model == m])
 mcol <- c(`microbiome only` = pal[["teal"]], `host only` = pal[["orange"]], both = pal[["navy"]])
 ocol <- c(preterm = pal[["orange"]], term = pal[["navy"]])
+
+# Draw a DAG from a node table (name, x, y, label, kind) and an edge table
+# (from, to, and optionally style and label). Arrows stop short of the boxes.
+kind_fill <- c(measured = pal[["teal"]], unmeasured = "#d9d9d9",
+               outcome = pal[["orange"]], latent = pal[["gold"]])
+kind_text <- c(measured = "white", unmeasured = "grey20", outcome = "white", latent = "grey20")
+draw_dag <- function(nodes, edges, wx = 0.7, wy = 0.4, text_size = 6.2) {
+  if (!"style" %in% names(edges)) edges$style <- "solid"
+  if (!"label" %in% names(edges)) edges$label <- NA_character_
+  e <- edges |>
+    left_join(nodes |> select(from = name, x, y), by = "from") |>
+    left_join(nodes |> select(to = name, xend = x, yend = y), by = "to") |>
+    # stop each arrow at the edge of a box of half-width wx, half-height wy
+    mutate(dx = xend - x, dy = yend - y,
+           f = pmin(if_else(dx == 0, Inf, wx / abs(dx)), if_else(dy == 0, Inf, wy / abs(dy))),
+           x0 = x + dx * f, y0 = y + dy * f, x1 = xend - dx * f, y1 = yend - dy * f)
+  ggplot() +
+    geom_segment(data = e, aes(x0, y0, xend = x1, yend = y1, linetype = style),
+                 arrow = arrow(length = unit(0.22, "cm"), type = "closed"),
+                 colour = "grey35", linewidth = 0.7, show.legend = FALSE) +
+    geom_label(data = filter(e, !is.na(label)),
+               aes((x0 + x1) / 2, (y0 + y1) / 2, label = label),
+               size = text_size * 0.8, label.size = 0, fill = "white", colour = "grey20") +
+    geom_label(data = nodes, aes(x, y, label = label, fill = kind, colour = kind),
+               size = text_size, lineheight = 0.9, label.padding = unit(0.35, "lines"),
+               label.size = 0) +
+    scale_fill_manual(values = kind_fill, name = NULL) +
+    scale_colour_manual(values = kind_text, guide = "none") +
+    scale_linetype_identity() +
+    scale_x_continuous(expand = expansion(mult = 0.1)) +
+    scale_y_continuous(expand = expansion(mult = 0.08)) +
+    guides(fill = guide_legend(override.aes = list(label = "    "))) +
+    theme_void(base_size = 16) +
+    theme(legend.position = "bottom")
+}
 ```
+
+# Why integrate?
 
 ## So far, one table at a time {.center}
 
@@ -59,109 +107,258 @@ week |>
   theme_void()
 ```
 
-We ran every method this week twice, once on each table, and never on both
-together.
+We ran every method this week twice, once on each table. Today we ask when to
+use both at once.
 
-## Today's question {.center}
+## Questions that sound like they need both tables {.your-turn}
 
-Does putting the two tables together tell you anything that neither told you
-alone?
+::: {style="font-size: 0.75em;"}
+1. Does BV cause inflammation in the cervix?
+2. Which bacteria go with which host genes?
+3. Can I predict preterm birth better with both tables?
+4. Are there types of participants who look different in both the microbiome and the host?
+5. Is the host response the reason *Gardnerella* matters?
+6. Which genes are different in women with BV?
+:::
 
-. . .
+::: {style="font-size: 0.8em;"}
+Sort them: **predict**, **find shared patterns**, **explain a mechanism**, or
+**a one-table question**.
+:::
 
-Sometimes, and you can measure when.
+```{r}
+#| echo: false
+countdown::countdown(3, left = 0, right = NULL, play_sound = TRUE)
+```
 
-## When combining helps
+## Four kinds of question, and where we cover them
 
-::: {.incremental}
-- If both tables carry the **same** information, combining them adds nothing
-  beyond a slightly better estimate of that one thing.
-- If they carry **different** information, combining them can add a lot.
-- If one carries **nothing**, combining them makes your model worse, because you
-  spent degrees of freedom on noise.
+::: {style="font-size: 0.75em;"}
+| the question is about | reach for | today |
+|---|---|---|
+| comparing groups | one table at a time, grouped by the other | next |
+| explaining a mechanism | a causal diagram first, then often a different study | DAGs |
+| finding features that move together | CCA, PLS | mixOmics |
+| finding structure shared across samples | MOFA | MOFA |
+| predicting an outcome | scores in one model, DIABLO | DIABLO |
+
+: {tbl-colwidths="[38,44,18]"}
 :::
 
 . . .
 
-So before fitting any model, measure how much the two tables already agree.
+Question 6 needs one table and a grouping. Questions 1 and 5 are about cause,
+and no method on this list answers them alone.
 
-## One number per person, from each table
+# The simplest integration
 
-```{r}
-#| eval: false
-# from the species table: how anaerobic is this person, on average
-micro_score <- per_sample |>
-  group_by(participant_id) |>
-  summarise(micro = mean(1 - lacto_fraction))
+## Group on one table, test the other
 
-# from the gene table: how inflamed, using Thursday's gene set
-host_score <- per_sample |>
-  group_by(participant_id) |>
-  summarise(host = mean(inflammatory_score))
-```
+:::: {.columns}
+::: {.column width="50%"}
+You have already done this.
 
-The two tables have 14,446 rows between them. After this step they are two
-columns, one row per person:
+::: {.incremental}
+- On Tuesday, the species table gave every sample a group: anaerobe-dominant or
+  *Lactobacillus*-dominant.
+- On Wednesday, you tested the gene table against that group:
+  **`r scales::comma(n_comm)` genes** differ.
+- That is integration. Information from one table organised your analysis of the
+  other.
+:::
+:::
 
-```{r}
-#| echo: false
-person |>
-  select(participant_id, outcome, micro_score, host_score) |>
-  head(3) |>
-  mutate(across(c(micro_score, host_score), ~ sprintf("%.2f", .x))) |>
-  kable(align = "llrr")
-```
-
-## The two scores barely agree
-
+::: {.column width="50%"}
 ```{r}
 #| echo: false
-#| fig-width: 12
+#| fig-width: 5.5
 #| fig-height: 5
+per_sample |>
+  filter(time_point == "week_18") |>
+  mutate(group = if_else(lacto_fraction >= 0.5, "Lactobacillus-\ndominant", "anaerobe-\ndominant")) |>
+  ggplot(aes(lacto_fraction, host_score, colour = group)) +
+  geom_vline(xintercept = 0.5, linetype = 2, colour = "grey50") +
+  geom_point(size = 2, alpha = 0.8) +
+  scale_colour_manual(values = c(pal[["orange"]], pal[["teal"]]), name = NULL) +
+  labs(x = "Lactobacillus fraction (species table)",
+       y = "inflammatory score (gene table)", title = "Week 18, one dot per sample") +
+  theme_minimal(base_size = 17) +
+  theme(legend.position = "top")
+```
+:::
+::::
+
+## Grouping throws information away
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+#| echo: false
+#| fig-width: 5.5
+#| fig-height: 4.5
+per_sample |>
+  filter(time_point == "week_18") |>
+  ggplot(aes(lacto_fraction)) +
+  geom_histogram(binwidth = 0.05, boundary = 0, fill = pal[["grey"]], colour = "white") +
+  geom_vline(xintercept = 0.5, linetype = 2, colour = "grey30") +
+  annotate("segment", x = 0.47, xend = 0.53, y = 30, yend = 30, colour = pal[["orange"]],
+           linewidth = 1.2) +
+  annotate("text", x = 0.5, y = 33, label = "different groups", colour = pal[["orange"]], size = 5) +
+  annotate("segment", x = 0.53, xend = 0.98, y = 45, yend = 45, colour = pal[["navy"]],
+           linewidth = 1.2) +
+  annotate("text", x = 0.75, y = 48, label = "same group", colour = pal[["navy"]], size = 5) +
+  labs(x = "Lactobacillus fraction, week 18", y = "samples") +
+  theme_minimal(base_size = 15)
+```
+:::
+
+::: {.column width="50%"}
+::: {.incremental}
+- 0.49 and 0.51 end up in different groups.
+- 0.51 and 0.99 end up in the same group.
+- In exchange, you get a sentence you can say: "these genes differ between
+  the two kinds of community."
+:::
+
+::: {.fragment}
+The methods later today keep more of the information, and their results are
+harder to put in one sentence.
+:::
+:::
+::::
+
+# Back up: what do we think causes what?
+
+## Draw it before you choose a method {.center}
+
+A **DAG** (directed acyclic graph) is a drawing of what you think causes what.
+
+::: {.incremental}
+- A box for each thing, measured or not.
+- An arrow means "changing this would change that."
+- **A missing arrow is also a claim**: that one thing has no direct effect on
+  the other.
+:::
+
+. . .
+
+You draw it before you look at the data, from what you know about the biology.
+
+## Let's draw one: preterm birth {.our-turn}
+
+::: {.incremental}
+- What did we measure in each table, and where does each thing sit relative to
+  preterm birth?
+- Which measurements are **causes**, and which are **readouts** of a cause?
+- What did we **not** measure that probably matters?
+:::
+
+## One version of that drawing
+
+```{r}
+#| echo: false
+#| fig-width: 13
+#| fig-height: 6.2
+real_nodes <- tribble(
+  ~name,      ~x,   ~y,  ~label,                                   ~kind,
+  "sex",      0,    3,   "sexual partners,\ndouching",              "unmeasured",
+  "abx",      0,    1.6, "antibiotics",                            "unmeasured",
+  "ses",      2.2,  4.3, "smoking, income,\nstress",                "unmeasured",
+  "micro",    2.2,  2.3, "anaerobic\ncommunity",                   "measured",
+  "readout",  2.2,  0.6, "Nugent, pH,\nAmsel criteria",            "measured",
+  "inf",      4.6,  2.3, "host\ninflammation",                     "measured",
+  "otherinf", 4.6,  0.6, "other infections\n(STIs, UTI)",          "unmeasured",
+  "remodel",  6.8,  2.3, "cervical\nremodelling",                  "unmeasured",
+  "prior",    6.8,  4.3, "previous preterm\nbirth, cervical\nlength",            "unmeasured",
+  "preterm",  9,    2.3, "preterm\nbirth",                         "outcome"
+)
+real_edges <- tribble(
+  ~from,      ~to,
+  "sex",      "micro",
+  "abx",      "micro",
+  "ses",      "micro",
+  "ses",      "prior",
+  "micro",    "readout",
+  "micro",    "inf",
+  "otherinf", "inf",
+  "inf",      "remodel",
+  "remodel",  "preterm",
+  "prior",    "preterm"
+)
+draw_dag(real_nodes, real_edges, wx = 0.85, wy = 0.32)
+```
+
+Grey boxes are things nobody in this cohort measured.
+
+## The DAG we used to build the outcome
+
+```{r}
+#| echo: false
+#| fig-width: 13
+#| fig-height: 5.8
+gen_nodes <- tribble(
+  ~name,     ~x,  ~y,  ~label,                                      ~kind,
+  "micro",   2,   3,   "anaerobe fraction,\naveraged over 3 visits", "measured",
+  "host",    2,   0.8, "host inflammation\n(hidden flag)",           "latent",
+  "preterm", 5.5, 1.9, "preterm\nbirth",                            "outcome",
+  "readout", 0,   4.3, "16S counts, Nugent,\npH, cytokines",         "measured",
+  "genes",   0,   -0.4, "inflammatory genes\nin the gene table",     "measured",
+  "batch",   -2.4, -0.4, "RNA\nbatch",                               "measured"
+)
+gen_edges <- tribble(
+  ~from,     ~to,        ~label,
+  "micro",   "preterm",  "odds ratio 3",
+  "host",    "preterm",  "odds ratio 5.5",
+  "micro",   "readout",  NA,
+  "host",    "genes",    NA,
+  "batch",   "genes",    NA
+)
+draw_dag(gen_nodes, gen_edges, wx = 0.95, wy = 0.36) +
+  annotate("text", x = 2.9, y = 1.9, label = "no arrow:\nindependent\nby design",
+           colour = pal[["orange"]], size = 6, fontface = "italic", lineheight = 0.9)
+```
+
+The species and genes are real sequencing data. The outcome was built from
+these two causes and nothing else.
+
+## So what should combining do?
+
+:::: {.columns}
+::: {.column width="55%"}
+```{r}
+#| echo: false
+#| fig-width: 6.5
+#| fig-height: 5.5
 ggplot(person, aes(micro_score, host_score)) +
   geom_point(aes(colour = outcome), size = 2.6, alpha = 0.8) +
   geom_smooth(method = "lm", se = FALSE, colour = "grey40", linetype = 2, linewidth = 0.8) +
   scale_colour_manual(values = ocol) +
-  labs(x = "mean anaerobe fraction, from the species table",
-       y = "mean inflammatory score,\nfrom the gene table", colour = NULL) +
+  labs(x = "mean anaerobe fraction (species table)",
+       y = "mean inflammatory score\n(gene table)", colour = NULL,
+       title = "One dot per person") +
+  theme_minimal(base_size = 16) +
   theme(legend.position = "top")
 ```
+:::
 
-Correlation: **`r sprintf("%.2f", cor(person$micro_score, person$host_score))`**.
+::: {.column width="45%"}
+Two causes, no arrow between them. Predict before the next slide: does adding
+the second table help?
 
-## Low agreement is good news here {.center}
+::: {.fragment}
+The two scores correlate at
+**`r sprintf("%.2f", cor(person$micro_score, person$host_score))`**.
+That is a feature of how we built the data.
+:::
 
-The two tables are telling us about **different** things.
+::: {.fragment}
+In real cohorts, an anaerobic community and an inflamed epithelium are strongly
+correlated.
+:::
+:::
+::::
 
-. . .
-
-In this cohort a disturbed bacterial community and an inflamed epithelium are
-separate measurements, and knowing one tells you almost nothing about the other.
-
-. . .
-
-So each has something to add.
-
-## One model per table, and one with both
-
-```{r}
-#| eval: false
-glm(preterm ~ micro_z,           data = per_person, family = binomial)
-glm(preterm ~ host_z,            data = per_person, family = binomial)
-glm(preterm ~ micro_z + host_z,  data = per_person, family = binomial)
-```
-
-```{r}
-#| echo: false
-models |>
-  transmute(model,
-            AUC = sprintf("%.2f", auc),
-            `95% interval` = sprintf("%.2f to %.2f", auc_lo, auc_hi),
-            AIC = round(aic)) |>
-  kable(align = "lrrr")
-```
-
-## ROC curves for each model
+## The DAG predicted the lift
 
 :::: {.columns}
 ::: {.column width="52%"}
@@ -180,6 +377,12 @@ ggplot(rocs, aes(fpr, tpr, colour = model)) +
 :::
 
 ::: {.column width="48%"}
+```{r}
+#| eval: false
+glm(preterm ~ micro_z + host_z,
+    family = binomial)
+```
+
 ::: {.incremental}
 - [Species table alone: AUC `r auc_of("microbiome only")`]{style="color: #2a9d8f; font-weight: 600;"}
 - [Gene table alone: AUC `r auc_of("host only")`]{style="color: #e76f51; font-weight: 600;"}
@@ -187,112 +390,440 @@ ggplot(rocs, aes(fpr, tpr, colour = model)) +
 :::
 
 ::: {.fragment}
-Adding the host score to the microbiome model:
-p = `r format(models$lrt_p_vs_micro[models$model == "both"], digits = 2)`.
-:::
-
-::: {.fragment}
-Two summary scores in one logistic regression are the simplest version of the
-case for multiomics.
+Two independent causes, so each table adds something the other cannot.
 :::
 :::
 ::::
 
-## Significance and prediction are different questions
+## In real data, expect a smaller lift
+
+```{r}
+#| echo: false
+#| fig-width: 13
+#| fig-height: 4.2
+med_nodes <- gen_nodes |> filter(name %in% c("micro", "host", "preterm"))
+med_edges <- tribble(
+  ~from,   ~to,       ~style,
+  "micro", "preterm", "solid",
+  "host",  "preterm", "solid",
+  "micro", "host",    "dashed"
+)
+draw_dag(med_nodes, med_edges, wx = 0.95, wy = 0.3) +
+  expand_limits(x = c(0.6, 6.4)) +
+  annotate("text", x = 2.12, y = 1.9, label = "the arrow we left out",
+           colour = pal[["orange"]], size = 6.5, fontface = "italic", hjust = 0) +
+  theme(legend.position = "none")
+```
+
+::: {.incremental}
+- If anaerobes cause inflammation, part of the microbiome's effect travels
+  **through** the host. The gene table then already carries it.
+- Adding the species table would add less, even though the bacteria matter.
+- "Doesn't improve the prediction" is not the same as "doesn't matter."
+:::
+
+## Predictive is not causal
+
+```{r}
+#| echo: false
+#| fig-width: 13
+#| fig-height: 5.2
+role_col <- c(cause = pal[["navy"]], `readout of a cause` = pal[["teal"]],
+              bystander = pal[["gold"]], technical = pal[["grey"]], unrelated = pal[["grey"]])
+ranking |>
+  mutate(label = fct_reorder(label, auc),
+         role = factor(role, names(role_col))) |>
+  ggplot(aes(auc, label, colour = role)) +
+  geom_vline(xintercept = 0.5, linetype = 2, colour = "grey70") +
+  geom_segment(aes(x = 0.5, xend = auc, yend = label), linewidth = 1) +
+  geom_point(size = 5) +
+  scale_colour_manual(values = role_col, name = "role in the DAG we used") +
+  labs(x = "AUC for preterm birth, one predictor at a time (per person)", y = NULL) +
+  theme_minimal(base_size = 18) +
+  theme(legend.position = "right")
+```
+
+. . .
+
+Rank by AUC and you would call Nugent and IL-1β drivers of preterm birth. In
+the model that made these data, neither one does anything.
+
+## Prediction is not mechanism {.center}
+
+::: {.incremental}
+- The features a method selects are the ones that **predict** or **move
+  together**, not the ones that cause.
+- That includes loading plots, top-feature lists and networks.
+- Drawing a DAG, and then building a model from it, is how you start to ask
+  about cause.
+:::
+
+. . .
+
+**Workshop 3 will focus on modelling and uncertainty**, in April 2027.
+
+# A tour of mixOmics
+
+## A good place to learn the rest: [mixomics.org](http://mixomics.org/) {.center}
+
+Most of what follows is a small tour of methods from mixOmics, with a couple of
+alternatives that are not on that site.
+
+::: {style="font-size: 0.75em;"}
+| method | the question | on mixOmics |
+|---|---|---|
+| CCA, PLS, sparse PLS | which features move together across two tables? | yes |
+| MOFA | what structure is shared, and what belongs to one table? | no |
+| DIABLO | which features from both tables separate the groups? | yes |
+| two scores in one model | does the second table add to the prediction? | no |
+
+: {tbl-colwidths="[28,54,18]"}
+:::
+
+# Patterns shared by two tables: CCA and PLS
+
+## Find a mix of species and a mix of genes that move together
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 5.5
+spls_scores |>
+  ggplot(aes(species_comp1, genes_comp1, colour = community)) +
+  geom_point(size = 2.4, alpha = 0.8) +
+  scale_colour_manual(values = c(anaerobe = pal[["orange"]], lactobacillus = pal[["teal"]]),
+                      name = "week 18 community") +
+  labs(x = "species mix (component 1)", y = "gene mix (component 1)",
+       title = "Sparse PLS, one dot per person") +
+  theme_minimal(base_size = 16) +
+  theme(legend.position = "top")
+```
+:::
+
+::: {.column width="50%"}
+::: {.incremental}
+- Sparse PLS picks 10 species and 50 genes, and weights them so the two mixes
+  rise and fall together across people.
+- **No outcome goes in.**
+- Coloured afterwards by community: the shared axis is *Lactobacillus* against
+  anaerobes.
+:::
+:::
+::::
+
+## CCA chases correlation, PLS chases correlation times spread
+
+:::: {.columns}
+::: {.column width="50%"}
+::: {.incremental}
+- **CCA** finds the mixes with the highest correlation. With 2,000 genes and
+  157 people it can always reach a perfect one, so it needs a penalty
+  (regularised CCA).
+- **PLS** also rewards a mix whose values spread widely.
+- Genes that rise and fall together add up to a big spread, so PLS goes after
+  **large groups of co-expressed genes**.
+:::
+:::
+
+::: {.column width="50%"}
+```{r}
+#| echo: false
+#| fig-width: 5.5
+#| fig-height: 4.2
+module_cor |>
+  mutate(set = fct_rev(fct_inorder(set))) |>
+  ggplot(aes(mean_abs_cor, set, fill = set)) +
+  geom_col(width = 0.6, show.legend = FALSE) +
+  scale_fill_manual(values = c(`50 genes sPLS picked` = pal[["navy"]],
+                               `50 random genes` = pal[["grey"]])) +
+  geom_text(aes(label = sprintf("%.2f", mean_abs_cor)), hjust = -0.2, size = 6) +
+  scale_x_continuous(limits = c(0, 1)) +
+  labs(x = "average correlation between\ngenes in the set", y = NULL) +
+  theme_minimal(base_size = 16)
+```
+
+The genes it picked move together far more than random genes.
+:::
+::::
+
+## The genes it picks are representatives of a group
 
 :::: {.columns}
 ::: {.column width="55%"}
-On Wednesday, preterm versus term gave **`r scales::comma(n_out)` significant genes**.
-
-::: {.fragment}
-Today, those same genes predict the outcome with an AUC of
-`r auc_of("host only")`.
-:::
-
-::: {.incremental}
-- Significance asks whether the groups differ on average.
-- AUC asks whether you can tell which person is in which group.
-- Many small differences can give you the first without the second.
-:::
+```{r}
+#| echo: false
+#| fig-width: 6.5
+#| fig-height: 5.5
+stability |>
+  mutate(rank = row_number()) |>
+  ggplot(aes(rank, freq)) +
+  geom_col(aes(fill = in_full_fit), width = 1) +
+  scale_fill_manual(values = c(`TRUE` = pal[["navy"]], `FALSE` = pal[["grey"]]),
+                    labels = c(`TRUE` = "picked in the full data", `FALSE` = "not picked"),
+                    name = NULL) +
+  scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
+  labs(x = "genes, most often picked first",
+       y = "how often picked in\n50 reruns on resampled people") +
+  theme_minimal(base_size = 16) +
+  theme(legend.position = "top")
+```
 :::
 
 ::: {.column width="45%"}
+::: {.incremental}
+- `r nrow(stability)` different genes were picked at least once. None was picked
+  every time.
+- Among genes that move together, small changes in the data swap which ones
+  get picked.
+- A gene missing from the list may have lost to a neighbour. Check how it
+  correlates with the component.
+:::
+:::
+::::
+
+# MOFA: what is shared, and what belongs to one table
+
+## Factors, and which tables each one lives in
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+#| echo: false
+#| fig-width: 5.5
+#| fig-height: 5
+tribble(
+  ~factor,    ~species, ~genes,
+  "Factor 1", 0.35,     0.12,
+  "Factor 2", 0.00,     0.15,
+  "Factor 3", 0.00,     0.08,
+  "Factor 4", 0.10,     0.00
+) |>
+  pivot_longer(-factor, names_to = "table", values_to = "explained") |>
+  mutate(table = factor(table, c("species", "genes")), factor = fct_rev(factor)) |>
+  ggplot(aes(table, factor, fill = explained)) +
+  geom_tile(colour = "white", linewidth = 2) +
+  scale_fill_gradient(low = "#f4f4f4", high = pal[["navy"]], guide = "none") +
+  labs(x = NULL, y = NULL, title = "Variance explained (sketch)") +
+  theme_minimal(base_size = 18) +
+  theme(panel.grid = element_blank())
+```
+:::
+
+::: {.column width="50%"}
+::: {.incremental}
+- MOFA (multi-omics factor analysis) is like a PCA run on all the tables at
+  once.
+- Each factor is an axis of variation across people. MOFA reports how much of
+  each table that factor explains.
+- **Shared factors** (Factor 1) show up in both tables. **Table-specific
+  factors** (Factors 2 to 4) show up in only one.
+- There is no outcome inside the model.
+:::
+:::
+::::
+
+## Where MOFA fits
+
+::: {.incremental}
+- You test the factors **afterwards** against the outcome, the RNA batch, age and
+  visit. A factor that tracks the batch is something to catch, not a finding.
+- In our data, the host inflammation lives only in the gene table. MOFA would
+  show it as a gene-only factor, next to the shared *Lactobacillus* axis.
+- The methods that are built to find shared signal tend to hide a signal that
+  lives in one table. DIABLO is one of them.
+- MOFA is not part of mixOmics. See [the MOFA site](https://biofam.github.io/MOFA2/)
+  for tutorials.
+:::
+
+# DIABLO: features from both tables that separate the groups
+
+## Two goals, added together
+
+:::: {.columns}
+::: {.column width="50%"}
+DIABLO builds a mix of species and a mix of genes. It scores each pair on:
+
+1. how well each mix **separates preterm from term**, plus
+2. how well the two mixes **agree with each other**, times a weight called the
+   **design**, from 0 to 1.
+
+::: {.fragment}
+At design 0 it fits each table on its own. Higher values push the two tables
+toward a shared axis, possibly at the cost of separation.
+:::
+:::
+
+::: {.column width="50%"}
+::: {.fragment}
+```{r}
+#| echo: false
+#| fig-width: 5.5
+#| fig-height: 4.8
+diablo_design |>
+  pivot_longer(c(auc, cross_table_cor), names_to = "what", values_to = "value") |>
+  mutate(what = recode(what, auc = "separates the groups\n(cross-validated AUC)",
+                       cross_table_cor = "agreement between\nthe two tables")) |>
+  ggplot(aes(design, value, colour = what)) +
+  geom_line(linewidth = 1.3) +
+  geom_point(size = 3.5) +
+  scale_colour_manual(values = c(pal[["navy"]], pal[["orange"]]), name = NULL) +
+  scale_y_continuous(limits = c(0, 1)) +
+  scale_x_continuous(breaks = c(0, 0.1, 0.5, 0.9)) +
+  labs(x = "design", y = NULL) +
+  theme_minimal(base_size = 16) +
+  theme(legend.position = "top")
+```
+
+Here, more agreement cost nothing. In data with a strong signal in only one
+table, it can.
+:::
+:::
+::::
+
+::: {.notes}
+Not covered on slides: when both tables are fitted to the same outcome, the
+agreement between them is partly just the outcome. To ask whether host and
+microbes covary beyond the label, correlate the two mixes within each group.
+:::
+
+## With 2,000 genes, any labels separate
+
+```{r}
+#| echo: false
+#| fig-width: 13
+#| fig-height: 4.6
+shuffle_scores |>
+  mutate(labels = recode(labels, real = "real labels", shuffled = "labels shuffled at random"),
+         labels = fct_relevel(labels, "real labels")) |>
+  ggplot(aes(comp1, comp2, colour = label)) +
+  geom_point(size = 2.2, alpha = 0.8) +
+  facet_wrap(~labels, scales = "free") +
+  scale_colour_manual(values = ocol, name = NULL) +
+  labs(x = "component 1", y = "component 2",
+       title = "Sparse PLS-DA on the gene table, plotted on the people it was fitted to") +
+  theme_minimal(base_size = 16) +
+  theme(legend.position = "top", strip.text = element_text(size = 16))
+```
+
+::: {.fragment}
+Cross-validated AUC, predicting people the model did not see:
+real labels **`r sprintf("%.2f", shuffle_cv$auc[shuffle_cv$labels == "real"])`**,
+shuffled labels **`r sprintf("%.2f", shuffle_cv$auc[shuffle_cv$labels == "shuffled"])`**.
+Only the cross-validated number tells them apart.
+:::
+
+## Loadings are the recipe, not a ranking
+
+:::: {.columns}
+::: {.column width="50%"}
 ```{r}
 #| echo: false
 #| fig-width: 5.5
 #| fig-height: 6
-ggplot(person, aes(outcome, host_z, colour = outcome)) +
-  geom_quasirandom(size = 2.2, alpha = 0.8, width = 0.3) +
-  stat_summary(fun = mean, geom = "crossbar", width = 0.5, colour = "grey20",
-               linewidth = 0.6) +
-  scale_colour_manual(values = ocol, guide = "none") +
-  labs(x = NULL, y = "host score (z), per person") +
-  theme_minimal(base_size = 22)
+diablo_load |>
+  filter(table == "genes") |>
+  slice_max(abs(loading), n = 15) |>
+  mutate(label = fct_reorder(label, loading)) |>
+  ggplot(aes(loading, label, fill = higher_in)) +
+  geom_col() +
+  scale_fill_manual(values = ocol, name = "higher in") +
+  labs(x = "weight on component 1", y = NULL, title = "DIABLO, gene table") +
+  theme_minimal(base_size = 16) +
+  theme(legend.position = "top")
 ```
+:::
+
+::: {.column width="50%"}
+::: {.incremental}
+- The bars say **what the component is made of**. IL6, THBD and ORM1 on the
+  preterm side: this axis is inflammation, the signal we built in.
+- They are **not** the genes that differ most between groups. A gene's bar
+  depends on its group of co-expressed neighbours, and on which neighbour won
+  the selection.
+- For "which genes differ?", use Wednesday's test.
+:::
 :::
 ::::
 
-## Choose the method from the goal
+## Did DIABLO beat two numbers in a glm?
 
-| if you want to | you need |
-|---|---|
-| improve a prediction | a model with features from both tables |
-| find features that move together | correlation across tables |
-| find shared sample structure | a joint ordination |
-| describe a mechanism | something more than either |
-
-: {tbl-colwidths="[45,55]"}
-
-## Integration methods, simplest first
-
-::: {style="font-size: 0.75em;"}
-| | examples | what it does |
-|---|---|---|
-| simple | scores in one model | Reduce each table to a few numbers and fit one model, as we did today. Every other method has to beat this. |
-| intermediate | canonical correlation, PLS, sparse PLS | Find the combination of features in table A that best tracks a combination in table B. |
-| multi-block | DIABLO, MOFA | Decompose several tables at once into shared and table-specific factors. |
-| similarity-based | Procrustes, co-inertia, DiSTATIS | Compare the sample configurations rather than the features. |
-| networks | | Build a graph across data types and look at its structure. |
-
-: {tbl-colwidths="[18,26,56]"}
+:::: {.columns}
+::: {.column width="55%"}
+```{r}
+#| echo: false
+#| fig-width: 6.5
+#| fig-height: 4.6
+diablo_cv |>
+  filter(model != "DIABLO, both tables weighted") |>
+  mutate(model = recode(model,
+                        `DIABLO, both tables averaged` = "DIABLO, both tables",
+                        `DIABLO, species table's vote` = "DIABLO, species only",
+                        `DIABLO, gene table's vote` = "DIABLO, genes only"),
+         model = fct_reorder(model, auc),
+         simple = model == "two scores, one glm") |>
+  ggplot(aes(auc, model, colour = simple)) +
+  geom_errorbarh(aes(xmin = auc - 2 * auc_sd, xmax = auc + 2 * auc_sd), height = 0.2) +
+  geom_point(size = 4.5) +
+  scale_colour_manual(values = c(`TRUE` = pal[["orange"]], `FALSE` = pal[["navy"]]), guide = "none") +
+  scale_x_continuous(limits = c(0.5, 1)) +
+  labs(x = "cross-validated AUC (10 repeats of 5-fold)", y = NULL) +
+  theme_minimal(base_size = 16)
+```
 :::
 
-## The cost of each method
+::: {.column width="45%"}
+::: {.incremental}
+- Each table alone: about `r cv_of("DIABLO, species table's vote")`. Together:
+  `r cv_of("DIABLO, both tables averaged")`. The tables carry different
+  information, as the DAG said.
+- Two hand-picked scores in a glm: `r cv_of("two scores, one glm")`.
+- The simple model wins, because we gave it what we knew: which gene set
+  means inflammation.
+:::
+:::
+::::
 
-| | gives you | costs you |
-|---|---|---|
-| scores in one model | interpretability | you chose the scores by hand |
-| sparse PLS | feature pairs | tuning, and unstable selection |
-| DIABLO, MOFA | shared factors | sample size, and hard-to-explain factors |
-| Procrustes | one agreement statistic | no features, no prediction |
-| networks | a picture | almost unlimited freedom to fool yourself |
+## Three things not to conclude
 
-: {tbl-colwidths="[24,32,44]"}
+::: {.incremental}
+- **"This gene wasn't selected, so it doesn't matter."** It may have lost to a
+  co-expressed neighbour.
+- **"The species table didn't improve the prediction, so the microbiome doesn't
+  matter."** Its effect may already be carried by the genes.
+- **"DIABLO separates community types perfectly."** Never use an outcome that was
+  built from one of the tables. Community type comes from the species counts, so
+  that table separates it by construction.
+:::
+
+# What we can and can't claim
 
 ## All of them can overfit {.center}
 
-With 157 people and 14,446 features, you can find a combination that separates
-your groups perfectly.
+With 157 people and over 2,000 features, you can find a combination that
+separates any two groups, as the shuffled labels showed.
 
 . . .
 
-It will not replicate.
+Every number you report should come from people the model did not see:
+cross-validation, or better, a separate cohort.
 
 . . .
 
-Every method on that list needs cross-validation or a held-out set, and the
-fancier the method the more it needs it.
+Any step that looks at the labels, including choosing features or settings,
+goes inside the cross-validation.
 
-## Our own result, honestly stated
+## Our own result, with its limits
 
 :::: {.columns}
 ::: {.column width="55%"}
 ::: {.incremental}
 - We chose both scores **after** looking at the data all week.
-- We never held out a test set.
-- AUC `r auc_of("both")` with a 95% interval of
+- Fitted and tested on the same people: AUC `r auc_of("both")`, 95% interval
   `r sprintf("%.2f to %.2f", models$auc_lo[models$model == "both"], models$auc_hi[models$model == "both"])`.
-- The two intervals for the single-table models overlap each other.
+- Cross-validated: `r cv_of("two scores, one glm")`.
+- We never tested it in a second cohort.
 :::
 :::
 
@@ -313,42 +844,19 @@ ggplot(models, aes(auc, fct_rev(model), colour = model)) +
 ::::
 
 ::: {.fragment}
-The improvement is real, but we should be modest about how big it is, and say
-both when we report it.
+The improvement is real. Report its size with the interval, and say how the
+scores were chosen.
 :::
-
-## Talk to your neighbour {.your-turn}
-
-Find someone whose research you do not know.
-
-**Partner A, then swap:**
-
-- What is your research question?
-- What data types do you have, or want?
-- What would combining them tell you that one alone would not?
-
-```{r}
-#| echo: false
-countdown::countdown(15, left = 0, right = NULL, play_sound = TRUE)
-```
-
-## Reporting back {.our-turn}
-
-One volunteer: explain **your partner's** project, and whether integration would
-actually help them.
-
-```{r}
-#| echo: false
-countdown::countdown(10, left = 0, right = NULL, play_sound = TRUE)
-```
 
 ## Further reading
 
 ::: {.incremental}
-- The methods deck linked from this module's page covers many more methods
-- `mixOmics` for CCA, PLS and DIABLO, with good vignettes
-- MOFA, if you have several tables and enough samples
+- [mixomics.org](http://mixomics.org/), for CCA, PLS and DIABLO, with good
+  vignettes
+- [MOFA](https://biofam.github.io/MOFA2/), if you have several tables and enough
+  people
 - *Modern Statistics for Modern Biology*, Holmes and Huber, free online
+- The longer methods deck linked from this module's page
 :::
 
 ## Then: your presentations {.center}

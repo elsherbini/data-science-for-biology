@@ -11,7 +11,7 @@ week is taught on one table and exercised on the other, with the same code.
 | 3, distances and ordination | species | genes |
 | 4, differential testing | genes | species |
 | 5, sets and enrichment | genes | species |
-| 6, integration | lecture only | no exercise |
+| 6, integration | lecture only | optional notebook, both tables |
 
 ## Slides never compute anything expensive
 
@@ -56,7 +56,7 @@ Module 3 is taught first:
 ```
 
 You need: `tidyverse`, `vegan`, `DESeq2`, `phyloseq`, `microViz`, `fgsea`,
-`msigdbr`, `pROC`. microViz is not on CRAN; install it from r-universe after the
+`msigdbr`, `pROC`, and `mixOmics` for Module 6. microViz is not on CRAN; install it from r-universe after the
 Bioconductor dependencies.
 
 ## The count table wrapper

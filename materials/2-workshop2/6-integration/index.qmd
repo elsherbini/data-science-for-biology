@@ -5,13 +5,13 @@ format:
     toc: true
 ---
 
-> Does combining two measurements tell you anything that neither told you alone?
-> This module shows how to check, surveys the integration methods, and argues
-> that the simplest one is the baseline the others have to beat.
+> When does a question need both tables? This module starts from the questions
+> that sound like integration, draws what we think causes what before choosing a
+> method, and then tours the methods: CCA and PLS, MOFA, and DIABLO.
 
-This module is a lecture and a discussion. There is no coding exercise. The
-second half of the morning is your group presentations, given to one paired
-group rather than the whole room.
+This module is a lecture and a discussion. The second half of the morning is
+your group presentations, given to one paired group rather than the whole room.
+An optional notebook lets you run the methods yourself after the workshop.
 
 ## Slides
 [Make slides full screen](slides.qmd)
@@ -19,6 +19,46 @@ group rather than the whole room.
 ```{=html}
 <iframe class="slide-deck" src="slides.html" height="420" width="747" style="border: 1px solid #2e3846;"></iframe>
 ```
+
+## What to take away
+
+- **Grouping on one table and testing the other is already integration.** It
+  throws information away in exchange for a result you can say in one sentence.
+- **Draw a DAG before you choose a method.** Put in what you measured, what you
+  did not, and which arrows you believe. A missing arrow is a claim too.
+- **Predictive is not causal.** In our data Nugent score and IL-1β predict
+  preterm birth, and neither one caused it in the model that built the outcome.
+  Every top-feature list, loading plot and network has the same limit.
+- **"Doesn't improve the prediction" is not "doesn't matter."** A cause whose
+  effect runs through the other table adds little to a prediction.
+- **PLS goes after big groups of co-expressed genes**, and the genes it selects
+  are representatives of a group. Rerun on resampled people and the list changes.
+- **With thousands of features, any labels separate on the training data.**
+  Only cross-validated numbers count, and every step that looks at the labels
+  goes inside the cross-validation.
+- **The simple baseline is hard to beat.** Two hand-picked scores in a glm
+  (cross-validated AUC 0.83) did better than DIABLO on 2,059 features (0.80).
+
+## Try it yourself
+
+Notebook `notebooks/06-integration.qmd` in your Codespace walks through four
+exercises, as requests to Pi:
+
+1. **Draw it first.** Sketch a DAG for preterm birth, then rank three predictors
+   by AUC and say which are causes.
+2. **A baseline you can trust.** Cross-validate the two-score glm from the
+   lecture.
+3. **Shuffled labels.** Fit sparse PLS-DA with real and shuffled labels, compare
+   the training plots, then the cross-validated AUC. Then watch a leak make
+   noise look predictive.
+4. **Patterns, then DIABLO.** Sparse PLS between the species and gene tables,
+   how stable its gene list is, and whether DIABLO beats the baseline.
+
+The notebook needs the mixOmics package. New Codespaces have it. In an older
+one, the notebook's setup chunk installs it the first time, which takes a few
+minutes.
+
+The DAG you draw can be on paper or in [Excalidraw](https://excalidraw.com).
 
 ## More integration methods
 
@@ -29,36 +69,10 @@ multi-block factor models.
 <iframe src="https://docs.google.com/presentation/d/1uI314ieJSjv02LED31RTuKIYK1iJsedxUDTxhCjD3ik/embed?start=false&loop=false&delayms=5000" frameborder="0" height="420" width="747" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
 ```
 
-## Running the analysis yourself
-
-Nothing in this module is assessed, but the code behind every number on the
-slides is short enough to read. The whole analysis is three logistic regressions
-on a table with four columns.
-
-```r
-library(tidyverse)
-library(pROC)
-
-# one row per participant: micro_z, host_z, preterm
-per_person <- read_csv("per_person_scores.csv")
-
-fits <- list(
-  micro = glm(preterm ~ micro_z, per_person, family = binomial),
-  host  = glm(preterm ~ host_z,  per_person, family = binomial),
-  both  = glm(preterm ~ micro_z + host_z, per_person, family = binomial)
-)
-
-map_dbl(fits, ~ as.numeric(auc(roc(per_person$preterm, predict(.x), quiet = TRUE))))
-anova(fits$micro, fits$both, test = "Chisq")
-```
-
-The two scores come from Tuesday and Thursday. One is the mean anaerobe fraction
-per person from the species table, the other the mean inflammatory gene set score
-per person from the gene table.
-
 ## Further reading
 
-- [mixOmics](http://mixomics.org/), for canonical correlation, sparse PLS and DIABLO
+- [mixOmics](http://mixomics.org/), for CCA, sparse PLS and DIABLO, with
+  tutorials for each
 - [MOFA](https://biofam.github.io/MOFA2/), for multi-table factor analysis
 - [Modern Statistics for Modern Biology](https://web.stanford.edu/class/bios221/book/), Holmes and Huber
 - [microViz documentation](https://david-barnett.github.io/microViz/), which we used all week
