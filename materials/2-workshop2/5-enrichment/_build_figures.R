@@ -15,6 +15,24 @@ source("materials/2-workshop2/R/count_tables.R")
 
 d <- read_counts("instructional")
 
+# --- outer-epithelium genes by community, for the "individual genes" slide ----
+# Counts per million at week 18, so the slides can draw the boxplot without
+# the full count table.
+res_dir <- file.path(here, "results")
+groups <- read_csv("materials/2-workshop2/4-differential/results/sample_groups.csv",
+                   show_col_types = FALSE) |>
+  filter(time_point == "week_18") |>
+  select(sample_id, community)
+cpm <- t(t(d$genes) / colSums(d$genes)) * 1e6
+epi <- d$gene_info |> filter(symbol %in% c("FLG", "MUC22"))
+cpm[epi$ensembl_gene_id, groups$sample_id, drop = FALSE] |>
+  as_tibble(rownames = "ensembl_gene_id") |>
+  pivot_longer(-ensembl_gene_id, names_to = "sample_id", values_to = "cpm") |>
+  left_join(epi |> select(ensembl_gene_id, symbol), by = "ensembl_gene_id") |>
+  left_join(groups, by = "sample_id") |>
+  select(sample_id, community, symbol, cpm) |>
+  write_csv(file.path(res_dir, "epithelial_genes_week18.csv"))
+
 # Week 18 only, the same samples as Module 4's species test, with term as the
 # reference so a positive estimate means higher in preterm.
 ps <- as_counts(table = "microbiome", data = d) |>

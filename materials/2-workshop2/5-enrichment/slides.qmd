@@ -27,6 +27,7 @@ sprank <- read_csv(file.path(res, "species_ranking_outcome.csv"), show_col_types
 bal <- read_csv(file.path(res, "ranking_balance.csv"), show_col_types = FALSE)
 balsum <- read_csv(file.path(res, "ranking_balance_summary.csv"), show_col_types = FALSE)
 generank <- read_csv(file.path(res, "gene_ranking_outcome.csv.gz"), show_col_types = FALSE)
+epi_genes <- read_csv(file.path(res, "epithelial_genes_week18.csv"), show_col_types = FALSE)
 out <- gsea |> filter(ranking == "preterm vs term")
 comm <- gsea |> filter(ranking == "anaerobe vs Lactobacillus")
 
@@ -289,16 +290,23 @@ way. Does that look like biology to you?
 
 ## What differs between these swabs
 
-![](images/bv-epithelium.png){width=68% fig-alt="Two panels of vaginal epithelium. Left, Lactobacillus-dominant: lactic acid, an intact epithelial barrier, a non-inflammatory environment. Right, bacterial vaginosis: mixed anaerobes, short chain fatty acids, mucin breakdown, loss of barrier integrity, a pro-inflammatory environment."}
+:::: {.columns}
+::: {.column width="60%"}
+![](images/bv-epithelium.png){width=100% fig-alt="Two panels of vaginal epithelium. Left, Lactobacillus-dominant: lactic acid, an intact epithelial barrier, a non-inflammatory environment. Right, bacterial vaginosis: mixed anaerobes, short chain fatty acids, mucin breakdown, loss of barrier integrity, a pro-inflammatory environment."}
 
 ::: {style="font-size: 0.5em;"}
 Aldunate et al., *Front. Physiol.* 2015, doi:10.3389/fphys.2015.00164
 :::
+:::
 
-. . .
-
-The two communities sit on different epithelium, so their swabs pick up a
-different mix of cells. Bulk RNA-seq adds all of those cells together.
+::: {.column style="width: 40%; font-size: 0.8em;"}
+::: {.incremental}
+- The two communities sit on different epithelium, so their swabs pick up a
+  different mix of cells. Bulk RNA-seq adds all of those cells together.
+- Why does this make it hard to interpret the gene expression data?
+:::
+:::
+::::
 
 ## Checking that the statistics are centred
 
@@ -383,23 +391,44 @@ tibble(
 
 ## The individual genes still stand
 
+:::: {.columns}
+::: {.column width="45%"}
+```{r}
+#| echo: false
+#| fig-width: 5.5
+#| fig-height: 5.5
+epi_genes |>
+  mutate(community = fct_relevel(community, "lactobacillus"),
+         symbol = recode(symbol, FLG = "filaggrin (FLG)", MUC22 = "mucin 22 (MUC22)")) |>
+  ggplot(aes(community, cpm + 1, fill = community)) +
+  geom_boxplot(outlier.shape = NA, alpha = 0.5, show.legend = FALSE) +
+  geom_jitter(aes(colour = community), width = 0.2, size = 1.2, alpha = 0.6,
+              show.legend = FALSE) +
+  facet_wrap(~ symbol) +
+  scale_y_log10(labels = scales::label_comma()) +
+  scale_fill_manual(values = c(lactobacillus = pal[["teal"]], anaerobe = pal[["orange"]])) +
+  scale_colour_manual(values = c(lactobacillus = pal[["teal"]], anaerobe = pal[["orange"]])) +
+  labs(x = NULL, y = "counts per million + 1 (log scale)")
+```
+:::
+
+::: {.column style="width: 55%; font-size: 0.8em;"}
 The individual genes from the community contrast are still real. Mucins and
 filaggrin were up in Lactobacillus-dominant samples by a factor of eight, with
 adjusted p-values near ten to the minus eighteen.
 
-. . .
+::: {.fragment}
+The set names are harder to trust.
+:::
 
-The set names are harder to trust. Filaggrin marks the outer layer of the
-epithelium, so these swabs differ in the mix of cells they hold. A shift that
-large can swamp changes inside the cells, and it moves every set that contains
-epithelial genes.
-
-. . .
-
+::: {.fragment}
 Go back to the question the experiment asked. If it was about immune
 activation, measured with RNA-seq on a mixed swab, tread carefully. The data is
 still telling you something about the biology. Deciding what it means is your
 job.
+:::
+:::
+::::
 
 ## Check the tail every time {.center}
 
