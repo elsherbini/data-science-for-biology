@@ -263,6 +263,10 @@ all shifted up in the people who delivered early.
 You could put that sentence in an abstract, and it comes from the same 13,738
 statistics that gave you the list of `r scales::comma(n_out)` genes.
 
+## Quick check {.your-turn}
+
+{{< live-poll W2M5.1 height="700px" >}}
+
 ## Now try the community contrast
 
 Run the same analysis on yesterday's other contrast, anaerobe versus
@@ -282,6 +286,19 @@ comm |> slice_min(padj, n = 6) |>
 `r sum(comm$padj < 0.05, na.rm = TRUE)` of 50 sets are significant, and
 `r sum(comm$padj < 0.05 & comm$NES < 0, na.rm = TRUE)` of those point the same
 way. Does that look like biology to you?
+
+## What differs between these swabs
+
+![](images/bv-epithelium.png){width=68% fig-alt="Two panels of vaginal epithelium. Left, Lactobacillus-dominant: lactic acid, an intact epithelial barrier, a non-inflammatory environment. Right, bacterial vaginosis: mixed anaerobes, short chain fatty acids, mucin breakdown, loss of barrier integrity, a pro-inflammatory environment."}
+
+::: {style="font-size: 0.5em;"}
+Aldunate et al., *Front. Physiol.* 2015, doi:10.3389/fphys.2015.00164
+:::
+
+. . .
+
+The two communities sit on different epithelium, so their swabs pick up a
+different mix of cells. Bulk RNA-seq adds all of those cells together.
 
 ## Checking that the statistics are centred
 
@@ -361,7 +378,7 @@ tibble(
 - Outcome: the strong effects are balanced, and the sets still agree with each
   other. Here the agreement comes from the biology.
 - Community: the strong effects nearly all point one way, and so do the sets.
-  The lopsided ranking alone would produce that.
+  The lopsided ranking alone would explain the direction.
 :::
 
 ## The individual genes still stand
@@ -372,9 +389,17 @@ adjusted p-values near ten to the minus eighteen.
 
 . . .
 
-The imbalance undermines the **set-level** claim, that a named program is
-coordinately shifted. Large generic sets drift along with a lopsided list, so the
-gene-level and set-level claims need separate checks.
+The set names are harder to trust. Filaggrin marks the outer layer of the
+epithelium, so these swabs differ in the mix of cells they hold. A shift that
+large can swamp changes inside the cells, and it moves every set that contains
+epithelial genes.
+
+. . .
+
+Go back to the question the experiment asked. If it was about immune
+activation, measured with RNA-seq on a mixed swab, tread carefully. The data is
+still telling you something about the biology. Deciding what it means is your
+job.
 
 ## Check the tail every time {.center}
 
@@ -383,8 +408,8 @@ and look at the top few hundred.
 
 . . .
 
-If those nearly all point one way, every large set will come out enriched that
-way, and the method will give you a very small p-value for it.
+If those nearly all point one way, every large set will lean that way. Ask what
+kind of genes they are before you believe the set names.
 
 . . .
 
@@ -401,6 +426,10 @@ Our community ranking was centred overall and still failed this check.
 - If nobody has curated a set for the biology you study, enrichment cannot find
   it.
 :::
+
+## Quick check {.your-turn}
+
+{{< live-poll W2M5.2 height="700px" >}}
 
 ## The same idea, on bacteria {.center}
 
@@ -494,6 +523,28 @@ ggplot(set_sizes, aes(size, table, colour = table)) +
 Set-level analysis pays off when you have thousands of features and hundreds of
 curated groups. With 53 species in ten genera, you are better off reading the
 species list.
+
+## Use the tree instead
+
+:::: {.columns}
+::: {.column width="60%"}
+![](figures/taxatree_outcome.png){width=100% fig-alt="A circular taxonomic tree with phyla near the centre and 53 species at the edge. Each node is coloured from teal (higher in term) to brown (higher in preterm). The Lactobacillus branch is teal, the Gardnerella branch is brown, and only Fenollaria is marked p < 0.05."}
+:::
+
+::: {.column style="width: 40%; font-size: 0.75em;"}
+microViz fits the same model to every taxon at every rank, from phyla near the
+centre to the 53 species at the edge.
+
+- Colour: brown is higher in preterm, teal is higher in term
+- Dot size: share of samples that carry the taxon
+
+You can see a whole branch lean one way. *Lactobacillus* leans term and
+*Gardnerella* leans preterm, but only *Fenollaria* reaches p < 0.05, and that
+is before correcting for testing every node.
+
+[microViz: modelling taxa](https://david-barnett.github.io/microViz/articles/web-only/modelling-taxa.html)
+:::
+::::
 
 ## Choosing a method for your table {.center}
 

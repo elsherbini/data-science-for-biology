@@ -56,8 +56,13 @@ result files you saved yesterday. Start Pi with a fresh conversation.
    `stat`, for both rankings. Check it against the slides: about 50% for
    outcome and about 4% for community among the 500 strongest.
 
+   Now look at what sits in that lopsided tail. Ask for the 20 genes with the
+   largest absolute `stat` in `genes_by_community`, as gene symbols from
+   `d$gene_info`, with the direction of each. What kind of cell expresses most
+   of them? Think back to the figure of the two epithelia in the slides.
+
    Write one sentence saying which of the two enrichment results you trust and
-   why.
+   why, and one saying what the community result tells you about these swabs.
 
 5. Alternatives side by side. Ask for the cutoff version as well: a
    hypergeometric test using only the genes with `padj` below 0.05, run for up
@@ -76,6 +81,18 @@ result files you saved yesterday. Start Pi with a fresh conversation.
    in preterm" and "higher in term", set size shown somewhere, and text large
    enough for a projector.
 
+### Part 3: Reach (optional)
+
+Test the idea from step 4 directly: could the community ranking alone have
+produced its table? Ask Pi to draw 100 random sets of 190 genes from the
+community ranking and run the same `fgsea` call on them. How many of the random
+sets point toward the Lactobacillus end, and how many have `padj < 0.05`?
+
+Compare that with the significant Hallmark sets from step 4. What does the lopsided
+tail explain, and what does it leave unexplained? Ask Pi how it would check
+whether the Hallmark sets share genes with that tail more often than random
+sets do.
+
 ### Discussion
 
 - Was your Part 1 prediction of the elevated program right?
@@ -85,3 +102,5 @@ result files you saved yesterday. Start Pi with a fresh conversation.
   it gives you one sentence. What did enrichment add, and what did it hide?
 - Which of Pi's claims would you have believed if you had not asked for the
   overlap table and the balance check?
+- If this study had been asking about immune activation in the cervix, what
+  would you check before reporting the community result?
