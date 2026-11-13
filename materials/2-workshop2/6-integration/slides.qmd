@@ -131,7 +131,7 @@ Sort them: **predict**, **find shared patterns**, **explain a mechanism**, or
 countdown::countdown(3, left = 0, right = NULL, play_sound = TRUE)
 ```
 
-## Four kinds of question, and where we cover them
+## Kinds of question, and where we cover them
 
 ::: {style="font-size: 0.75em;"}
 | the question is about | reach for | today |
@@ -139,7 +139,8 @@ countdown::countdown(3, left = 0, right = NULL, play_sound = TRUE)
 | comparing groups | one table at a time, grouped by the other | next |
 | explaining a mechanism | a causal diagram first, then often a different study | DAGs |
 | finding features that move together | CCA, PLS | mixOmics |
-| finding structure shared across samples | MOFA | MOFA |
+| what is shared, and what belongs to one table | MOFA | MOFA |
+| types of people who look alike in every table | STATIS, mixKernel, SNF | people, not features |
 | predicting an outcome | scores in one model, DIABLO | DIABLO |
 
 : {tbl-colwidths="[38,44,18]"}
@@ -462,6 +463,10 @@ the model that made these data, neither one does anything.
 
 **Workshop 3 will focus on modelling and uncertainty**, in April 2027.
 
+## Quick check {.your-turn}
+
+{{< live-poll W2M6.1 height="700px" >}}
+
 # A tour of mixOmics
 
 ## A good place to learn the rest: [mixomics.org](http://mixomics.org/) {.center}
@@ -474,6 +479,7 @@ alternatives that are not on that site.
 |---|---|---|
 | CCA, PLS, sparse PLS | which features move together across two tables? | yes |
 | MOFA | what structure is shared, and what belongs to one table? | no |
+| STATIS, mixKernel, SNF | which people look alike across every table? | mixKernel is a companion |
 | DIABLO | which features from both tables separate the groups? | yes |
 | two scores in one model | does the second table add to the prediction? | no |
 
@@ -637,6 +643,81 @@ tribble(
   for tutorials.
 :::
 
+# Another route: compare people, not features
+
+## Each table becomes a map of who looks like whom
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+#| echo: false
+#| fig-width: 6
+#| fig-height: 5.5
+set.seed(6)
+# 16 people: community splits 1-8 from 9-16 (both tables);
+# inflammation splits 5-8 and 13-16 from the rest (genes only)
+community <- rep(c(1, -1), each = 8)
+inflamed <- rep(rep(c(-1, 1), each = 4), 2)
+sim_of <- function(p, s_comm, s_infl) {
+  x <- outer(community, rnorm(p)) * s_comm + outer(inflamed, rnorm(p)) * s_infl +
+    matrix(rnorm(16 * p), 16, p)
+  cor(t(x))
+}
+sims <- list(species = sim_of(30, 1.2, 0), genes = sim_of(200, 0.6, 0.6))
+sims$combined <- (sims$species + sims$genes) / 2
+sim_tile <- function(m, title) {
+  tibble(a = c(row(m)), b = c(col(m)), s = c(m)) |>
+    ggplot(aes(a, -b, fill = s)) +
+    geom_tile() +
+    scale_fill_gradient2(low = "#f4f4f4", mid = "#f4f4f4", high = pal[["navy"]],
+                         midpoint = 0, limits = c(-1, 1), guide = "none") +
+    coord_equal() +
+    labs(title = title) +
+    theme_void(base_size = 18) +
+    theme(plot.title = element_text(hjust = 0.5))
+}
+(sim_tile(sims$species, "species") | sim_tile(sims$genes, "genes")) /
+  (plot_spacer() + sim_tile(sims$combined, "combined") + plot_spacer() +
+     plot_layout(widths = c(1, 2, 1))) +
+  plot_annotation(title = "People × people similarity (sketch)",
+                  theme = theme(plot.title = element_text(size = 20, hjust = 0.5)))
+```
+:::
+
+::: {.column width="50%" style="font-size: 0.85em;"}
+::: {.incremental}
+- Each table becomes one **people × people** similarity matrix, using any
+  distance: UniFrac, Bray–Curtis, correlation.
+- The matrices are combined into one:
+  - **STATIS / DISTATIS**: a weighted average; tables that agree with the
+    others count more.
+  - **mixKernel**: the same idea with kernels, from the mixOmics team.
+  - **SNF**: shares similarity through each person's nearest neighbours,
+    then clusters people.
+:::
+:::
+::::
+
+## Features or people: two places to start
+
+::: {style="font-size: 0.8em;"}
+| starts from | methods | gives you |
+|---|---|---|
+| the tables of features | PCA, MOFA, sparse PLS, DIABLO | axes of variation, and a weight for every feature |
+| a similarity matrix per table | STATIS, DISTATIS, mixKernel, SNF | a map or clusters of people |
+
+: {tbl-colwidths="[28,36,36]"}
+:::
+
+::: {.incremental}
+- Starting from people, a table with 2,000 genes and one with 30 species each
+  give one matrix, so **the big table does not drown the small one**.
+- The price: **features come back only indirectly**, and every person needs
+  every table.
+- Weighting by agreement turns down a table that tells a different story, and
+  that story may be the finding.
+:::
+
 # DIABLO: features from both tables that separate the groups
 
 ## Two goals, added together
@@ -754,7 +835,7 @@ diablo_load |>
 ```{r}
 #| echo: false
 #| fig-width: 6.5
-#| fig-height: 4.6
+#| fig-height: 3.6
 diablo_cv |>
   filter(model != "DIABLO, both tables weighted") |>
   mutate(model = recode(model,
@@ -771,6 +852,19 @@ diablo_cv |>
   labs(x = "cross-validated AUC (10 repeats of 5-fold)", y = NULL) +
   theme_minimal(base_size = 16)
 ```
+
+::: {style="font-size: 0.7em;"}
+```{.r}
+# one row per person, values averaged over the 3 visits
+glm(preterm ~ anaerobe_fraction + inflammation_score,
+    family = binomial)
+
+block.splsda(list(species = clr_species,       # 10% prevalence
+                  genes   = top_2000_genes),   # most variable
+             outcome, ncomp = 2, design = 0.1,
+             keepX = list(species = c(10, 10), genes = c(50, 50)))
+```
+:::
 :::
 
 ::: {.column width="45%"}
@@ -847,6 +941,10 @@ ggplot(models, aes(auc, fct_rev(model), colour = model)) +
 The improvement is real. Report its size with the interval, and say how the
 scores were chosen.
 :::
+
+## Quick check {.your-turn}
+
+{{< live-poll W2M6.2 height="700px" >}}
 
 ## Further reading
 
